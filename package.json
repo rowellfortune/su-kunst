@@ -1,5 +1,5 @@
 {
-  "name": "monorepo-template",
+  "name": "su-kunst",
   "version": "0.0.0",
   "workspaces": [
     "packages/*"
@@ -7,9 +7,16 @@
   "scripts": {},
   "devDependencies": {
     "@tsconfig/node22": "^22",
+    "@types/react-router-bootstrap": "^0.26.8",
     "typescript": "^5"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.830.0",
+    "amazon-cognito-identity-js": "^6.3.15",
+    "aws-amplify": "^5.3.27",
+    "react-icons": "^5.5.0",
+    "react-router-bootstrap": "^0.26.3",
+    "react-router-dom": "^7.6.2",
     "sst": "^3"
   }
 }

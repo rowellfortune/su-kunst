@@ -3,7 +3,7 @@
 export default $config({
   app(input) {
     return {
-      name: "monorepo-template",
+      name: "su-kunst",
       removal: input?.stage === "production" ? "retain" : "remove",
       protect: ["production"].includes(input?.stage),
       home: "aws",
@@ -11,10 +11,17 @@ export default $config({
   },
   async run() {
     const storage = await import("./infra/storage");
+    const auth = await import("./infra/auth");
+    await import("./infra/web");
     await import("./infra/api");
 
     return {
-      MyBucket: storage.bucket.name,
+      Bucket: storage.bucket.name,
+      UserPoolId: auth.userPool.id,
+      UserPoolClientId: auth.userPoolClient.id,
+      IdentityPoolId: auth.identityPool.id,
+      // Region: stack.region,
+
     };
   },
 });

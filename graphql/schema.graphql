@@ -1,0 +1,116 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+enum OpportunityStatus {
+  public
+  draft
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  role: String! # ADMIN | ARTISAN | REVIEWER
+  bio: String
+  profilePicture: String
+  createdAt: AWSDateTime!
+}
+
+type Opportunity {
+  id: ID!
+  title: String!
+  description: String!
+  deadline: AWSDate!
+  location: String
+  category: String
+  status: OpportunityStatus! # 👈 Add this line
+  createdAt: AWSDateTime!
+}
+
+type Application {
+  id: ID!
+  opportunityId: ID!
+  userId: ID!
+  portfolioLink: AWSURL
+  status: String! # PENDING | REVIEWED | APPROVED | REJECTED
+  submittedAt: AWSDateTime!
+}
+
+type Chat {
+  id: ID!
+  participants: [ID!]!
+  lastMessage: String
+  updatedAt: AWSDateTime!
+}
+
+type Message {
+  id: ID!
+  chatId: ID!
+  senderId: ID!
+  content: String!
+  sentAt: AWSDateTime!
+}
+
+type Query {
+  getUser(id: ID!): User
+  listOpportunities: [Opportunity!]!
+  getOpportunity(id: ID!): Opportunity
+  listApplicationsByUser(userId: ID!): [Application!]!
+  listMessages(chatId: ID!): [Message!]!
+  listChatsByUser(userId: ID!): [Chat!]!
+
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+  createOpportunity(input: CreateOpportunityInput!): Opportunity!
+  applyToOpportunity(input: ApplyInput!): Application!
+  sendMessage(input: SendMessageInput!): Message!
+  createChat(input: CreateChatInput!): Chat!
+}
+
+type Subscription {
+  onNewMessage(chatId: ID!): Message
+    @aws_subscribe(mutations: ["sendMessage"])
+}
+
+input CreateUserInput {
+  id: ID!
+  name: String!
+  email: String!
+  role: String!
+  bio: String
+  profilePicture: String
+}
+
+input CreateOpportunityInput {
+  id: ID!
+  title: String!
+  description: String!
+  deadline: AWSDate!
+  location: String
+  category: String
+  status: OpportunityStatus! # 👈 Add this line
+}
+
+input ApplyInput {
+  id: ID!
+  opportunityId: ID!
+  userId: ID!
+  portfolioLink: AWSURL
+}
+
+input SendMessageInput {
+  id: ID!
+  chatId: ID!
+  senderId: ID!
+  content: String!
+}
+
+input CreateChatInput {
+  id: ID!
+  participants: [ID!]!
+}

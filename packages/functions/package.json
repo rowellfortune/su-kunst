@@ -1,10 +1,11 @@
 {
-  "name": "@monorepo-template/functions",
+  "name": "@su-kunst/functions",
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "@monorepo-template/core": "*",
-    "sst": "*"
+    "@su-kunst/core": "*",
+    "sst": "^3.17.5",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8"
