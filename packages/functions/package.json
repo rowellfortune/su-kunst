@@ -3,11 +3,14 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.830.0",
+    "@aws-sdk/lib-dynamodb": "^3.830.0",
     "@su-kunst/core": "*",
     "sst": "^3.17.5",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8"
+    "@types/aws-lambda": "^8.10.150",
+    "@types/uuid": "^10.0.0"
   }
 }

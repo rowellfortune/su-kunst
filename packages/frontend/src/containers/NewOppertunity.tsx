@@ -1,0 +1,100 @@
+import React, {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import { API} from "aws-amplify";
+import { onError } from "../lib/errorLib";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+
+export type OpportunityInput = {
+  id?: string;
+  title: string;
+  description: string;
+  opencall?: "internship" | "residency" | "workshop" ; // Example types
+};
+
+export default function NewOppertunity() {
+  const nav = useNavigate();
+
+  const [formData, setFormData] = useState<OpportunityInput>({
+    title: "",
+    description: "",
+    opencall: "internship",
+  });
+
+  console.log(formData);
+
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+
+   const handleChange = (field: keyof OpportunityInput, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  function createNote(note: OpportunityInput) {
+    return API.post("notes", "/notes", {
+      body: note,
+    });
+  }
+
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    setMessage(null);
+
+    try {
+      await createNote(formData);
+      nav("/");
+
+    } catch (e) {
+      onError(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  return (
+    <div className="NewNote">
+      <form onSubmit={handleSubmit} className="space-y-4 p-4 max-w-md mx-auto">
+      <Input
+        type="text"
+        placeholder="Title"
+        value={formData.title}
+        onChange={(e) => handleChange("title", e.target.value)}
+        required
+      />
+
+      <Textarea
+        placeholder="Description"
+        value={formData.description}
+        onChange={(e) => handleChange("description", e.target.value)}
+        required
+      />
+
+      <Select
+        onValueChange={(value) => handleChange("opencall", value)}
+        value={formData.opencall}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select Type" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="internship">Internship</SelectItem>
+          <SelectItem value="residency">Residency</SelectItem>
+          <SelectItem value="workshop">Workshop</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Button type="submit" disabled={loading}>
+        {loading ? "Creating..." : "Create Opportunity"}
+      </Button>
+
+      {message && <p className="text-sm text-center">{message}</p>}
+    </form>
+    </div>
+  );
+}

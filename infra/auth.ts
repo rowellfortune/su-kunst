@@ -1,10 +1,16 @@
 import { api } from "./api";
-import { bucket } from "./storage";
+import { bucket, table } from "./storage";
 
 const region = aws.getRegionOutput().name;
 
 export const userPool = new sst.aws.CognitoUserPool("UserPool", {
   usernames: ["email"],
+  triggers: {
+    postConfirmation: {
+      handler: "packages/functions/src/user/postConfirmation.main",
+      link: [table]
+    }
+  }
 });
 
 export const userPoolClient = userPool.addClient("UserPoolClient");
@@ -43,6 +49,13 @@ export const identityPool = new sst.aws.CognitoIdentityPool("IdentityPool", {
     ],
   },
 });
+
+
+export const postConfirmationLambda = new sst.aws.Function("PostConfirmationLambda", {
+  handler: "packages/functions/src/postConfirmation.main",
+  link: [table]
+});
+
 
 // Define the groups
 const groups = [

@@ -11,15 +11,17 @@ export default $config({
   },
   async run() {
     const storage = await import("./infra/storage");
-    const auth = await import("./infra/auth");
-    await import("./infra/web");
-    await import("./infra/api");
+    const auth    = await import("./infra/auth");
+    const web     = await import("./infra/web");
+    const api     = await import("./infra/api");
 
     return {
       Bucket: storage.bucket.name,
-      UserPoolId: auth.userPool.id,
-      UserPoolClientId: auth.userPoolClient.id,
-      IdentityPoolId: auth.identityPool.id,
+      UserPool: auth.userPool.id,
+      Table: storage.table.name,
+      Region: aws.getRegionOutput().name,
+      IdentityPool: auth.identityPool.id,
+      UserPoolClient: auth.userPoolClient.id,
       // Region: stack.region,
 
     };

@@ -6,16 +6,8 @@
 declare module "sst" {
   export interface Resource {
     "Api": {
-      "type": "sst.aws.AppSync"
+      "type": "sst.aws.ApiGatewayV2"
       "url": string
-    }
-    "ApiDataSourceLambdaDSFunction": {
-      "name": string
-      "type": "sst.aws.Function"
-    }
-    "Bucket": {
-      "name": string
-      "type": "sst.aws.Bucket"
     }
     "Frontend": {
       "type": "sst.aws.StaticSite"
@@ -25,9 +17,17 @@ declare module "sst" {
       "id": string
       "type": "sst.aws.CognitoIdentityPool"
     }
+    "PostConfirmationLambda": {
+      "name": string
+      "type": "sst.aws.Function"
+    }
     "SuKunst": {
       "name": string
       "type": "sst.aws.Dynamo"
+    }
+    "Uploads": {
+      "name": string
+      "type": "sst.aws.Bucket"
     }
     "UserPool": {
       "id": string

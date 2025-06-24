@@ -7,6 +7,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Amplify } from "aws-amplify";
 import config from "./config.ts";
 
+console.log(config);
+
 Amplify.configure({
   Auth: {
     mandatorySignIn: true,
