@@ -1,20 +1,49 @@
 import { api } from "./api";
 import { bucket, table } from "./storage";
+import * as aws from "@pulumi/aws";
+import * as pulumi from "@pulumi/pulumi";
 
+// Get region + account ID
 const region = aws.getRegionOutput().name;
+const accountId = aws.getCallerIdentityOutput({}).accountId;
 
-export const userPool = new sst.aws.CognitoUserPool("UserPool", {
-  usernames: ["email"],
-  triggers: {
-    postConfirmation: {
-      handler: "packages/functions/src/user/postConfirmation.main",
-      link: [table]
-    }
-  }
+export const postConfirmationLambda = new sst.aws.Function("PostConfirmationLambda", {
+  handler: "packages/functions/src/user/postConfirmation.main",
+  link: [table],
 });
 
-export const userPoolClient = userPool.addClient("UserPoolClient");
+// ✅ 1. Cognito User Pool with aliases
+export const userPool = new aws.cognito.UserPool("UserPool", {
+  aliasAttributes: ["email", "preferred_username"],
+  autoVerifiedAttributes: ["email"],
+  schemas: [
+    { name: "email", required: true, attributeDataType: "String" },
+    { name: "preferred_username", required: false, attributeDataType: "String" },
+  ],
+  lambdaConfig: {
+    postConfirmation: postConfirmationLambda.arn,
+  },
+});
 
+new aws.lambda.Permission("AllowCognitoInvokePostConfirmation", {
+  action: "lambda:InvokeFunction",
+  function: postConfirmationLambda.arn, // use `.functionName` from sst.aws.Function
+  principal: "cognito-idp.amazonaws.com",
+  sourceArn: userPool.arn,
+});
+
+// ✅ 2. Cognito User Pool Client
+export const userPoolClient = new aws.cognito.UserPoolClient("UserPoolClient", {
+  userPoolId: userPool.id,
+  generateSecret: false,
+  explicitAuthFlows: [
+    "ALLOW_USER_PASSWORD_AUTH",
+    "ALLOW_REFRESH_TOKEN_AUTH",
+    "ALLOW_USER_SRP_AUTH",
+  ],
+});
+
+// ✅ 3. Identity Pool via SST
 export const identityPool = new sst.aws.CognitoIdentityPool("IdentityPool", {
   userPools: [
     {
@@ -28,18 +57,17 @@ export const identityPool = new sst.aws.CognitoIdentityPool("IdentityPool", {
         actions: ["s3:*"],
         resources: [
           $concat(bucket.arn, "/private/${cognito-identity.amazonaws.com:sub}/*"),
+          $concat(bucket.arn, "/public/posts/*")
         ],
       },
       {
-        actions: [
-          "execute-api:*",
-        ],
+        actions: ["execute-api:*"],
         resources: [
           $concat(
             "arn:aws:execute-api:",
             region,
             ":",
-            aws.getCallerIdentityOutput({}).accountId,
+            accountId,
             ":",
             api.nodes.api.id,
             "/*/*/*"
@@ -50,12 +78,22 @@ export const identityPool = new sst.aws.CognitoIdentityPool("IdentityPool", {
   },
 });
 
+// ✅ 4. Post-confirmation trigger Lambda
 
-export const postConfirmationLambda = new sst.aws.Function("PostConfirmationLambda", {
-  handler: "packages/functions/src/postConfirmation.main",
-  link: [table]
+// ✅ 5. (Optional) You can assign this function to the pool via trigger **manually** in the AWS console or via the SDK.
+// Pulumi does not directly support attaching triggers to user pools cleanly unless you use raw AWS Lambda ARNs.
+// Add Cognito User Pool permissions
+new aws.iam.RolePolicy("CognitoUserPoolAccess", {
+  role: 'su-kunst-dev-PostConfirmationLambdaRole-muktrnwz',
+  policy: {
+    Version: "2012-10-17",
+    Statement: [{
+      Effect: "Allow",
+      Action: ["cognito-idp:AdminAddUserToGroup"],
+      Resource: pulumi.interpolate`arn:aws:cognito-idp:${region}:${aws.getCallerIdentityOutput({}).accountId}:userpool/${userPool.id}`,
+    }],
+  },
 });
-
 
 // Define the groups
 const groups = [

@@ -1,18 +1,25 @@
 import { Route, Routes } from "react-router-dom";
-import Home from "./containers/Home.tsx";
-import NotFound from "./containers/NotFound.tsx";
-import NewNote from "./containers/NewNote.tsx";
-import NewOppertunity from "./containers/NewOppertunity.tsx";
+import Home from "./containers/Home";
+import NotFound from "./containers/NotFound";
+import NewNote from "./containers/NewNote";
+import NewOppertunity from "./containers/NewOppertunity";
 
 import Layout from "./layout/layout.tsx";
 import Admin from "./layout/admin.tsx";
-import Landing from "./layout/landing.tsx";
+import Landing from "./layout/landing";
+import SettingsLayout from "./layout/settings";
 
-import Signup from "./containers/Signup.tsx";
-import Login from "./containers/Login.tsx";
+import Signup from "./containers/Signup";
+import Login from "./containers/Login";
 
-import ArtistSignup from "./auth/artist/Signup.tsx";
-import AdminSignup from "./auth/admin/Signup.tsx";
+import ArtistSignup from "./auth/artist/Signup";
+import AdminSignup from "./auth/admin/Signup";
+
+// Setting 
+import Settings from "./containers/Settings";
+import Profile from "./containers/Profile";
+import Inbox from "./containers/Inbox";
+import NewPost from "./containers/NewPost";
 
 export default function Links() {
   return (
@@ -23,6 +30,16 @@ export default function Links() {
         }
       />
 
+
+      {/* Post */}
+      <Route path="/posts/new" 
+        element={
+          <Landing children={<NewPost />} />
+        }
+      />
+
+      {/*  */}
+
       {/* Finally, catch all unmatched routes */}
       <Route path="*" element={<NotFound />} />;
 
@@ -31,6 +48,10 @@ export default function Links() {
           <Layout children={<NewNote />} />
         }
       />
+
+
+
+
 
       <Route path="/notes/oppertuniy/new" 
         element={
@@ -48,6 +69,24 @@ export default function Links() {
 
       {/* Admin Auth Screens */}
       <Route path="/admin/signup" element={<AdminSignup />} />
+
+      {/* Settings */}
+      <Route path="/settings" 
+        element={
+          <SettingsLayout children={<Settings />} />
+        }
+      />
+      <Route path="/settings/profile" 
+        element={
+          <SettingsLayout children={<Profile />} />
+        }
+      />
+
+      <Route path="/inbox" 
+        element={
+          <SettingsLayout children={<Inbox />} />
+        }
+      />
       
     </Routes>
   );

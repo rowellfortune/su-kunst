@@ -1,8 +1,10 @@
 import { CognitoUserPoolTriggerEvent } from "aws-lambda";
+import { CognitoIdentityServiceProvider } from "aws-sdk";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { Resource } from "sst";
 
+const cognito = new CognitoIdentityServiceProvider();
 const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 export async function main(event: AWSLambda.PostConfirmationTriggerEvent): Promise<AWSLambda.PostConfirmationTriggerEvent> {
@@ -13,12 +15,13 @@ export async function main(event: AWSLambda.PostConfirmationTriggerEvent): Promi
   const groupName = determineUserGroup(event);
 
   const params = {
-        TableName: Resource?.SuKunst?.name,
+    TableName: Resource?.SuKunst?.name,
     Item: {
       pk: `USER#${userId}`,
       sk: "PROFILE",
       entityType: "USER",
       createdAt: Date.now(),
+      username,
       email,
       role: groupName, // default role
     },
@@ -26,28 +29,28 @@ export async function main(event: AWSLambda.PostConfirmationTriggerEvent): Promi
 
   await dynamoDb.send(new PutCommand(params));
 
+  try {
+    await cognito
+      .adminAddUserToGroup({
+        GroupName: groupName,
+        UserPoolId: event.userPoolId,
+        Username: username,
+      })
+      .promise();
+
+    console.log(`User ${username} added to group ${groupName}`);
+  } catch (error) {
+    console.error(`Error adding user ${username} to group ${groupName}:`, error);
+  }
+
   return event;
 };
 
 // Function to determine user group (replace with your own logic)
-// function determineUserGroup(event: AWSLambda.PostConfirmationTriggerEvent): string {
-//   // Example: Assign based on user attributes
-//   if (event.request.userAttributes["custom:role"] === "admin") return "admin";
-//   return "artisan"; // Default group
-// }
-
-// Function to determine user group based on custom:userRole attribute in Cognito
 function determineUserGroup(event: AWSLambda.PostConfirmationTriggerEvent): string {
-  const userRole = event.request.userAttributes["custom:role"]; // Assuming you store role here
-
-  switch (userRole) {
-    case "admin":
-      return "admin";
-    case "artisan":
-      return "artisan";
-    case "viewer":
-      return "viewer";
-    default:
-      return "viewer"; // fallback/default group
-  }
+  // Example: Assign based on user attributes
+  if (event.request.userAttributes["custom:role"] === "admin") return "admin";
+  if (event.request.userAttributes["custom:role"] === "viewer") return "viewer";
+  if (event.request.userAttributes["custom:role"] === "artisan") return "artisan";
+  return "artisan"; // Default group
 }

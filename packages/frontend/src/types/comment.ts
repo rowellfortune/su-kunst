@@ -1,9 +1,11 @@
-export interface NoteType {
+export interface CommentType {
+  entityType?: string;
   sk?: string;
   pk?: string;
-  title: string;
-  description: string;
+  postId?: string;
+  content?: string;
+  userId?: string;
+  user?: string;
+  author?: string;
   createdAt?: string;
-  attachment?: string;
-  attachmentURL?: string;
 }

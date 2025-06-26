@@ -29,15 +29,6 @@ declare module "sst" {
       "name": string
       "type": "sst.aws.Bucket"
     }
-    "UserPool": {
-      "id": string
-      "type": "sst.aws.CognitoUserPool"
-    }
-    "UserPoolClient": {
-      "id": string
-      "secret": string
-      "type": "sst.aws.CognitoUserPoolClient"
-    }
   }
 }
 /// <reference path="sst-env.d.ts" />

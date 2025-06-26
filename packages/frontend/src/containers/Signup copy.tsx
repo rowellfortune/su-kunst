@@ -2,22 +2,22 @@ import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Stack from "react-bootstrap/Stack";
 import { useNavigate } from "react-router-dom";
-import { useFormFields } from "@/lib/hooksLib";
-import { useAppContext } from "@/lib/contextLib";
-import LoaderButton from "@/components/LoaderButton";
+import { useFormFields } from "../lib/hooksLib";
+import { useAppContext } from "../lib/contextLib";
+import LoaderButton from "../components/LoaderButton";
 import "./Signup.css";
+
 import { Auth } from "aws-amplify";
-import { onError } from "@/lib/errorLib";
+import { onError } from "../lib/errorLib";
 import { type ISignUpResult } from "amazon-cognito-identity-js";
 
-export default function ArtistSignup() {
+export default function Signup() {
   const [fields, handleFieldChange] = useFormFields({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
     confirmationCode: "",
-    role: 'artisan'
   });
   const nav = useNavigate();
   const { userHasAuthenticated } = useAppContext();
@@ -26,7 +26,6 @@ export default function ArtistSignup() {
 
   function validateForm() {
     return (
-      fields.username.length > 0 &&
       fields.email.length > 0 &&
       fields.password.length > 0 &&
       fields.password === fields.confirmPassword
@@ -37,47 +36,43 @@ export default function ArtistSignup() {
     return fields.confirmationCode.length > 0;
   }
 
-    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setIsLoading(true);
-      try {
-        const newUser = await Auth.signUp({
-          username: fields.username,
-          password: fields.password,
-          attributes: {
-            email: fields.email,
-            "custom:role": fields.role, // ✅ Assign role dynamically
-          },
-        });
-        setIsLoading(false);
-        setNewUser(newUser);
-      } catch (e) {
-        onError(e);
-        setIsLoading(false);
-      }
-    }
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  event.preventDefault();
+  setIsLoading(true);
+  try {
+      const newUser = await Auth.signUp({
+      username: fields.email,
+      password: fields.password,
+      });
+      setIsLoading(false);
+      setNewUser(newUser);
+  } catch (e) {
+      onError(e);
+      setIsLoading(false);
+  }
+  }
 
-    async function handleConfirmationSubmit(
-      event: React.FormEvent<HTMLFormElement>
-    ) {
-      event.preventDefault();
-      setIsLoading(true);
-      try {
-        await Auth.confirmSignUp(fields.username, fields.confirmationCode);
-        await Auth.signIn(fields.username, fields.password);
-        userHasAuthenticated(true);
-        nav("/");
-      } catch (e) {
-        onError(e);
-        setIsLoading(false);
-      }
-    }
+  async function handleConfirmationSubmit(
+  event: React.FormEvent<HTMLFormElement>
+  ) {
+  event.preventDefault();
+  setIsLoading(true);
+  try {
+      await Auth.confirmSignUp(fields.email, fields.confirmationCode);
+      await Auth.signIn(fields.email, fields.password);
+      userHasAuthenticated(true);
+      nav("/");
+  } catch (e) {
+      onError(e);
+      setIsLoading(false);
+  }
+  }
 
-    function renderConfirmationForm() {
+  function renderConfirmationForm() {
       return (
-        <Form onSubmit={handleConfirmationSubmit}>
+      <Form onSubmit={handleConfirmationSubmit}>
           <Stack gap={3}>
-            <Form.Group controlId="confirmationCode">
+          <Form.Group controlId="confirmationCode">
               <Form.Label>Confirmation Code</Form.Label>
               <Form.Control
               size="lg"
@@ -87,35 +82,25 @@ export default function ArtistSignup() {
               value={fields.confirmationCode}
               />
               <Form.Text muted>Please check your email for the code.</Form.Text>
-            </Form.Group>
-            <LoaderButton
+          </Form.Group>
+          <LoaderButton
               size="lg"
               type="submit"
               variant="success"
               isLoading={isLoading}
               disabled={!validateConfirmationForm()}
-            >
+          >
               Verify
-            </LoaderButton>
+          </LoaderButton>
           </Stack>
-        </Form>
+      </Form>
       );
-    }
+  }
 
   function renderForm() {
     return (
       <Form onSubmit={handleSubmit}>
         <Stack gap={3}>
-          <Form.Group controlId="username">
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              size="lg"
-              autoFocus
-              type="text"
-              value={fields.username}
-              onChange={handleFieldChange}
-            />
-          </Form.Group>
           <Form.Group controlId="email">
             <Form.Label>Email</Form.Label>
             <Form.Control

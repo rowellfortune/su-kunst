@@ -1,8 +1,11 @@
-export interface NoteType {
+export interface PostType {
   sk?: string;
   pk?: string;
   title: string;
-  description: string;
+  author?: string;
+  userId?: string;
+  content?: string;
+  postedBy?: string;
   createdAt?: string;
   attachment?: string;
   attachmentURL?: string;

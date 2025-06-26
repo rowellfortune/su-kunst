@@ -13,19 +13,19 @@ export const main = RestUtil.restHandler(async (event) => {
     data = JSON.parse(event.body);
   }
 
+  console.log(data)
+
   params = {
     TableName: Resource?.SuKunst?.name,
     Item: {
-      pk: `POST-${uuid.v1()}`,
-      sk: "DETAILS#POST",
-      title: data.title,
+      pk: `COMMENT#${uuid.v1()}`,
+      sk: `DETAILS#${data.postId}`,
       content: data.content,
-      entityType: "POST", // 👈 Required for GSI
-      attachment: data.attachment,
+      entityType: "COMMENT", // 👈 Required for GSI
       user: data.user,
-      postedBy: event?.requestContext?.authorizer?.iam?.cognitoIdentity?.identityId,
+      // postedBy: event?.requestContext?.authorizer?.iam?.cognitoIdentity?.identityId,
       createdAt: Date.now(),
-      status: "published",
+      // status: "published",
     }
   };
 

@@ -7,8 +7,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Amplify } from "aws-amplify";
 import config from "./config.ts";
 
-console.log(config);
-
 Amplify.configure({
   Auth: {
     mandatorySignIn: true,
@@ -25,7 +23,27 @@ Amplify.configure({
   API: {
     endpoints: [
       {
-        name: "notes",
+        name: "comments",
+        endpoint: config.apiGateway.URL,
+        region: config.apiGateway.REGION,
+      },
+      {
+        name: "reactions",
+        endpoint: config.apiGateway.URL,
+        region: config.apiGateway.REGION,
+      },
+      {
+        name: "chats",
+        endpoint: config.apiGateway.URL,
+        region: config.apiGateway.REGION,
+      },
+      {
+        name: "posts",
+        endpoint: config.apiGateway.URL,
+        region: config.apiGateway.REGION,
+      },
+      {
+        name: "opportunities",
         endpoint: config.apiGateway.URL,
         region: config.apiGateway.REGION,
       },

@@ -13,15 +13,16 @@ export const main = RestUtil.restHandler(async (event) => {
     data = JSON.parse(event.body);
   }
 
+  console.log(event?.requestContext?.authorizer)
   params = {
     TableName: Resource?.SuKunst?.name,
     Item: {
       pk: `OPPORTUNITY#${uuid.v1()}`,
-      sk: "DETAILS",
+      sk: "DETAILS#OPPORTUNITY",
       title: data.title,
       description: data.description,
       entityType: "OPPORTUNITY", // 👈 Required for GSI
-      type: data.type,
+      type: data.opencall,
       postedBy: event?.requestContext?.authorizer?.iam?.cognitoIdentity?.identityId,
       createdAt: Date.now(),
       status: "active",

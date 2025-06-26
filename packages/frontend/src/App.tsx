@@ -1,5 +1,4 @@
 import Navbar from "react-bootstrap/Navbar";
-import "./App.css";
 import Routes from "./Routes.tsx";
 import { useState, useEffect } from "react";
 import Nav from "react-bootstrap/Nav";
@@ -26,22 +25,20 @@ function App() {
         onError(error);
       }
     }
-
     setIsAuthenticating(false);
   }
 
   async function handleLogout() {
     await Auth.signOut();
-
     userHasAuthenticated(false);
-
     nav("/login");
   }
+
   return (
     !isAuthenticating && (
       <div className="App container py-3">
         <Navbar collapseOnSelect bg="light" expand="md" className="mb-3 px-3">
-          <Navbar.Brand className="fw-bold text-muted" href="/">Scratch</Navbar.Brand>
+          <Navbar.Brand className="fw-bold text-muted" href="/">Su-Kunst</Navbar.Brand>
           <Navbar.Toggle />
           <Navbar.Collapse className="justify-content-end">
             <Nav>
@@ -53,13 +50,10 @@ function App() {
                   <Nav.Link href="/login">Login</Nav.Link>
                 </>
               )}
-
             </Nav>
           </Navbar.Collapse>
         </Navbar>
-        <AppContext.Provider
-          value={{ isAuthenticated, userHasAuthenticated } as AppContextType}
-        >
+        <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated } as AppContextType} >
           <Routes />
         </AppContext.Provider>
       </div>

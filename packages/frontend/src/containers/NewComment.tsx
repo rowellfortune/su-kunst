@@ -8,17 +8,20 @@ import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import Form from "react-bootstrap/Form";
 import config from "../config";
-import type { OpportunityType } from "@/types/opportunity";
-
+export type OpportunityInput = {
+  id?: string;
+  title: string;
+  description: string;
+  opencall?: "" | "internship" | "residency" | "workshop" ; // Example types
+};
 
 export default function NewNote() {
   const nav = useNavigate();
   const file = useRef<null | File>(null);
-  const [formData, setFormData] = useState<OpportunityType>({
+  const [formData, setFormData] = useState<OpportunityInput>({
     title: "",
     description: "",
-    category: "",
-
+    opencall: "",
   });
 
   console.log(formData);
@@ -27,11 +30,11 @@ export default function NewNote() {
   const [message, setMessage] = useState<string | null>(null);
 
 
-   const handleChange = (field: keyof OpportunityType, value: string) => {
+   const handleChange = (field: keyof OpportunityInput, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  function createNote(note: OpportunityType) {
+  function createNote(note: OpportunityInput) {
     return API.post("notes", "/notes", {
       body: note,
     });
@@ -90,8 +93,8 @@ export default function NewNote() {
         <Form.Control onChange={handleFileChange} type="file" />
       </Form.Group>
       <Select
-        onValueChange={(value) => handleChange("category", value)}
-        value={formData.category}
+        onValueChange={(value) => handleChange("opencall", value)}
+        value={formData.opencall}
       >
         <SelectTrigger>
           <SelectValue placeholder="Select Type" />

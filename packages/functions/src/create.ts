@@ -22,6 +22,7 @@ export const main = RestUtil.restHandler(async (event) => {
       description: data.description,
       entityType: "OPPORTUNITY", // 👈 Required for GSI
       type: data.type,
+      attachment: data.attachment,
       postedBy: event?.requestContext?.authorizer?.iam?.cognitoIdentity?.identityId,
       createdAt: Date.now(),
       status: "active",
