@@ -46,9 +46,9 @@ export default function Home() {
     return (
       <>
         <NewPost userData={user} />
-        {notes.map(({pk, title, content, createdAt, postedBy, user, attachment }) => (
+        {notes.map(({pk, title, content, createdAt, postedBy, author, attachment }) => (
           <div key={pk} >
-            <Post title={title} pk={pk} attachment={attachment} content={content} author={user} userId={postedBy} createdAt={formatDate(createdAt)} postedBy={""}/>
+            <Post title={title} pk={pk} attachment={attachment} content={content} author={author} userId={postedBy} createdAt={formatDate(createdAt)} postedBy={""}/>
           </div>
         ))}
       </>

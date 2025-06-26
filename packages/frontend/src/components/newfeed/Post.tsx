@@ -5,9 +5,9 @@ import type { PostType } from "@/types/post";
 import Comment from "../reactions/Comments";
 import Reactions from "../reactions/Reactions";
 
-function Post({user, title, content, userId, attachment, attachmentURL, pk}: PostType) {
+function Post({author, title, content, userId, attachment, attachmentURL, pk}: PostType) {
 
-  console.log(attachment, attachmentURL, user);
+  console.log(attachment, attachmentURL, author);
   
   return (
     <div className='my-3'>
@@ -18,7 +18,7 @@ function Post({user, title, content, userId, attachment, attachmentURL, pk}: Pos
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <div className="ml-3 text-md font-semibold text-gray-900">{user}</div>
+          <div className="ml-3 text-md font-semibold text-gray-900">{author}</div>
         </div>
 
         {/* Post Image */}
@@ -32,7 +32,7 @@ function Post({user, title, content, userId, attachment, attachmentURL, pk}: Pos
               <Reactions userId={userId} postId={pk} />
             </div>
             <div className="flex items-center space-x-1">
-              <Comment user={user} pk={pk} userId={userId} postId={pk} />
+              <Comment author={author} pk={pk} userId={userId}  postId={pk} />
             </div>
           </div>
           <FiShare className="text-xl cursor-pointer"/>

@@ -16,7 +16,7 @@ export default function NewPost() {
   const nav = useNavigate();
   const [title, setTitle] = useState("");
   const {isAuthenticated } = useAppContext();
-  const [user, setUser] = useState("")
+  const [author, setUser] = useState("")
   const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -67,7 +67,7 @@ export default function NewPost() {
         title,
         content,
         attachment, // this is the S3 public URL
-        user,
+        author,
       });
       nav("/");
     } catch (e) {

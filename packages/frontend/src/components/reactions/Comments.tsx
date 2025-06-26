@@ -19,7 +19,6 @@ function Comments({ author, pk, userId, postId}: CommentType) {
   console.log(author)
     const { isAuthenticated } = useAppContext();
   const [user, setUser] = useState("")
-  console.log(user);
   const [comments, setComments] = useState<Array<CommentType>>([]);
   const nav = useNavigate();
 
@@ -100,7 +99,7 @@ function Comments({ author, pk, userId, postId}: CommentType) {
     <div>
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="ghost" className='flex justify-between'>
+          <Button variant="ghost" className='flex justify-between rounded'>
             <FaComment className="text-pink-500 w-5 h-5" />
             
             <span>{comment.length} Comments</span>
