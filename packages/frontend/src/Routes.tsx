@@ -15,11 +15,14 @@ import Login from "./containers/Login";
 import ArtistSignup from "./auth/artist/Signup";
 import AdminSignup from "./auth/admin/Signup";
 
+import AdminDashboard from "./containers/admin/AdminDashboard.tsx";
 // Setting 
 import Settings from "./containers/Settings";
 import Profile from "./containers/Profile";
 import Inbox from "./containers/Inbox";
 import NewPost from "./containers/NewPost";
+import Opportunities from "./containers/admin/Opportunities.tsx";
+import Ads from "./containers/admin/Ads.tsx";
 
 export default function Links() {
   return (
@@ -30,15 +33,12 @@ export default function Links() {
         }
       />
 
-
       {/* Post */}
       <Route path="/posts/new" 
         element={
           <Landing children={<NewPost />} />
         }
       />
-
-      {/*  */}
 
       {/* Finally, catch all unmatched routes */}
       <Route path="*" element={<NotFound />} />;
@@ -48,10 +48,6 @@ export default function Links() {
           <Layout children={<NewNote />} />
         }
       />
-
-
-
-
 
       <Route path="/notes/oppertuniy/new" 
         element={
@@ -67,8 +63,42 @@ export default function Links() {
       {/* Artist Auth screens */}
       <Route path="/artist/signup" element={<ArtistSignup />} />
 
+
+
       {/* Admin Auth Screens */}
       <Route path="/admin/signup" element={<AdminSignup />} />
+
+
+      <Route path="/admin/" 
+        element={
+          <Admin children={<AdminDashboard/>} />
+        } 
+      />
+
+      <Route path="/admin/inbox" 
+        element={
+          <Admin children={<Inbox />} />
+        } 
+      />
+
+      <Route path="/admin/opportunities" 
+        element={
+          <Admin children={<Opportunities />} />
+        } 
+      />
+
+      <Route path="/admin/opportunities" 
+        element={
+          <Admin children={<Opportunities />} />
+        } 
+      />
+
+      <Route path="/admin/ads" 
+        element={
+          <Admin children={<Ads />} />
+        }
+      />
+
 
       {/* Settings */}
       <Route path="/settings" 

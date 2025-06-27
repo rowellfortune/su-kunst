@@ -1,7 +1,10 @@
 // Create an S3 bucket
-import * as awsSdk from "@pulumi/aws";
-
 export const bucket = new sst.aws.Bucket("Uploads", {
+  access: "public",
+  cors: {
+    allowOrigins: ["*"],         // optional, good for browser uploads/downloads
+    allowMethods: ["GET"],       // we only need GET for public reads
+  },
   transform: {
     publicAccessBlock: {
       blockPublicPolicy: false,
@@ -9,26 +12,6 @@ export const bucket = new sst.aws.Bucket("Uploads", {
     },
   },
 });
-
-// export const bucketPolicy = new awsSdk.s3.BucketPolicy("UploadsPolicy", {
-//   bucket: bucket.name,
-//   policy: bucket.name.apply(name =>
-//     JSON.stringify({
-//       Version: "2012-10-17",
-//       Statement: [
-//         {
-//           Sid: "AllowPublicReadForPublicFolder",
-//           Effect: "Allow",
-//           Principal: "*",
-//           Action: ["s3:GetObject"],
-//           Resource: `arn:aws:s3:::${name}/public/*`,
-//         },
-//       ],
-//     })
-//   ),
-// });
-
-
 
 export const table = new sst.aws.Dynamo("SuKunst", {
   fields: {

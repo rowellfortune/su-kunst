@@ -28,6 +28,11 @@ Amplify.configure({
         region: config.apiGateway.REGION,
       },
       {
+        name: "ads",
+        endpoint: config.apiGateway.URL,
+        region: config.apiGateway.REGION,
+      },
+      {
         name: "reactions",
         endpoint: config.apiGateway.URL,
         region: config.apiGateway.REGION,

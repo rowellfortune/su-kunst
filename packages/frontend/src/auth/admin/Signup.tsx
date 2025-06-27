@@ -13,6 +13,7 @@ import { type ISignUpResult } from "amazon-cognito-identity-js";
 
 export default function AdminSignup() {
   const [fields, handleFieldChange] = useFormFields({
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -26,6 +27,7 @@ export default function AdminSignup() {
 
   function validateForm() {
     return (
+      fields.username.length > 0 &&
       fields.email.length > 0 &&
       fields.password.length > 0 &&
       fields.password === fields.confirmPassword
@@ -41,7 +43,7 @@ export default function AdminSignup() {
     setIsLoading(true);
     try {
         const newUser = await Auth.signUp({
-        username: fields.email,
+        username: fields.username,
         password: fields.password,
         attributes: {
           email: fields.email,
@@ -56,65 +58,86 @@ export default function AdminSignup() {
     }
     }
 
-    async function handleConfirmationSubmit(
-    event: React.FormEvent<HTMLFormElement>
-    ) {
-    event.preventDefault();
-    setIsLoading(true);
-    try {
-        await Auth.confirmSignUp(fields.email, fields.confirmationCode);
+    async function handleConfirmationSubmit(event: React.FormEvent<HTMLFormElement>) {
+      event.preventDefault();
+      setIsLoading(true);
+
+      try {
+        await Auth.confirmSignUp(fields.username, fields.confirmationCode);
         await Auth.signIn(fields.email, fields.password);
         userHasAuthenticated(true);
         nav("/");
-    } catch (e) {
+      } catch (e) {
         onError(e);
         setIsLoading(false);
-    }
+      }
     }
 
     function renderConfirmationForm() {
-        return (
+      return (
         <Form onSubmit={handleConfirmationSubmit}>
-            <Stack gap={3}>
+          <Stack gap={3}>
+            <Form.Group controlId="username">
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                autoFocus
+                size="lg"
+                type="text"
+                value={fields.username}
+                onChange={handleFieldChange}
+              />
+            </Form.Group>
             <Form.Group controlId="confirmationCode">
-                <Form.Label>Confirmation Code</Form.Label>
-                <Form.Control
+              <Form.Label>Confirmation Code</Form.Label>
+              <Form.Control
                 size="lg"
                 autoFocus
                 type="tel"
                 onChange={handleFieldChange}
                 value={fields.confirmationCode}
-                />
-                <Form.Text muted>Please check your email for the code.</Form.Text>
+              />
+              <Form.Text muted>Please check your email for the code.</Form.Text>
             </Form.Group>
             <LoaderButton
-                size="lg"
-                type="submit"
-                variant="success"
-                isLoading={isLoading}
-                disabled={!validateConfirmationForm()}
+              size="lg"
+              type="submit"
+              variant="success"
+              isLoading={isLoading}
+              disabled={!validateConfirmationForm()}
             >
-                Verify
+              Verify
             </LoaderButton>
-            </Stack>
+          </Stack>
         </Form>
-        );
+      );
     }
 
   function renderForm() {
     return (
       <Form onSubmit={handleSubmit}>
         <Stack gap={3}>
+
+          <Form.Group controlId="username">
+            <Form.Label>Username</Form.Label>
+            <Form.Control
+              size="lg"
+              autoFocus
+              type="text"
+              value={fields.uername}
+              onChange={handleFieldChange}
+            />
+          </Form.Group>
+
           <Form.Group controlId="email">
             <Form.Label>Email</Form.Label>
             <Form.Control
               size="lg"
-              autoFocus
               type="email"
               value={fields.email}
               onChange={handleFieldChange}
             />
           </Form.Group>
+
           <Form.Group controlId="password">
             <Form.Label>Password</Form.Label>
             <Form.Control
@@ -124,6 +147,7 @@ export default function AdminSignup() {
               onChange={handleFieldChange}
             />
           </Form.Group>
+          
           <Form.Group controlId="confirmPassword">
             <Form.Label>Confirm Password</Form.Label>
             <Form.Control

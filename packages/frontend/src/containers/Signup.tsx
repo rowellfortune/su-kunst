@@ -68,7 +68,7 @@ export default function Signup() {
       await Auth.confirmSignUp(fields.username, fields.confirmationCode);
       await Auth.signIn(fields.username, fields.password);
       userHasAuthenticated(true);
-      nav("/");
+      nav("/admin");
     } catch (e) {
       onError(e);
       setIsLoading(false);

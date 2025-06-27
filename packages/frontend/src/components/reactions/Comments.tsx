@@ -16,12 +16,10 @@ import { onError } from '@/lib/errorLib';
 import { useNavigate } from 'react-router-dom';
 
 function Comments({ author, pk, userId, postId}: CommentType) {
-  console.log(author)
-    const { isAuthenticated } = useAppContext();
+  const { isAuthenticated } = useAppContext();
   const [user, setUser] = useState("")
   const [comments, setComments] = useState<Array<CommentType>>([]);
   const nav = useNavigate();
-
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     content: "",
@@ -29,8 +27,6 @@ function Comments({ author, pk, userId, postId}: CommentType) {
     userId: userId,
     user: user
   });
-
-  console.log(formData);
 
   function getCommentsForPost(data: CommentType[], postId: string) {
     return data.filter((item) => {
@@ -42,7 +38,6 @@ function Comments({ author, pk, userId, postId}: CommentType) {
   }
 
   const comment = getCommentsForPost(comments, postId!);
-
   const handleChange = (field: keyof CommentType, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -94,7 +89,6 @@ function Comments({ author, pk, userId, postId}: CommentType) {
     onLoad();
   }, [isAuthenticated]);
   
-
   return (
     <div>
       <Dialog>

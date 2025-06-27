@@ -16,11 +16,11 @@ export const api = new sst.aws.ApiGatewayV2("Api", {
 });
 
 /// Opportunityies
-api.route("POST /notes", "packages/functions/src/opportunity/create.main");
-api.route("GET /notes", "packages/functions/src/opportunity/list.main");
-// api.route("GET /notes/{id}", "packages/functions/src/opportunity/get.main");
-// api.route("PUT /notes/{id}", "packages/functions/src/opportunity/update.main");
-// api.route("DELETE /notes/{id}", "packages/functions/src/opportunity/delete.main");
+api.route("POST /opportunities", "packages/functions/src/opportunity/create.main");
+api.route("GET /opportunities", "packages/functions/src/opportunity/list.main");
+// api.route("GET /opportunities/{id}", "packages/functions/src/opportunity/get.main");
+// api.route("PUT /opportunities/{id}", "packages/functions/src/opportunity/update.main");
+// api.route("DELETE /opportunities/{id}", "packages/functions/src/opportunity/delete.main");
 
 // Posts
 api.route("POST /posts", "packages/functions/src/post/create.main");
@@ -39,7 +39,8 @@ api.route("GET /comments", "packages/functions/src/post/comment/list.main");
 // Like
 api.route("POST /reactions", "packages/functions/src/post/like/create.main");
 
-// Chat
+// Ads
+api.route("GET /ads", "packages/functions/src/post/list.main");
 
 // export const myApi = new sst.aws.Function("MyApi", {
 //   url: true,

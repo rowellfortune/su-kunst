@@ -1,4 +1,4 @@
-import { AudioWaveform, BookOpen, Bot, Command, Frame, GalleryVerticalEnd, Home, Inbox, PieChart, Settings, Settings2, SquareTerminal } from "lucide-react"
+import { AudioWaveform, BookOpen, Bot, Command, Frame, GalleryVerticalEnd, Home, Inbox, Megaphone, PieChart, ScanEye, Settings2, SquareTerminal } from "lucide-react"
 
 import {
   Sidebar,
@@ -16,19 +16,24 @@ import { NavUser } from "./nav-user"
 // Menu items.
 const items = [
   {
-    title: "Home",
-    url: "/",
+    title: "Dashboard",
+    url: "/admin",
     icon: Home,
   },
   {
+    title: "Ads",
+    url: "/admin/ads",
+    icon: ScanEye,
+  },
+  {
     title: "Inbox",
-    url: "/inbox",
+    url: "/admin/inbox",
     icon: Inbox,
   },
   {
-    title: "Settings",
-    url: "/settings",
-    icon: Settings,
+    title: "Opportunities",
+    url: "/admin/opportunities",
+    icon: Megaphone,
   },
 ]
 
@@ -166,12 +171,12 @@ const data = {
   ],
 }
 
-export function AppSidebar() {
+export function AdminSidebar() {
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (

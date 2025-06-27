@@ -11,7 +11,7 @@ import { Auth } from "aws-amplify";
 
 export default function Login() {
     const [fields, handleFieldChange] = useFormFields({
-        email: "",
+        username: "",
         password: "",
     });
     const { userHasAuthenticated } = useAppContext();
@@ -19,7 +19,7 @@ export default function Login() {
     const nav = useNavigate();
 
     function validateForm() {
-       return fields.email.length > 0 && fields.password.length > 0;
+       return fields.username.length > 0 && fields.password.length > 0;
     }
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -28,7 +28,7 @@ export default function Login() {
         setIsLoading(true);
 
         try {
-            await Auth.signIn(fields.email, fields.password);
+            await Auth.signIn(fields.username, fields.password);
             userHasAuthenticated(true);
             nav("/");
         } catch (error) {
@@ -41,13 +41,13 @@ export default function Login() {
         <div className="Login">
         <Form onSubmit={handleSubmit}>
             <Stack gap={3}>
-            <Form.Group controlId="email">
-                <Form.Label>Email</Form.Label>
+            <Form.Group controlId="username">
+                <Form.Label>Username</Form.Label>
                 <Form.Control
                     autoFocus
                     size="lg"
-                    type="email"
-                    value={fields.email}
+                    type="text"
+                    value={fields.username}
                     onChange={handleFieldChange}
                 />
             </Form.Group>

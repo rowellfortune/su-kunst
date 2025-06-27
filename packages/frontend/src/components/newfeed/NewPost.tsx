@@ -12,7 +12,7 @@ import {
 
 const NewPost = ({userData}: any) => {
   return (
-    <div className="bg-white rounded-xl shadow p-4 space-y-4 max-w-md mx-auto">
+    <div className="bg-white rounded-xl shadow p-4 space-y-4 max-w-xl mx-auto">
 
       {/* Top Input Row */}
       <div className="flex items-center space-x-3">

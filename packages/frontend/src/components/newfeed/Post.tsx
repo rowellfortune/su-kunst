@@ -5,13 +5,11 @@ import type { PostType } from "@/types/post";
 import Comment from "../reactions/Comments";
 import Reactions from "../reactions/Reactions";
 
-function Post({author, title, content, userId, attachment, attachmentURL, pk}: PostType) {
-
-  console.log(attachment, attachmentURL, author);
+function Post({author, title, content, userId, attachment, pk}: PostType) {
   
   return (
     <div className='my-3'>
-      <div className="max-w-md bg-white rounded-xl shadow-md overflow-hidden border mx-auto">
+      <div className="max-w-xl bg-white rounded-xl shadow-md overflow-hidden border mx-auto">
         {/* User Info */}
         <div className="flex items-center p-4">
           <Avatar>
@@ -20,10 +18,14 @@ function Post({author, title, content, userId, attachment, attachmentURL, pk}: P
           </Avatar>
           <div className="ml-3 text-md font-semibold text-gray-900">{author}</div>
         </div>
-
-        {/* Post Image */}
+         {/* Post Image */}
         <h5 className="px-3 text-bold text-2xl">{title}</h5>
-        <div className="px-3 mb-2">{content}</div>
+        <img
+          className="w-full object-cover"
+          src={attachment} // Replace with dynamic source if needed
+          alt="Post"
+        />
+        <div className="px-3 my-2">{content}</div>
 
         {/* Action Buttons */}
         <div className="flex justify-between items-center px-3 pb-4 text-gray-600 text-sm">
