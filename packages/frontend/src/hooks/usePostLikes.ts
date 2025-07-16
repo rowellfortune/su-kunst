@@ -23,9 +23,6 @@ export function usePostLikes(
   const [liked, setLiked] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
-
-    console.log('Liked',liked, count, loading);
-
   // ──────────────────────────────────────────────────────────────
   // 2️⃣ useEffect: run once (or whenever postId changes) to fetch initial data
   // ──────────────────────────────────────────────────────────────

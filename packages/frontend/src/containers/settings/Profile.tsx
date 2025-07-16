@@ -29,7 +29,7 @@ function Profile() {
           <form className="space-y-8">
             <div data-slot="form-item" className="grid gap-2">
               <Label htmlFor="username" className="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 data-[error=true]:text-destructive">Username</Label>
-              <Input onChange={() => {console.log('Rowell')}} value={'Rowell'} />
+              <Input onChange={() => {console.log('Rowell')}} value={user.username} defaultValue={user.username} />
               <p data-slot="form-description" id="«rnk»-form-item-description" className="text-muted-foreground text-sm">This is your public display name. It can be your real name or a pseudonym. You can only change this once every 30 days.</p></div>
               <div data-slot="form-item" className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -58,4 +58,4 @@ function Profile() {
   );
 }
 
-export default Profile
+export default Profile;

@@ -62,7 +62,7 @@ export const RightSidebar: React.FC = () => {
     console.log(opportunities)
 
   return (
-    <Card className="w-80 bg-white border-l hidden xl:block">
+    <Card className="bg-white border-l hidden xl:block">
       <ScrollArea className="h-full p-4 space-y-6">
         <div className="space-y-3">
           {ads.map((item) => (

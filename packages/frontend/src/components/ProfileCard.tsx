@@ -9,7 +9,7 @@ export const ProfileCard: FC = () => {
     const {user} = useContext(AppContext)
     const username = user?.username;
   return (
-    <Card className="max-w-md bg-white border-r hidden lg:block">
+    <Card className=" bg-white border-r hidden lg:block">
       {/* Header: avatar and name */}
       <CardContent className="flex items-center space-x-3 mx-auto">
         <Avatar className="h-12 w-12">
@@ -21,12 +21,12 @@ export const ProfileCard: FC = () => {
             <span className="text-lg font-semibold">{username}</span>
             <BadgeCheck className="h-4 w-4 text-blue-500" />
           </div>
-          {/* <span className="text-sm text-gray-500">@jakobbosh</span> */}
+          <span className="text-sm text-gray-500">@jakobbosh</span>
         </div>
       </CardContent>
 
       {/* Stats */}
-      {/* <CardContent className="mt-4 grid grid-cols-3 text-center">
+      <CardContent className="mt-4 grid grid-cols-3 text-center">
         <div>
           <span className="block text-lg font-medium">2.3k</span>
           <span className="block text-xs text-gray-500">Follower</span>
@@ -39,7 +39,7 @@ export const ProfileCard: FC = () => {
           <span className="block text-lg font-medium">80</span>
           <span className="block text-xs text-gray-500">Post</span>
         </div>
-      </CardContent> */}
+      </CardContent>
     </Card>
   );
 };

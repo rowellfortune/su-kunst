@@ -1,39 +1,33 @@
 import { useContext} from 'react'
-import {  useNavigate } from "react-router-dom";
+import {  Link, useNavigate } from "react-router-dom";
 import { handleLogout } from "@/lib/auth.ts";
 import { AppContext, useAppContext } from "@/lib/contextLib.ts";
 import { NotificationBell } from "@/components/NotificationBell";
-import { Input } from "@/components/ui/input";
-
+// import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-// import { Button } from '../ui/button';
-// import { Bookmark } from 'lucide-react';
-
-
 
 export default function Navbar() {
   const { userHasAuthenticated } = useAppContext();
   const navigate = useNavigate();
-
-    const {user} = useContext(AppContext)
-      const username = user?.username;
+  const {user} = useContext(AppContext)
+  const username = user?.username;
 
   return (
     <nav className="flex items-center justify-between px-6 py-4 mb-5 bg-white border-b">
       {/* Brand */}
       <div className="flex items-center space-x-2">
-        <img src="/we-share-logo.svg" alt="WeShare Logo" className="h-8 w-8" />
-        {/* <span className="text-xl font-semibold">WeShare</span> */}
+        <img src="/logo.png" alt="SuKunst Logo" className="h-12 w-12" />
+        <span className="text-xl font-semibold hidden md:inline-block">Su-Kunst</span>
       </div>
 
       {/* Search */}
-      <div className="flex-1 px-6">
+      {/* <div className="flex-1 px-6">
         <Input
           placeholder="Search"
           className="max-w-lg mx-auto bg-gray-100"
         />
-      </div>
+      </div> */}
 
       {/* Actions */}
       <div className="flex items-center space-x-1">
@@ -54,8 +48,9 @@ export default function Navbar() {
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            {user?.attributes["custom:role"] === 'admin' ? <DropdownMenuItem><Link to="/admin">Admin</Link></DropdownMenuItem>: null  }
+            <DropdownMenuItem><Link to="/settings/profile">Profile</Link></DropdownMenuItem>
+            <DropdownMenuItem><Link to="/settings">Settings</Link></DropdownMenuItem>
             <DropdownMenuItem><button onClick={() => handleLogout(userHasAuthenticated, navigate)}>Logout</button></DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

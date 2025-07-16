@@ -25,12 +25,5 @@ export function useNotifications(pollIntervalMs = 60000) {
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  // const markOneAsRead = async (sk: string) => {
-  //   await markAsRead(sk);
-  //   setNotifications((prev) =>
-  //     prev.map((n) => (n.sk === sk ? { ...n, read: true } : n))
-  //   );
-  // };
-
   return { notifications, loading, unreadCount};
 }

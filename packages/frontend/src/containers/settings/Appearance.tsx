@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { useAppContext } from '@/lib/contextLib'
 
-function Settings() {
+function Appearance() {
     const { isAuthenticated, user } = useAppContext();
    
     return isAuthenticated && user ? (
@@ -57,4 +57,4 @@ function Settings() {
     );
 }
 
-export default Settings;
+export default Appearance;

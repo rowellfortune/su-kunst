@@ -18,10 +18,11 @@ export default function Navbar() {
         <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start items-center">
           <Link
             to="/"
-            className="text-slate-700 text-sm font-bold leading-relaxed inline-block mr-4 whitespace-nowrap"
+            className="text-slate-700 flex text-sm font-bold leading-relaxed mr-4 whitespace-nowrap"
           > 
+           
+            <img src="/logo.png" alt="" className='rounde-xl w-10 h-10 -mb-3 mr-2'/>
             <p className="text-2xl"> Su-Kunst</p>
-            {/* <img src="/favicon-16x16.png" alt="" className='rounde-xl w-10 h-10 -mb-3 mr-2'/> */}
           </Link>
           <button
             className="cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded-xl bg-transparent block lg:hidden outline-none focus:outline-none"

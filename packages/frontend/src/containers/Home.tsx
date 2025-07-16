@@ -10,7 +10,7 @@ import {
   useGetAdsQuery,
   useGetOpportunitiesQuery,
 } from '@/store/index'
-import NewPost from "@/components/newsfeed/NewPost";
+// import NewPost from "@/components/newsfeed/NewPost";
 import Landing from "./Landing";
 
 // base for all items
@@ -32,18 +32,18 @@ interface BaseItem {
     | string;
 }
 
-// a “POST” item
+// // a “POST” item
 interface PostType extends BaseItem {
   entityType: "POST";
 }
 
-// an “AD” item
+// // an “AD” item
 interface AdType extends BaseItem {
   entityType: "AD"; 
   company: string;
 }
 
-// an “OPPORTUNITY” item
+// // an “OPPORTUNITY” item
 interface OpportunityType extends BaseItem {
   entityType: "OPPORTUNITY";
   description?: string;
@@ -60,21 +60,23 @@ export default function Home() {
 
   const {
     data: posts = [],
-    // error: postsError,
+    error: postsError,
     isLoading: postsLoading,
-  } = useGetPostsQuery()
+  } = useGetPostsQuery(undefined, { skip: !isAuthenticated });
 
   const {
     data: ads = [],
-    // error: adsError,
-    // isLoading: adsLoading,
-  } = useGetAdsQuery()
+    error: adsError,
+    isLoading: adsLoading,
+  } = useGetAdsQuery(undefined, { skip: !isAuthenticated });
 
   const {
     data: opportunities = [],
-    // error: oppsError,
-    // isLoading: oppsLoading,
-  } = useGetOpportunitiesQuery()
+    error: oppsError,
+    isLoading: oppsLoading,
+  } = useGetOpportunitiesQuery(undefined, { skip: !isAuthenticated });
+
+  console.log(oppsError, adsError, postsError)
 
   // 1) Flatten & shuffle any number of arrays
   function shuffleArrays<T>(...arrays: T[][]): T[] {
@@ -143,12 +145,13 @@ export default function Home() {
   function renderPostsList(feed: FeedItem[]) {
     return (
       <div className="mx-auto">
-        {isAuthenticated ? <NewPost/> : null }
+        {/* {isAuthenticated ? <NewPost/> : <>Hey</> } */}
       {feed.map((item) => {
         switch (item.entityType) {
           case 'POST':
             if (!item.content) return null;
-            return  (<Post pk={item?.pk} 
+            return  (
+            <Post pk={item?.pk} 
                       key={item?.pk} 
                       title={item.title} 
                       attachment={item.attachment} 
@@ -157,7 +160,9 @@ export default function Home() {
                       userId={item.postedBy} 
                       createdAt={item.createdAt} 
                       postedBy={item.postedBy}
-                    />);
+                    />
+            // <div key={item.pk} >Post</div>
+                  );
           case 'AD':
             return  (<AdsComponent pk={item.pk}  
                       key={item.pk} 
@@ -178,7 +183,7 @@ export default function Home() {
                       createdAt={item.entityType}
                     />);
           default:
-            return null;
+            return <div> Error</div>;
         }
       })}
       </div>
@@ -193,27 +198,27 @@ export default function Home() {
     );
   }
 
-  if (postsLoading) return (
-    <div className="flex w-full max-w-4xl container mx-auto">
-      <div className="flex flex-col space-y-3 md:w-1/3">
-        <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+  if (postsLoading && oppsLoading && adsLoading && oppsError && adsError && postsError) return (
+    <div className="flex w-full flex-col md:flex-row max-w-3xl container mx-auto h-screen" >
+      <div className="flex flex-col md:w-1/3">
+        <Skeleton className="h-[125px] w-full md:w-[250px] rounded-xl bg-amber-300" />
         <div className="space-y-2">
-          <Skeleton className="h-4 w-[250px]" />
-          <Skeleton className="h-4 w-[200px]" />
+          <Skeleton className="h-4 w-full md:w-[250px] bg-amber-300" />
+          <Skeleton className="h-4 w-full md:w-[200px] bg-amber-300" />
         </div>
       </div>
       <div className="flex items-center space-x-4">
         <div className="space-y-2 ">
-          <Skeleton className="h-4 w-[250px]" />
-          <Skeleton className="h-100 w-full" />
+          <Skeleton className="h-4 w-full md:w-[250px] bg-amber-300" />
+          <Skeleton className="h-100 w-full bg-amber-300" />
         </div>
 
       </div>
-      <div className="flex flex-col space-y-3 md:w-1/3">
-        <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+      <div className="flex flex-col md:w-1/3">
+        <Skeleton className="h-[125px] w-[250px] rounded-xl bg-amber-300" />
         <div className="space-y-2">
-          <Skeleton className="h-4 w-[250px]" />
-          <Skeleton className="h-4 w-[200px]" />
+          <Skeleton className="h-4 w-full md:w-[250px] bg-amber-300" />
+          <Skeleton className="h-4 w-full md:w-[200px] bg-amber-300" />
         </div>
       </div>
     </div>
@@ -221,9 +226,14 @@ export default function Home() {
  
   function renderPosts() {
     return (
-        <ScrollArea className="flex flex-col md:flex-row w-full max-w-4xl px-5 container mx-auto">
-          {!postsLoading && renderPostsList(feed)}
+        <>
+         {isAuthenticated ? 
+        <ScrollArea className="flex flex-col md:flex-row w-full max-w-xl mx-auto">
+          {!postsLoading && !oppsLoading && !adsLoading && !oppsError && !adsError && !postsError && renderPostsList(feed)}
         </ScrollArea>
+        : <h1>gkgf</h1> }
+
+        </> 
     );
   }
 

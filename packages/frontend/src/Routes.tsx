@@ -39,6 +39,9 @@ import AllAds from "./containers/admin/ads/AllAds";
 import UpdateAd from "./containers/admin/ads/UpdateAd";
 import Events from "./containers/Events";
 import AppLayout from "./layout/applayout";
+import Account from "./containers/settings/Account";
+import Appearance from "./containers/settings/Appearance";
+import Notifications from "./containers/settings/Notifications";
 
 export default function Links() {
   return (
@@ -229,21 +232,33 @@ export default function Links() {
 
       <Route path="/settings/profile" 
         element={
-          <SettingsLayout children={<Profile />} />
-        }
-      />
-
-      <Route path="/settings/account" 
-        element={
           <AuthenticatedRoute>
             <SettingsLayout children={<Profile />} />
           </AuthenticatedRoute>
         }
       />
 
+      <Route path="/settings/account" 
+        element={
+          <AuthenticatedRoute>
+            <SettingsLayout children={<Account />} />
+          </AuthenticatedRoute>
+        }
+      />
+
       <Route path="/settings/appearance" 
         element={
-          <SettingsLayout children={<Profile />} />
+          <AuthenticatedRoute>
+            <SettingsLayout children={<Appearance />} />
+          </AuthenticatedRoute>
+        }
+      />
+
+      <Route path="/settings/notifications" 
+        element={
+          <AuthenticatedRoute>
+            <SettingsLayout children={<Notifications />} />
+          </AuthenticatedRoute>
         }
       />
 

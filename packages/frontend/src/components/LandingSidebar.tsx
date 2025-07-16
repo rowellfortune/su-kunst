@@ -40,7 +40,7 @@ export const Sidebar: FC<{ activeItem?: string }> = ({ activeItem = "Feed" }) =>
   // ];
 
   return (
-    <Card className="max-w-xs bg-white border-r hidden lg:block my-5">
+    <Card className=" bg-white border-r hidden lg:block my-5">
       <ScrollArea className="h-full p-4">
         <nav>
           <ul className="space-y-2">

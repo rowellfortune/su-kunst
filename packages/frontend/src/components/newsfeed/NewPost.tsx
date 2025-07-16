@@ -25,131 +25,76 @@ import { Button } from "@/components/ui/button";
 import { DialogTitle } from '@radix-ui/react-dialog';
 
 const NewPost = () => {
-    const file = useRef<null | File>(null);
-    const nav = useNavigate();
-    const [title, setTitle] = useState("");
-    const {isAuthenticated } = useAppContext();
-    const {user} = useContext(AppContext)
-    const [content, setContent] = useState("");
-    const [author, setAuthor] = useState("");
-    const [isLoading, setIsLoading] = useState(true);
+  const file = useRef<null | File>(null);
+  const nav = useNavigate();
+  const [title, setTitle] = useState("");
+  const {isAuthenticated } = useAppContext();
+  const {user} = useContext(AppContext)
+  const [content, setContent] = useState("");
+  const [author, setAuthor] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
-    console.log(user?.username, ': Username')
-  
-    function createPost(note: PostType) {
-      return API.post("posts", "/posts", {
-        body: note,
-      });
-    }
-  
-    useEffect(() => {
-      setIsLoading(true);
-      async function onLoad() {
-        if (!isAuthenticated) {
-          return;
-        }
-        setAuthor(user?.username);
-         console.log(user?.username, ': Username')
-        setIsLoading(false);
-      }
+  function createPost(note: PostType) {
+    return API.post("posts", "/posts", {
+      body: note,
+    });
+  }
 
-  
-      onLoad();
-    }, [isAuthenticated, user]);
-  
-    function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-      if ( event.currentTarget.files === null ) return
-      file.current = event.currentTarget.files[0];
-    }
-    
-    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-      event.preventDefault();
-  
-      if (file.current && file.current.size > config.MAX_ATTACHMENT_SIZE) {
-        alert(
-          `Please pick a file smaller than ${
-            config.MAX_ATTACHMENT_SIZE / 1000000
-          } MB.`
-        );
+  useEffect(() => {
+    setIsLoading(true);
+    async function onLoad() {
+      if (!isAuthenticated) {
         return;
       }
-  
-      setIsLoading(true);
-  
-      try {
-        const attachment = file.current
-          ? await s3Upload(file.current)
-          : undefined;
-  
-        await createPost({
-          title,
-          content,
-          attachment, // this is the S3 public URL
-          author,
-        });
-        setIsLoading(false);
-        nav("/");
-      } catch (e) {
-        onError(e);
-        setIsLoading(false);
-      }
+      setAuthor(user?.username);
+        console.log(user?.username, ': Username')
+      setIsLoading(false);
     }
+
+
+    onLoad();
+  }, [isAuthenticated, user]);
+
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    if ( event.currentTarget.files === null ) return
+    file.current = event.currentTarget.files[0];
+  }
+  
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (file.current && file.current.size > config.MAX_ATTACHMENT_SIZE) {
+      alert(
+        `Please pick a file smaller than ${
+          config.MAX_ATTACHMENT_SIZE / 1000000
+        } MB.`
+      );
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const attachment = file.current
+        ? await s3Upload(file.current)
+        : undefined;
+
+      await createPost({
+        title,
+        content,
+        attachment, // this is the S3 public URL
+        author,
+      });
+      setIsLoading(true);
+      nav("/");
+    } catch (e) {
+      onError(e);
+      setIsLoading(false);
+    }
+  }
+
   return (
     <div>
-      {/* <div className="bg-white rounded-xl shadow p-4 space-y-4 mx-auto">
-        <div className="flex items-center space-x-3">
-          <Avatar className="h-10 w-10">
-            <AvatarImage src="/avatar.jpg" alt="User avatar" />
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
-          <Input
-            placeholder="What's on your mind?"
-            className="flex-1 bg-gray-100 rounded-full py-2 px-4"
-          />
-          <Button className="whitespace-nowrap">Share Post</Button>
-        </div>
-
-        <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
-          <div className="flex space-x-6">
-            <button className="flex items-center space-x-1 hover:text-blue-500">
-              <ImageIcon className="h-5 w-5" />
-              <span>Image/Video</span>
-            </button>
-            <button className="flex items-center space-x-1 hover:text-blue-500">
-              <LinkIcon className="h-5 w-5" />
-              <span>Attachment</span>
-            </button>
-            <button className="flex items-center space-x-1 hover:text-blue-500">
-              <Video className="h-5 w-5" />
-              <span>Live</span>
-            </button>
-            <button className="flex items-center space-x-1 hover:text-blue-500">
-              <Hash className="h-5 w-5" />
-              <span>Hashtag</span>
-            </button>
-            <button className="flex items-center space-x-1 hover:text-blue-500">
-              <AtSign className="h-5 w-5" />
-              <span>Mention</span>
-            </button>
-          </div>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex items-center space-x-1 hover:text-gray-800">
-                <span>Public</span>
-                <ChevronDown className="h-4 w-4" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Public</DropdownMenuItem>
-              <DropdownMenuItem>Friends</DropdownMenuItem>
-              <DropdownMenuItem>Only Me</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div> */}
-
-
       <div className="bg-white rounded-xl shadow p-4 mb-5 space-y-4 mx-auto">
         {/* Top Input Row */}
         <div className="flex items-center space-x-3">

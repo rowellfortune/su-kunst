@@ -59,6 +59,7 @@ export default function NewAdForm() {
     // Validate dates
     const startTs = Date.parse(startDate);
     const endTs = Date.parse(endDate);
+    
     if (isNaN(startTs) || isNaN(endTs)) {
       alert("Please enter valid start and end dates.");
       return;
