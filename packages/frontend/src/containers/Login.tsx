@@ -1,75 +1,110 @@
-import React, { useState } from "react";
-import Form from "react-bootstrap/Form";
-import Stack from "react-bootstrap/Stack";
-import LoaderButton from "../components/LoaderButton.tsx";
-import "./Login.css";
+// src/components/UserLogin.tsx
+"use client";
+
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../lib/contextLib";
-import { useFormFields } from "../lib/hooksLib";
-import { onError } from "../lib/errorLib";
+import { useForm } from "react-hook-form";
 import { Auth } from "aws-amplify";
+import { onError } from "@/lib/errorLib";
+import { useAppContext } from "@/lib/contextLib";
+
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+
+interface LoginFormValues {
+  username: string;
+  password: string;
+}
 
 export default function Login() {
-    const [fields, handleFieldChange] = useFormFields({
-        username: "",
-        password: "",
-    });
-    const { userHasAuthenticated } = useAppContext();
-    const [isLoading, setIsLoading] = useState(false);
-    const nav = useNavigate();
+  const { userHasAuthenticated, setUser } = useAppContext();
+  const nav = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
-    function validateForm() {
-       return fields.username.length > 0 && fields.password.length > 0;
+  const form = useForm<LoginFormValues>({
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+    mode: "onChange",
+  });
+
+  async function onSubmit(data: LoginFormValues) {
+    setIsLoading(true);
+    try {
+      const user = await Auth.signIn(data.username, data.password);
+      setUser(user)
+      userHasAuthenticated(true);
+      nav("/");
+    } catch (error) {
+      onError(error);
+      setIsLoading(false);
     }
+  }
 
-    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-
-        setIsLoading(true);
-
-        try {
-            await Auth.signIn(fields.username, fields.password);
-            userHasAuthenticated(true);
-            nav("/");
-        } catch (error) {
-            onError(error);
-            setIsLoading(false);
-        }
-    }
-
-    return (
-        <div className="Login">
-        <Form onSubmit={handleSubmit}>
-            <Stack gap={3}>
-            <Form.Group controlId="username">
-                <Form.Label>Username</Form.Label>
-                <Form.Control
-                    autoFocus
-                    size="lg"
+  return (
+    <div className="mx-auto p-6 bg-white rounded-lg shadow">
+      {/* Provide RHF context to all FormField components */}
+      <Form {...form}>
+        {/* Native form tag to handle onSubmit */}
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
+          <FormField
+            control={form.control}
+            name="username"
+            rules={{ required: "Email is required" }}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
                     type="text"
-                    value={fields.username}
-                    onChange={handleFieldChange}
-                />
-            </Form.Group>
-            <Form.Group controlId="password">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                    size="lg"
-                    type="password"
-                    value={fields.password}
-                    onChange={handleFieldChange}
-                />
-            </Form.Group>
-                <LoaderButton
-                    size="lg"
-                    type="submit"
-                    isLoading={isLoading}
-                    disabled={!validateForm()}
-                >
-                Login
-                </LoaderButton>
-            </Stack>
-        </Form>
-        </div>
-    );
+                    placeholder="you@example.com"
+                    autoFocus
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            
+            name="password"
+            rules={{ required: "Password is required" }}
+            render={({ field }) => (
+              <FormItem  className="w-full my-5">
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input {...field} type="password" placeholder="s0MeThin4s@fe" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button
+            type="submit"
+            className="w-full my-3"
+            disabled={!form.formState.isValid || isLoading}
+          >
+            {isLoading && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            Login
+          </Button>
+        </form>
+      </Form>
+    </div>
+  );
 }

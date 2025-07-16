@@ -3,6 +3,7 @@ import { table } from "./storage";
 
 // Create the API
 export const api = new sst.aws.ApiGatewayV2("Api", {
+  cors: true,
   transform: {
     route: {
       handler: {
@@ -22,31 +23,36 @@ api.route("GET /opportunities", "packages/functions/src/opportunity/list.main");
 // api.route("PUT /opportunities/{id}", "packages/functions/src/opportunity/update.main");
 // api.route("DELETE /opportunities/{id}", "packages/functions/src/opportunity/delete.main");
 
+/// Events
+api.route("POST /events", "packages/functions/src/events/createEvent.main");
+api.route("GET /events", "packages/functions/src/events/listEvents.main");
+api.route("GET /events/{id}", "packages/functions/src/events/getEvent.main");
+// api.route("PUT /events/{id}", "packages/functions/src/events/updateEvent.main");
+// api.route("DELETE /events/{id}", "packages/functions/src/events/deleteEvent.main");
+
 // Posts
 api.route("POST /posts", "packages/functions/src/post/create.main");
 api.route("GET /posts", "packages/functions/src/post/list.main");
-// api.route("GET /posts/{id}", "packages/functions/src/post/get.main");
-// api.route("PUT /posts/{id}", "packages/functions/src/post/update.main");
+api.route("GET /notifications", "packages/functions/src/post/notification/getNotifications.main");
+api.route("GET /posts/{id}", "packages/functions/src/post/get.main");
+api.route("PUT /posts/{id}", "packages/functions/src/post/update.main");
 // api.route("DELETE /posts/{id}", "packages/functions/src/post/delete.main");
+// api.route("GET /posts/{postId}/likes", "packages/functions/src/post/likes.main");
 
 //comment
 api.route("POST /comments", "packages/functions/src/post/comment/create.main");
 api.route("GET /comments", "packages/functions/src/post/comment/list.main");
-// api.route("GET /comments/{id}", "packages/functions/src/post/comment/get.main");
-// api.route("PUT /comments/{id}", "packages/functions/src/post/comment/update.main");
+api.route("PUT /comments/{id}", "packages/functions/src/post/comment/update.main");
 // api.route("DELETE /comments/{id}", "packages/functions/src/post/comment/delete.main");
 
 // Like
-api.route("POST /reactions", "packages/functions/src/post/like/create.main");
+api.route("POST /reactions/{postId}/likes", "packages/functions/src/post/like/toggleLike.main");
+api.route("GET /reactions/{postId}/likes", "packages/functions/src/post/like/getLike.main");
 
 // Ads
-api.route("GET /ads", "packages/functions/src/post/list.main");
-
-// export const myApi = new sst.aws.Function("MyApi", {
-//   url: true,
-//   link: [bucket],
-//   handler: "packages/functions/src/api.handler"
-// });
+api.route("POST /ads", "packages/functions/src/ads/create.main");
+api.route("GET /ads", "packages/functions/src/ads/list.main");
+api.route("GET /ads/{id}", "packages/functions/src/ads/get.main");
 
 // export const api = new sst.aws.AppSync("Api", {
 //   schema: "graphql/schema.graphql",

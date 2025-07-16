@@ -1,179 +1,268 @@
-import React, { useState } from "react";
-import Form from "react-bootstrap/Form";
-import Stack from "react-bootstrap/Stack";
-import { useNavigate } from "react-router-dom";
-import { useFormFields } from "@/lib/hooksLib";
-import { useAppContext } from "@/lib/contextLib";
-import LoaderButton from "@/components/LoaderButton";
-import "./Signup.css";
+// src/components/UserLogin.tsx
+"use client";
 
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { Auth } from "aws-amplify";
 import { onError } from "@/lib/errorLib";
-import { type ISignUpResult } from "amazon-cognito-identity-js";
+import { useAppContext } from "@/lib/contextLib";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
-export default function AdminSignup() {
-  const [fields, handleFieldChange] = useFormFields({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    confirmationCode: "",
-    role: 'admin'
-  });
-  const nav = useNavigate();
-  const { userHasAuthenticated } = useAppContext();
+interface SignUpValues {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  role: string;
+}
+
+interface ConfirmValues {
+  confirmationCode: string;
+}
+
+export default function Signup() {
+  const navigate = useNavigate();
+  const { userHasAuthenticated, setUser  } = useAppContext();
   const [isLoading, setIsLoading] = useState(false);
-  const [newUser, setNewUser] = useState<null | ISignUpResult>(null);
+  const [signupSuccess, setSignupSuccess] = useState(false);
+  const [signupUsername, setSignupUsername] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
 
-  function validateForm() {
+  // 1) Sign-up form
+  const signupForm = useForm<SignUpValues>({
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      role: "admin",
+    },
+    mode: "onChange",
+  });
+
+  // 2) Confirmation form
+  const confirmForm = useForm<ConfirmValues>({
+    defaultValues: { confirmationCode: "" },
+    mode: "onChange",
+  });
+
+  // Handle initial sign-up
+  async function onSignUp(data: SignUpValues) {
+    setIsLoading(true);
+    try {
+      await Auth.signUp({
+        username: data.username,
+        password: data.password,
+        attributes: {
+          email: data.email,
+          "custom:role": data.role,
+        },
+      });
+      // store for confirmation step
+      setSignupUsername(data.username);
+      setSignupPassword(data.password);
+      setSignupSuccess(true);
+      setIsLoading(false);
+    } catch (e) {
+      onError(e);
+      setIsLoading(false);
+    }
+  }
+
+  // Handle code confirmation
+  async function onConfirm(data: ConfirmValues) {
+    setIsLoading(true);
+    try {
+      await Auth.confirmSignUp(signupUsername, data.confirmationCode);
+      // sign the user in immediately
+      const user = await Auth.signIn(signupUsername, signupPassword);
+      userHasAuthenticated(true);
+      setUser(user)
+      navigate("/");
+    } catch (e) {
+      onError(e);
+      setIsLoading(false);
+    }
+  }
+
+  // Resend the confirmation code
+  async function onResendCode() {
+    setIsLoading(true);
+    try {
+      await Auth.resendSignUp(signupUsername);
+      // you might want to show a toast or message here
+    } catch (e) {
+      onError(e);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  function renderSignupForm() {
     return (
-      fields.username.length > 0 &&
-      fields.email.length > 0 &&
-      fields.password.length > 0 &&
-      fields.password === fields.confirmPassword
+      <div className="max-w-md mx-auto mt-16 p-6 bg-white rounded-lg shadow">
+        <Form {...signupForm}>
+          <form
+            onSubmit={signupForm.handleSubmit(onSignUp)}
+            className="space-y-6"
+          >
+            <FormField
+              control={signupForm.control}
+              name="username"
+              rules={{ required: "Username is required" }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="JaneDoe" autoFocus />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={signupForm.control}
+              name="email"
+              rules={{ required: "Email is required" }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="you@example.com"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={signupForm.control}
+              name="password"
+              rules={{ required: "Password is required" }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="password" placeholder="••••••••" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={signupForm.control}
+              name="confirmPassword"
+              rules={{
+                required: "Please confirm your password",
+                validate: (val) =>
+                  val === signupForm.getValues("password") ||
+                  "Passwords do not match",
+              }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="password" placeholder="••••••••" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              size="lg"
+              type="submit"
+              className="w-full"
+              disabled={!signupForm.formState.isValid || isLoading}
+            >
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Sign Up
+            </Button>
+          </form>
+        </Form>
+      </div>
     );
   }
 
-  function validateConfirmationForm() {
-    return fields.confirmationCode.length > 0;
-  }
-
-    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setIsLoading(true);
-    try {
-        const newUser = await Auth.signUp({
-        username: fields.username,
-        password: fields.password,
-        attributes: {
-          email: fields.email,
-          "custom:role": fields.role, // ✅ Assign role dynamically
-        },
-        });
-        setIsLoading(false);
-        setNewUser(newUser);
-    } catch (e) {
-        onError(e);
-        setIsLoading(false);
-    }
-    }
-
-    async function handleConfirmationSubmit(event: React.FormEvent<HTMLFormElement>) {
-      event.preventDefault();
-      setIsLoading(true);
-
-      try {
-        await Auth.confirmSignUp(fields.username, fields.confirmationCode);
-        await Auth.signIn(fields.email, fields.password);
-        userHasAuthenticated(true);
-        nav("/");
-      } catch (e) {
-        onError(e);
-        setIsLoading(false);
-      }
-    }
-
-    function renderConfirmationForm() {
-      return (
-        <Form onSubmit={handleConfirmationSubmit}>
-          <Stack gap={3}>
-            <Form.Group controlId="username">
-              <Form.Label>Username</Form.Label>
-              <Form.Control
-                autoFocus
-                size="lg"
-                type="text"
-                value={fields.username}
-                onChange={handleFieldChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="confirmationCode">
-              <Form.Label>Confirmation Code</Form.Label>
-              <Form.Control
-                size="lg"
-                autoFocus
-                type="tel"
-                onChange={handleFieldChange}
-                value={fields.confirmationCode}
-              />
-              <Form.Text muted>Please check your email for the code.</Form.Text>
-            </Form.Group>
-            <LoaderButton
-              size="lg"
-              type="submit"
-              variant="success"
-              isLoading={isLoading}
-              disabled={!validateConfirmationForm()}
-            >
-              Verify
-            </LoaderButton>
-          </Stack>
-        </Form>
-      );
-    }
-
-  function renderForm() {
+  function renderConfirmationForm() {
     return (
-      <Form onSubmit={handleSubmit}>
-        <Stack gap={3}>
+      <div className="max-w-md mx-auto mt-16 p-6 bg-white rounded-lg shadow">
+        <p className="mb-4">
+          We sent a code to <strong>{signupUsername}</strong>. Enter it below to
+          confirm your account.
+        </p>
 
-          <Form.Group controlId="username">
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              size="lg"
-              autoFocus
-              type="text"
-              value={fields.uername}
-              onChange={handleFieldChange}
-            />
-          </Form.Group>
-
-          <Form.Group controlId="email">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              size="lg"
-              type="email"
-              value={fields.email}
-              onChange={handleFieldChange}
-            />
-          </Form.Group>
-
-          <Form.Group controlId="password">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              size="lg"
-              type="password"
-              value={fields.password}
-              onChange={handleFieldChange}
-            />
-          </Form.Group>
-          
-          <Form.Group controlId="confirmPassword">
-            <Form.Label>Confirm Password</Form.Label>
-            <Form.Control
-              size="lg"
-              type="password"
-              onChange={handleFieldChange}
-              value={fields.confirmPassword}
-            />
-          </Form.Group>
-          <LoaderButton
-            size="lg"
-            type="submit"
-            variant="success"
-            isLoading={isLoading}
-            disabled={!validateForm()}
+        <Form {...confirmForm}>
+          <form
+            onSubmit={confirmForm.handleSubmit(onConfirm)}
+            className="space-y-6"
           >
-            Signup
-          </LoaderButton>
-        </Stack>
-      </Form>
+            <FormField
+              control={confirmForm.control}
+              name="confirmationCode"
+              rules={{ required: "Code is required" }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirmation Code</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Enter code"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex justify-between items-center">
+              <Button
+                variant="secondary"
+                onClick={onResendCode}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  "Resend Code"
+                )}
+              </Button>
+              <Button
+                size="lg"
+                type="submit"
+                disabled={!confirmForm.formState.isValid || isLoading}
+              >
+                {isLoading && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Confirm
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
     );
   }
 
   return (
-    <div className="Signup">
-      {newUser === null ? renderForm() : renderConfirmationForm()}
-    </div>
+    <div className="Signup">{signupSuccess ? renderConfirmationForm() : renderSignupForm()}</div>
   );
 }

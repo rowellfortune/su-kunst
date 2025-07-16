@@ -1,58 +1,67 @@
-import { useEffect, useState } from 'react';
-import { FaThumbsUp } from 'react-icons/fa';
+// components/Reactions.tsx
+import { useContext, useState } from 'react';
 import { API } from 'aws-amplify';
-import { onError } from '@/lib/errorLib';
+import { Heart, ScanHeart } from 'lucide-react';
+import { usePostLikes } from '@/hooks/usePostLikes';
+import { AppContext, useAppContext } from '@/lib/contextLib';
 
-type ReactionsProps = {
-  postId?: string;
-  userId?: string;
-};
+// interface ReactionsProps {
+//   postId: string;
+// }
 
-function Reactions({ postId, userId }: ReactionsProps) {
-  const [liked, setLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+export default function Reactions({ postId }: any) {
+  // pull initial state & loader from our hook
+  const {user} = useContext(AppContext)
+  const {isAuthenticated } = useAppContext();
+  const { liked, count, loading, setLiked, setCount } = usePostLikes(postId);
 
-  useEffect(() => {
-    async function fetchLikes() {
+  console.log(liked, count, loading);
+
+  // track only the toggle‑call loading
+  const [toggling, setToggling] = useState(false);
+
+  const toggleLike = async () => {
+    if (toggling) return;
+    setToggling(true);
+
+    if (!isAuthenticated) return;
+
       try {
-        // const res = await API.get("posts", `/posts/${postId}/likes`, {});
-        // setLikesCount(res.count);
-        // setLiked(res.likedByCurrentUser);
-      } catch (e) {
-        onError(e);
+        
+        const response = await API.post("reactions", `/reactions/${postId}/likes`, {
+          body: {user}
+        });
+        // { liked: boolean, count: number }
+        setLiked(response.liked);
+        setCount(response.count);
+      } catch (error) {
+        console.error("Error toggling like:", error);
       } finally {
-        setLoading(false);
+        setToggling(false);
       }
-    }
+   
+  };
 
-    fetchLikes();
-  }, [postId]);
-
-  async function handleLike() {
-    try {
-      const res = await API.post("reactions", "/reactions", {
-        body: { postId, userId },
-      });
-
-      setLiked(res.liked);
-      setLikesCount((prev) => (res.liked ? prev + 1 : prev - 1));
-    } catch (e) {
-      onError(e);
-    }
-  }
+  const isBusy = loading || toggling;
 
   return (
-    <div
-      className="flex items-center space-x-1 cursor-pointer select-none"
-      onClick={handleLike}
+    <button
+      onClick={toggleLike}
+      disabled={isBusy}
+      className={`
+        flex items-center space-x-1 text-sm
+        ${liked ? "text-red-600" : "text-gray-600 hover:text-red-600"}
+      `}
     >
-      <FaThumbsUp className={liked ? "text-blue-500 w-4 h-4" : "text-gray-400 w-4 h-4"} />
-      <span className="text-sm text-gray-700">
-        {loading ? "..." : `${likesCount} Like${likesCount === 1 ? "" : "s"}`}
-      </span>
-    </div>
+      {isBusy
+        ? <span className="animate-pulse"><ScanHeart size={16}/></span>
+        : liked
+          ? <Heart color='#ff0000' size={20}/>
+          : <Heart  size={16}/>
+      }
+      <span className={`
+        ${liked ? "text-#6fff00-600" : "text-gray-600 hover:text-red-600"}
+      `}>{count}</span>
+    </button>
   );
 }
-
-export default Reactions;

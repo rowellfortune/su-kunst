@@ -1,7 +1,9 @@
+import NewAdForm from "@/components/adsfeed/NewAdForm";
+
 function Ads() {
   return (
-    <div>
-      Advertisement
+    <div className="w-full overflow-y-hidden p-1">
+      <NewAdForm />
     </div>
   )
 }

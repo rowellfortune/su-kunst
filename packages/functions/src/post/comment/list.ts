@@ -9,7 +9,7 @@ export const main = RestUtil.restHandler(async (event) => {
   const params = {
     TableName: Resource.SuKunst.name,
     IndexName: "entityTypeIndex",
-    KeyConditionExpression: "entityType = :comment",
+    KeyConditionExpression:  "entityType = :comment",
     ExpressionAttributeValues: {
       ":comment": "COMMENT",
     },

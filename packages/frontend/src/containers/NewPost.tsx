@@ -5,8 +5,8 @@ import { onError } from "../lib/errorLib";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import Form from "react-bootstrap/Form";
-import config from "../config";
+// import Form from "react-bootstrap/Form";
+import config from "@/config";
 import type { PostType } from "@/types/post";
 import { s3Upload } from "@/lib/awsLib";
 import { useAppContext } from "@/lib/contextLib";
@@ -20,7 +20,7 @@ export default function NewPost() {
   const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  function createNote(note: PostType) {
+  function createPost(note: PostType) {
     return API.post("posts", "/posts", {
       body: note,
     });
@@ -63,12 +63,15 @@ export default function NewPost() {
         ? await s3Upload(file.current)
         : undefined;
 
-      await createNote({
+      await createPost({
         title,
         content,
         attachment, // this is the S3 public URL
         author,
+        entityType: "POST",
+
       });
+      
       nav("/");
     } catch (e) {
       onError(e);
@@ -92,6 +95,7 @@ export default function NewPost() {
         onChange={(e) => setContent(e.target.value)}
         required
       />
+  
       {file.current && (
         <img
           src={URL.createObjectURL(file.current)}
@@ -99,10 +103,12 @@ export default function NewPost() {
           className="mt-2 rounded shadow-md w-full max-w-sm"
         />
       )}
-      <Form.Group className="mt-2" controlId="file">
-        <Form.Label>Attachment</Form.Label>
-        <Form.Control onChange={handleFileChange} type="file" accept="image/*" />
-      </Form.Group>
+    
+      <Input
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+      />
       <Button type="submit" disabled={isLoading} className="mt-3 w-full">
         {isLoading ? "Posting..." : "Create Post"}
       </Button>

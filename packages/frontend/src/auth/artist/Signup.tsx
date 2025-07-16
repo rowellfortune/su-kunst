@@ -1,160 +1,212 @@
-import React, { useState } from "react";
-import Form from "react-bootstrap/Form";
-import Stack from "react-bootstrap/Stack";
+// src/components/UserLogin.tsx
+"use client";
+
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useFormFields } from "@/lib/hooksLib";
-import { useAppContext } from "@/lib/contextLib";
-import LoaderButton from "@/components/LoaderButton";
-import "./Signup.css";
+import { useForm } from "react-hook-form";
 import { Auth } from "aws-amplify";
 import { onError } from "@/lib/errorLib";
+import { useAppContext } from "@/lib/contextLib";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 import { type ISignUpResult } from "amazon-cognito-identity-js";
 
-export default function ArtistSignup() {
-  const [fields, handleFieldChange] = useFormFields({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    confirmationCode: "",
-    role: 'artisan'
+interface SignupFormValues {
+  username: string;
+  email: string,
+  password: string,
+  confirmPassword: string,
+  confirmationCode: string,
+  attributes: {
+    email: string;
+    "custom:role": string; // ✅ Assign role dynamically
+  },
+  role: string;
+}
+
+export default function Signup() {
+
+  const form = useForm<SignupFormValues>({
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      confirmationCode: "",
+      role: 'artisan'
+    },
+    mode: "onChange",
   });
+
   const nav = useNavigate();
   const { userHasAuthenticated } = useAppContext();
   const [isLoading, setIsLoading] = useState(false);
   const [newUser, setNewUser] = useState<null | ISignUpResult>(null);
 
-  function validateForm() {
+  async function onSubmit(data: SignupFormValues) {
+    console.log(data);
+    setIsLoading(true);
+    try {
+      const newUser = await Auth.signUp({
+        username: data.username,
+        password: data.password,
+        attributes: {
+          email: data.email,
+          "custom:role": data.role, // ✅ Assign role dynamically
+        },
+    });
+      setIsLoading(false);
+      setNewUser(newUser);
+    } catch (e) {
+      onError(e);
+      setIsLoading(false);
+    }
+  }
+
+  async function handleConfirmationSubmit(data: SignupFormValues) {
+    setIsLoading(true);
+    try {
+      await Auth.confirmSignUp(data.username, data.confirmationCode);
+      await Auth.signIn(data.username, data.password);
+      userHasAuthenticated(true);
+      nav("/");
+    } catch (e) {
+      onError(e);
+      setIsLoading(false);
+    }
+  }
+
+  function renderConfirmationForm() {
     return (
-      fields.username.length > 0 &&
-      fields.email.length > 0 &&
-      fields.password.length > 0 &&
-      fields.password === fields.confirmPassword
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleConfirmationSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="confirmationCode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirmation</FormLabel>
+                <FormControl>
+                  <Input type="text" id="confirmationCode" placeholder="shadcn" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button 
+            size={"lg"}
+            type="submit"
+            className="w-full"
+            disabled={!form.formState.isValid || isLoading}
+          >
+            {isLoading && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            Sign Up
+          </Button>
+        </form>
+      </Form>
     );
   }
 
-  function validateConfirmationForm() {
-    return fields.confirmationCode.length > 0;
-  }
-
-    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setIsLoading(true);
-      try {
-        const newUser = await Auth.signUp({
-          username: fields.username,
-          password: fields.password,
-          attributes: {
-            email: fields.email,
-            "custom:role": fields.role, // ✅ Assign role dynamically
-          },
-        });
-        setIsLoading(false);
-        setNewUser(newUser);
-      } catch (e) {
-        onError(e);
-        setIsLoading(false);
-      }
-    }
-
-    async function handleConfirmationSubmit(
-      event: React.FormEvent<HTMLFormElement>
-    ) {
-      event.preventDefault();
-      setIsLoading(true);
-      try {
-        await Auth.confirmSignUp(fields.username, fields.confirmationCode);
-        await Auth.signIn(fields.username, fields.password);
-        userHasAuthenticated(true);
-        nav("/");
-      } catch (e) {
-        onError(e);
-        setIsLoading(false);
-      }
-    }
-
-    function renderConfirmationForm() {
-      return (
-        <Form onSubmit={handleConfirmationSubmit}>
-          <Stack gap={3}>
-            <Form.Group controlId="confirmationCode">
-              <Form.Label>Confirmation Code</Form.Label>
-              <Form.Control
-              size="lg"
-              autoFocus
-              type="tel"
-              onChange={handleFieldChange}
-              value={fields.confirmationCode}
-              />
-              <Form.Text muted>Please check your email for the code.</Form.Text>
-            </Form.Group>
-            <LoaderButton
-              size="lg"
-              type="submit"
-              variant="success"
-              isLoading={isLoading}
-              disabled={!validateConfirmationForm()}
-            >
-              Verify
-            </LoaderButton>
-          </Stack>
-        </Form>
-      );
-    }
-
   function renderForm() {
     return (
-      <Form onSubmit={handleSubmit}>
-        <Stack gap={3}>
-          <Form.Group controlId="username">
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              size="lg"
-              autoFocus
-              type="text"
-              value={fields.username}
-              onChange={handleFieldChange}
+      <div className="max-w-md mx-auto mt-16 p-6 bg-white rounded-lg shadow">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="username"
+              rules={{ required: "User is required" }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>User</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="text"
+                      placeholder="JaneDoe"
+                      autoFocus
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </Form.Group>
-          <Form.Group controlId="email">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              size="lg"
-              autoFocus
-              type="email"
-              value={fields.email}
-              onChange={handleFieldChange}
+
+            <FormField
+              control={form.control}
+              name="email"
+              rules={{ required: "Email is required" }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="you@example.com"
+                      autoFocus
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </Form.Group>
-          <Form.Group controlId="password">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              size="lg"
-              type="password"
-              value={fields.password}
-              onChange={handleFieldChange}
+
+            <FormField
+              control={form.control}
+              name="password"
+              rules={{ required: "Password is required" }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="password" placeholder="••••••••" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </Form.Group>
-          <Form.Group controlId="confirmPassword">
-            <Form.Label>Confirm Password</Form.Label>
-            <Form.Control
-              size="lg"
-              type="password"
-              onChange={handleFieldChange}
-              value={fields.confirmPassword}
+
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              rules={{ required: "Password is required" }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="password" placeholder="••••••••" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </Form.Group>
-          <LoaderButton
-            size="lg"
-            type="submit"
-            variant="success"
-            isLoading={isLoading}
-            disabled={!validateForm()}
-          >
-            Signup
-          </LoaderButton>
-        </Stack>
-      </Form>
+
+             <Button
+              type="submit"
+              className="w-full"
+              disabled={!form.formState.isValid || isLoading}
+            >
+              {isLoading && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Sign Up
+            </Button>
+
+          </form>
+        </Form>
+      </div>
     );
   }
 

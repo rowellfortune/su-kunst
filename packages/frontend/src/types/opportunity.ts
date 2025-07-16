@@ -1,10 +1,13 @@
 export interface OpportunityType {
-  id?: string;
+  pk?: string;
   title?: string;
   description?: string;
   deadline?: string;
   location?: string;
+  type?: string;
+  company: string;
   category?: string;
+  attachment?: string;
   status?: "public" | "draft";
-  createdAt?: string;
+  createdAt: string;
 }

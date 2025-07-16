@@ -1,16 +1,17 @@
-import Navbar from "react-bootstrap/Navbar";
+// import Navbar from "react-bootstrap/Navbar";
 import Routes from "./Routes.tsx";
 import { useState, useEffect } from "react";
-import Nav from "react-bootstrap/Nav";
+import { Provider } from 'react-redux';
 import { AppContext, type AppContextType } from "./lib/contextLib";
-import { useNavigate } from "react-router-dom";
 import { Auth } from "aws-amplify";
 import { onError } from "./lib/errorLib";
+import {store} from './store/index.ts'
 
 function App() {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
+  const [user, setUser] = useState<any | null>(null);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
-  const nav = useNavigate();
+  // const nav = useNavigate();
 
   useEffect(() => {
     onLoad();
@@ -18,9 +19,13 @@ function App() {
 
   async function onLoad() {
     try {
+      // check session
       await Auth.currentSession();
+      // fetch the user’s attributes
+      const currentUser = await Auth.currentAuthenticatedUser();
+      setUser(currentUser);
       userHasAuthenticated(true);
-    } catch (error) {
+    } catch (error: any) {
       if (error !== "No current user") {
         onError(error);
       }
@@ -28,35 +33,22 @@ function App() {
     setIsAuthenticating(false);
   }
 
-  async function handleLogout() {
-    await Auth.signOut();
-    userHasAuthenticated(false);
-    nav("/login");
-  }
+  const contextValue: AppContextType = {
+    isAuthenticated,
+    userHasAuthenticated,
+    user,
+    setUser,
+  };
 
   return (
     !isAuthenticating && (
-      <div className="App px-5 py-3">
-        <Navbar collapseOnSelect bg="light" expand="md" className="mb-3 px-3">
-          <Navbar.Brand className="fw-bold text-muted" href="/">Su-Kunst</Navbar.Brand>
-          <Navbar.Toggle />
-          <Navbar.Collapse className="justify-content-end">
-            <Nav>
-              {isAuthenticated ? (
-                <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
-              ) : (
-                <>
-                  <Nav.Link href="/signup">Signup</Nav.Link>
-                  <Nav.Link href="/login">Login</Nav.Link>
-                </>
-              )}
-            </Nav>
-          </Navbar.Collapse>
-        </Navbar>
-        <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated } as AppContextType} >
-          <Routes />
-        </AppContext.Provider>
-      </div>
+      <>
+        <Provider store={store}>
+          <AppContext.Provider value={contextValue}>
+            <Routes />
+          </AppContext.Provider>
+        </Provider>
+      </>
     )
   );
 }

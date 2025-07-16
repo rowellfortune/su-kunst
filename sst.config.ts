@@ -1,6 +1,7 @@
 /// <reference path="./.sst/platform/config.d.ts" />
 
 export default $config({
+  
   app(input) {
     return {
       name: "su-kunst",
@@ -9,6 +10,7 @@ export default $config({
       home: "aws",
     };
   },
+
   async run() {
     const storage = await import("./infra/storage");
     const auth    = await import("./infra/auth");
@@ -26,4 +28,5 @@ export default $config({
 
     };
   },
+
 });

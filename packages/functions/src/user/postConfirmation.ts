@@ -8,6 +8,11 @@ const cognito = new CognitoIdentityServiceProvider();
 const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 export async function main(event: AWSLambda.PostConfirmationTriggerEvent): Promise<AWSLambda.PostConfirmationTriggerEvent> {
+  let data;
+  
+  if (event?.body != null) {
+    data = JSON.parse(event?.body);
+  }
   
   const userId = event.request.userAttributes.sub;
   const email = event.request.userAttributes.email;
@@ -23,6 +28,12 @@ export async function main(event: AWSLambda.PostConfirmationTriggerEvent): Promi
       createdAt: Date.now(),
       username,
       email,
+      profile: {
+        username,
+        email,
+        bio:      `More about ${username}`,
+        picture:  ``, 
+      },
       role: groupName, // default role
     },
   };

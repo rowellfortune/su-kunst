@@ -3,7 +3,6 @@ export const bucket = new sst.aws.Bucket("Uploads", {
   access: "public",
   cors: {
     allowOrigins: ["*"],         // optional, good for browser uploads/downloads
-    allowMethods: ["GET"],       // we only need GET for public reads
   },
   transform: {
     publicAccessBlock: {
@@ -33,4 +32,3 @@ export const table = new sst.aws.Dynamo("SuKunst", {
     },
   },
 });
-

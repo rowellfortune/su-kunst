@@ -1,142 +1,143 @@
-import React, { useRef, useState, useEffect } from "react";
-import { useParams} from "react-router-dom";
-import { API, Storage } from "aws-amplify";
-import { onError } from "../lib/errorLib";
-import type { PostType } from "@/types/post";
+// import React, { useRef, useState, useEffect } from "react";
+// import { useParams} from "react-router-dom";
+// import { API, Storage } from "aws-amplify";
+// import { onError } from "../lib/errorLib";
+// import type { PostType } from "@/types/post";
 
-import config from "../config";
-import Form from "react-bootstrap/Form";
-import Stack from "react-bootstrap/Stack";
-import LoaderButton from "../components/LoaderButton";
+// import config from "../config";
+// import Form from "react-bootstrap/Form";
+// import Stack from "react-bootstrap/Stack";
+// import LoaderButton from "../components/LoaderButton";
 import "./Notes.css";
 
 export default function Notes() {
-  const file = useRef<null | File>(null)
-  const { id } = useParams();
+  // const file = useRef<null | File>(null)
+  // const { id } = useParams();
   // const nav = useNavigate();
-  const [note, setNote] = useState<null | PostType>(null);
-  const [content, setContent] = useState("");
+  // const [note, setNote] = useState<null | PostType>(null);
+  // const [content, setContent] = useState("");
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [isDeleting, setIsDeleting] = useState(false);
 
-  useEffect(() => {
-    function loadNote() {
-      return API.get("notes", `/notes/${id}`, {});
-    }
+  // useEffect(() => {
+  //   function loadNote() {
+  //     return API.get("notes", `/notes/${id}`, {});
+  //   }
 
-    async function onLoad() {
-      try {
-        const note = await loadNote();
-        const { content, attachment } = note;
+  //   async function onLoad() {
+  //     try {
+  //       const note = await loadNote();
+  //       const { content, attachment } = note;
 
-        if (attachment) {
-          note.attachmentURL = await Storage.vault.get(attachment);
-        }
+  //       if (attachment) {
+  //         note.attachmentURL = await Storage.vault.get(attachment);
+  //       }
 
-        setContent(content);
-        setNote(note);
-      } catch (e) {
-        onError(e);
-      }
-    }
+  //       setContent(content);
+  //       setNote(note);
+  //     } catch (e) {
+  //       onError(e);
+  //     }
+  //   }
 
-    onLoad();
-  }, [id]);
+  //   onLoad();
+  // }, [id]);
 
-  function validateForm() {
-  return content.length > 0;
-}
+// function validateForm() {
+//   return content.length > 0;
+// }
 
-function formatFilename(str: string) {
-  return str.replace(/^\w+-/, "");
-}
+// function formatFilename(str: string) {
+//   return str.replace(/^\w+-/, "");
+// }
 
-function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-  if (event.currentTarget.files === null) return;
-  file.current = event.currentTarget.files[0];
-}
+// function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+//   if (event.currentTarget.files === null) return;
+//   file.current = event.currentTarget.files[0];
+// }
 
-async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-  // let attachment;
+// async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+//   // let attachment;
 
-  event.preventDefault();
+//   event.preventDefault();
 
-  if (file.current && file.current.size > config.MAX_ATTACHMENT_SIZE) {
-    alert(
-      `Please pick a file smaller than ${
-        config.MAX_ATTACHMENT_SIZE / 1000000
-      } MB.`
-    );
-    return;
-  }
+//   if (file.current && file.current.size > config.MAX_ATTACHMENT_SIZE) {
+//     alert(
+//       `Please pick a file smaller than ${
+//         config.MAX_ATTACHMENT_SIZE / 1000000
+//       } MB.`
+//     );
+//     return;
+//   }
 
-  setIsLoading(true);
-}
+//   setIsLoading(true);
+// }
 
-async function handleDelete(event: React.FormEvent<HTMLFormElement>) {
-  event.preventDefault();
+// async function handleDelete(event: React.FormEvent<HTMLFormElement>) {
+//   event.preventDefault();
 
-  const confirmed = window.confirm(
-    "Are you sure you want to delete this note?"
-  );
+//   const confirmed = window.confirm(
+//     "Are you sure you want to delete this note?"
+//   );
 
-  if (!confirmed) {
-    return;
-  }
+//   if (!confirmed) {
+//     return;
+//   }
 
-  setIsDeleting(true);
-}
+//   setIsDeleting(true);
+// }
 
 return (
   <div className="Notes">
-    {note && (
-      <Form onSubmit={handleSubmit}>
-        <Stack gap={3}>
-          <Form.Group controlId="content">
-            <Form.Control
-              size="lg"
-              as="textarea"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group className="mt-2" controlId="file">
-            <Form.Label>Attachment</Form.Label>
-            {note.attachment && (
-              <p>
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={note.attachmentURL}
-                >
-                  {formatFilename(note.attachment)}
-                </a>
-              </p>
-            )}
-            <Form.Control onChange={handleFileChange} type="file" />
-          </Form.Group>
-          <Stack gap={1}>
-            <LoaderButton
-              size="lg"
-              type="submit"
-              isLoading={isLoading}
-              disabled={!validateForm()}
-            >
-              Save
-            </LoaderButton>
-            <LoaderButton
-              size="lg"
-              variant="danger"
-              onClick={handleDelete}
-              isLoading={isDeleting}
-            >
-              Delete
-            </LoaderButton>
-          </Stack>
-        </Stack>
-      </Form>
-    )}
+    {/* {note && ( */}
+      <></>
+      {/* // <Form onSubmit={handleSubmit}>
+      //   <Stack gap={3}>
+      //     <Form.Group controlId="content">
+      //       <Form.Control
+      //         size="lg"
+      //         as="textarea"
+      //         value={content}
+      //         onChange={(e) => setContent(e.target.value)}
+      //       />
+      //     </Form.Group>
+      //     <Form.Group className="mt-2" controlId="file">
+      //       <Form.Label>Attachment</Form.Label>
+      //       {note.attachment && (
+      //         <p>
+      //           <a
+      //             target="_blank"
+      //             rel="noopener noreferrer"
+      //             href={note.attachmentURL}
+      //           >
+      //             {formatFilename(note.attachment)}
+      //           </a>
+      //         </p>
+      //       )}
+      //       <Form.Control onChange={handleFileChange} type="file" />
+      //     </Form.Group>
+      //     <Stack gap={1}>
+      //       <LoaderButton
+      //         size="lg"
+      //         type="submit"
+      //         isLoading={isLoading}
+      //         disabled={!validateForm()}
+      //       >
+      //         Save
+      //       </LoaderButton>
+      //       <LoaderButton
+      //         size="lg"
+      //         variant="danger"
+      //         onClick={handleDelete}
+      //         isLoading={isDeleting}
+      //       >
+      //         Delete
+      //       </LoaderButton>
+      //     </Stack>
+      //   </Stack>
+      // </Form> */}
+    {/* )} */}
   </div>
 );
 }

@@ -1,5 +1,14 @@
-import { AudioWaveform, BookOpen, Bot, Command, Frame, GalleryVerticalEnd, Home, Inbox, Megaphone, PieChart, ScanEye, Settings2, SquareTerminal } from "lucide-react"
+import { 
 
+  Inbox, 
+  Megaphone, 
+  ScanEye, 
+  Building,
+  Building2,
+  User,
+  Plane,
+  Gauge
+} from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -7,35 +16,10 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+  
 } from "@/components/ui/sidebar"
+import { NavMain } from "@/components/nav-main"
 import { NavUser } from "./nav-user"
-
-// Menu items.
-const items = [
-  {
-    title: "Dashboard",
-    url: "/admin",
-    icon: Home,
-  },
-  {
-    title: "Ads",
-    url: "/admin/ads",
-    icon: ScanEye,
-  },
-  {
-    title: "Inbox",
-    url: "/admin/inbox",
-    icon: Inbox,
-  },
-  {
-    title: "Opportunities",
-    url: "/admin/opportunities",
-    icon: Megaphone,
-  },
-]
 
 // This is sample data.
 const data = {
@@ -45,128 +29,81 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   
   navMain: [
     {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
+      title: "Dashboard",
+      icon: Gauge,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "User",
+          url: "/admin/user",
+          icon: User,
         },
         {
-          title: "Starred",
-          url: "#",
+          title: "Companies",
+          url: "/admin/companies",
+          icon: Building,
         },
         {
-          title: "Settings",
-          url: "#",
+          title: "Ad Data",
+          url: "/admin/ad-data",
+          icon: Megaphone,
+        },
+        {
+          title: "Opportunities",
+          url: "/admin/opportunities",
+          icon: Plane,
+        },
+        {
+          title: "Organizations",
+          url: "/admin/organizations",
+          icon: Building2,
         },
       ],
     },
     {
-      title: "Models",
-      url: "#",
-      icon: Bot,
+      title: "Ads",
+      icon: ScanEye,
       items: [
         {
-          title: "Genesis",
-          url: "#",
+          title: "Create new ads",
+          url: "/admin/ads/new",
+           icon: Megaphone,
         },
         {
-          title: "Explorer",
-          url: "#",
+          title: "View all ads",
+          url: "/admin/ads/",
+           icon: Megaphone,
         },
         {
-          title: "Quantum",
-          url: "#",
+          title: "Live",
+          url: "/admin/ads/live",
+           icon: Megaphone,
         },
       ],
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
+      title: "Inbox",
+      icon: Inbox,
       items: [
         {
-          title: "Introduction",
-          url: "#",
+          title: "Applications",
+          url: "/admin/inbox",
+          icon: Megaphone,
         },
         {
-          title: "Get Started",
+          title: "Request",
           url: "#",
+           icon: Megaphone,
         },
         {
-          title: "Tutorials",
+          title: "Incomming Calls",
           url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
+           icon: Megaphone,
         },
       ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
     },
   ],
 }
@@ -178,18 +115,7 @@ export function AdminSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            <NavMain items={data.navMain} />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

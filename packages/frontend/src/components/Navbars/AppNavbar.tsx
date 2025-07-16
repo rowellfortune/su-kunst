@@ -1,0 +1,66 @@
+import { useContext} from 'react'
+import {  useNavigate } from "react-router-dom";
+import { handleLogout } from "@/lib/auth.ts";
+import { AppContext, useAppContext } from "@/lib/contextLib.ts";
+import { NotificationBell } from "@/components/NotificationBell";
+import { Input } from "@/components/ui/input";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+// import { Button } from '../ui/button';
+// import { Bookmark } from 'lucide-react';
+
+
+
+export default function Navbar() {
+  const { userHasAuthenticated } = useAppContext();
+  const navigate = useNavigate();
+
+    const {user} = useContext(AppContext)
+      const username = user?.username;
+
+  return (
+    <nav className="flex items-center justify-between px-6 py-4 mb-5 bg-white border-b">
+      {/* Brand */}
+      <div className="flex items-center space-x-2">
+        <img src="/we-share-logo.svg" alt="WeShare Logo" className="h-8 w-8" />
+        {/* <span className="text-xl font-semibold">WeShare</span> */}
+      </div>
+
+      {/* Search */}
+      <div className="flex-1 px-6">
+        <Input
+          placeholder="Search"
+          className="max-w-lg mx-auto bg-gray-100"
+        />
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center space-x-1">
+          <NotificationBell />
+        {/* <div className="">
+          <Bookmark className="h-5 w-5" />
+        </div> */}
+
+        {/* User dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="flex items-center space-x-2 rounded-full p-1 hover:bg-gray-100">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src="/avatar.jpg" alt="User avatar" />
+                <AvatarFallback>JD</AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-medium">{username}</span>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem><button onClick={() => handleLogout(userHasAuthenticated, navigate)}>Logout</button></DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </nav>
+
+  );
+};

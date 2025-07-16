@@ -2,7 +2,7 @@ import { Context, APIGatewayProxyEvent, AppSyncResolverEvent } from "aws-lambda"
 
 export module RestUtil {
   export function restHandler(
-    lambda: (evt: APIGatewayProxyEvent, context: Context) => Promise<string>
+    lambda: (event: APIGatewayProxyEvent, context: Context) => Promise<string>
   ) {
     return async function(event: APIGatewayProxyEvent, context: Context) {
       let body: string, statusCode: number;
@@ -24,6 +24,8 @@ export module RestUtil {
         statusCode,
         headers: {
           "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "*",
+          "Access-Control-Allow-Methods": "*",
           "Access-Control-Allow-Credentials": true,
         },
       };

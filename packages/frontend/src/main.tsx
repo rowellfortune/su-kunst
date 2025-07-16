@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router } from "react-router-dom";
 import './index.css'
 import App from './App.tsx'
-import "bootstrap/dist/css/bootstrap.min.css";
+
 import { Amplify } from "aws-amplify";
 import config from "./config.ts";
 
@@ -44,6 +44,11 @@ Amplify.configure({
       },
       {
         name: "posts",
+        endpoint: config.apiGateway.URL,
+        region: config.apiGateway.REGION,
+      },
+      {
+        name: "notifications",
         endpoint: config.apiGateway.URL,
         region: config.apiGateway.REGION,
       },

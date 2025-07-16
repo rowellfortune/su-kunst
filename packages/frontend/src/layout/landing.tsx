@@ -1,8 +1,12 @@
+import IndexNavbar from "@/components/Navbars/IndexNavbar";
 
-export default function Landing({ children }: { children: React.ReactNode }) {
+export default function Landinglayout({ children }: { children: React.ReactNode }) {
   return (
-    <main>
-      {children}
-    </main>
+    <div className="flex justify-center items-center h-screen bg-slate-100 ">
+      <IndexNavbar /> 
+      <main className="">
+        {children}
+      </main>
+    </div>
   )
 }

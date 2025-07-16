@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import Form from "react-bootstrap/Form";
+// import Form from "react-bootstrap/Form";
 import config from "../config";
 export type OpportunityInput = {
   id?: string;
@@ -40,10 +40,10 @@ export default function NewNote() {
     });
   }
 
-  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    if ( event.currentTarget.files === null ) return
-    file.current = event.currentTarget.files[0];
-  }
+  // function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+  //   if ( event.currentTarget.files === null ) return
+  //   file.current = event.currentTarget.files[0];
+  // }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -88,10 +88,10 @@ export default function NewNote() {
         onChange={(e) => handleChange("description", e.target.value)}
         required
       />
-      <Form.Group className="mt-2" controlId="file">
+      {/* <Form.Group className="mt-2" controlId="file">
         <Form.Label>Attachment</Form.Label>
         <Form.Control onChange={handleFileChange} type="file" />
-      </Form.Group>
+      </Form.Group> */}
       <Select
         onValueChange={(value) => handleChange("opencall", value)}
         value={formData.opencall}

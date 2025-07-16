@@ -3,7 +3,6 @@ import { Resource } from "sst";
 import { RestUtil, GraphqlUtil } from "@su-kunst/core/util";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { PiKanban } from "react-icons/pi";
 
 const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
@@ -17,12 +16,13 @@ export const main = RestUtil.restHandler(async (event) => {
   params = {
     TableName: Resource?.SuKunst?.name,
     Item: {
-      pk: `OPPORTUNITY#${uuid.v1()}`,
+      pk: `OPPORTUNITY-${uuid.v1()}`,
       sk: "DETAILS#OPPORTUNITY",
       title: data.title,
       description: data.description,
       entityType: "OPPORTUNITY", // 👈 Required for GSI
       type: data.opencall,
+      attachment: data.attachment,
       postedBy: event?.requestContext?.authorizer?.iam?.cognitoIdentity?.identityId,
       createdAt: Date.now(),
       status: "active",
