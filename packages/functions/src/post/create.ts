@@ -25,7 +25,7 @@ export const main = RestUtil.restHandler(async (event) => {
       entityType: "POST", // 👈 Required for GSI
       attachment: data?.attachment,
       author: data?.author,
-      postedBy: event?.requestContext?.authorizer?.iam?.cognitoIdentity?.identityId,
+      postedBy: data.userId,
       createdAt: Date.now(),
       status: "published",
     }

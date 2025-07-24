@@ -4,12 +4,14 @@ import { commentsApi } from '@/store/apis/commentsApi'
 import { adsApi } from '@/store/apis/adsApi'
 import { opportunitiesApi } from '@/store/apis/opportunitiesApi'
 import { eventsApi } from '@/store/apis/eventsApi'
+import { userApi } from '@/store/apis/userApi'
 
 // Aggregate all RTK Query API slices into an array
 const apis = [
   postsApi,
   commentsApi,
   adsApi,
+  userApi,
   opportunitiesApi,
   eventsApi,
 ]
@@ -30,6 +32,7 @@ export const store = configureStore({
 export { useGetPostsQuery }     from '@/store/apis/postsApi'
 export { useGetPostsQuery as useGetCommentsQuery }  from '@/store/apis/commentsApi'
 export { useGetPostsQuery as useGetAdsQuery }       from '@/store/apis/adsApi'
+export { useGetUserQuery } from '@/store/apis/userApi'
 export { useGetPostsQuery as useGetOpportunitiesQuery } from '@/store/apis/opportunitiesApi'
 export { useGetPostsQuery as useGetEventsQuery }    from '@/store/apis/eventsApi'
 

@@ -1,7 +1,7 @@
 import {
-  Image as ImageIcon,
+  // Image as ImageIcon,
   Palette,
-  Film,
+  // Film,
 } from "lucide-react";
 // import { ImageIcon, Film, Palette } from 'lucide-react'; // Using lucide icons
 import {
@@ -10,19 +10,20 @@ import {
   DialogDescription,
   DialogFooter,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { API } from 'aws-amplify';
+} from "@/components/ui/dialog";
+import { API} from 'aws-amplify';
 import { s3Upload } from '@/lib/awsLib';
 import { onError } from '@/lib/errorLib';
-import config from "@/config";
 import { useContext, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppContext, useAppContext} from '@/lib/contextLib';
 import type { PostType } from '@/types/post';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { DialogTitle } from '@radix-ui/react-dialog';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useGetUserQuery } from "@/store";
 
 const NewPost = () => {
   const file = useRef<null | File>(null);
@@ -32,7 +33,21 @@ const NewPost = () => {
   const {user} = useContext(AppContext)
   const [content, setContent] = useState("");
   const [author, setAuthor] = useState("");
+  const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true);
+
+  const effectiveId = user.attributes.sub ?? "";
+  const {
+    data: userInfo,
+    error: userInfoError,
+    isLoading: userInfoLoading,
+  } = useGetUserQuery(effectiveId, { skip: !isAuthenticated || !effectiveId });
+
+  console.log(userInfoError)
+  console.log(userInfoLoading)
+  // fallback to the passed‑in `author` if we don’t have the full profile yet
+  const avatarUrl   = userInfo?.profile.avatarFileattachment;
+  
 
   function createPost(note: PostType) {
     return API.post("posts", "/posts", {
@@ -47,13 +62,11 @@ const NewPost = () => {
         return;
       }
       setAuthor(user?.username);
-        console.log(user?.username, ': Username')
       setIsLoading(false);
     }
 
-
     onLoad();
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, open]);
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     if ( event.currentTarget.files === null ) return
@@ -62,15 +75,6 @@ const NewPost = () => {
   
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
-    if (file.current && file.current.size > config.MAX_ATTACHMENT_SIZE) {
-      alert(
-        `Please pick a file smaller than ${
-          config.MAX_ATTACHMENT_SIZE / 1000000
-        } MB.`
-      );
-      return;
-    }
 
     setIsLoading(true);
 
@@ -84,8 +88,10 @@ const NewPost = () => {
         content,
         attachment, // this is the S3 public URL
         author,
+        userId: user.attributes.sub
       });
-      setIsLoading(true);
+      setIsLoading(false);
+      setOpen(false)
       nav("/");
     } catch (e) {
       onError(e);
@@ -98,13 +104,12 @@ const NewPost = () => {
       <div className="bg-white rounded-xl shadow p-4 mb-5 space-y-4 mx-auto">
         {/* Top Input Row */}
         <div className="flex items-center space-x-3">
-          <a href="/settings/profile">
-          <img
-            src="https://github.com/shadcn.png" // replace with user avatar if available
-            alt={author}
-            className="w-10 h-10 rounded-full"
-          />
-          </a>
+          <Link to={`/profile/${user.attributes.sub}`}>
+            <Avatar className="h-10 w-10">
+              <AvatarImage src={avatarUrl} alt="Jakob Botosh" />
+              <AvatarFallback>{author[0]}</AvatarFallback>
+            </Avatar>
+          </Link>
           <div className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none">
             <span>{`What's on your mind, ${author}`}</span>
           </div>
@@ -113,7 +118,7 @@ const NewPost = () => {
         {/* Action Buttons */}
         <div className="flex justify-between border-t pt-2">
           {/* Art post */}
-          <Dialog>
+          <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button variant="ghost"><Palette className="text-red-500 w-5 h-5" />Art</Button>
             </DialogTrigger>
@@ -165,7 +170,7 @@ const NewPost = () => {
           </Dialog>
   
           {/* Post */}
-          <Dialog>
+          {/* <Dialog>
             <DialogTrigger asChild>
               <Button variant="ghost"><ImageIcon className="text-green-500 w-5 h-5" />Post</Button>
             </DialogTrigger>
@@ -215,9 +220,9 @@ const NewPost = () => {
               </form>
             </DialogContent>
           </Dialog>
-  
+   */}
           {/* Article */}
-          <Dialog>
+          {/* <Dialog>
             <DialogTrigger asChild>
               <Button variant="ghost"><Film className="text-pink-500 w-5 h-5" /><span>Write article</span></Button>
             </DialogTrigger>
@@ -245,7 +250,7 @@ const NewPost = () => {
                 </DialogFooter>
               </form>
             </DialogContent>
-          </Dialog>
+          </Dialog> */}
         </div>
       </div>
     </div>

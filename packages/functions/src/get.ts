@@ -6,12 +6,15 @@ import { GetCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 export const main = RestUtil.restHandler(async (event) => {
+  const full  = event?.requestContext?.authorizer?.iam?.cognitoIdentity?.amr[2];
+  const userId = full.replace(/^.*:/, "");
+  
   const params = {
     TableName: Resource.SuKunst.name,
     // 'Key' defines the partition key and sort key of
     // the item to be retrieved
     Key: {
-      pk: event?.requestContext?.authorizer?.iam?.cognitoIdentity?.identityId, // The id of the author
+      pk: userId, // The id of the author
       sk: event?.pathParameters?.id, // The id of the note from the path
     },
   };

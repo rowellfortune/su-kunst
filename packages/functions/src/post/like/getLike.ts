@@ -14,9 +14,13 @@ export const main = RestUtil.restHandler(async (event) => {
   // ──────────────────────────────────────────────────────────────
   // 1️⃣ Extract path‑ and auth‑info
   // ──────────────────────────────────────────────────────────────
-  const postId = event.pathParameters!.postId!;                                       // e.g. "5e8d93c0‑…"
-  const userId = event.requestContext.authorizer?.iam.cognitoIdentity.identityId!;     // Cognito identity ID
+  const postId = event.pathParameters!.postId!;   
+  const full  = event?.requestContext?.authorizer?.iam?.cognitoIdentity?.amr[2];
+  // 1) Using replace with a regex that eats everything up through the last “:”
+  const userId = full.replace(/^.*:/, "");
+  // → "949874d8‑f0e1‑7035‑7d5b‑a27443550deb"                                 // e.g. "5e8d93c0‑…"
 
+  // console.log(us)
   // ──────────────────────────────────────────────────────────────
   // 2️⃣ Build keys for DynamoDB
   // ──────────────────────────────────────────────────────────────
@@ -49,6 +53,8 @@ export const main = RestUtil.restHandler(async (event) => {
   }));
 
   const liked = Boolean(getResult.Item);
+
+  console.log(liked, count)
 
   // ──────────────────────────────────────────────────────────────
   // 5️⃣ Return both the like‑flag and the total count

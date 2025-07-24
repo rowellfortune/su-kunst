@@ -1,110 +1,172 @@
-import React, {useContext, useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
+// src/components/Comments.tsx
+import React, { useContext, useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import type { CommentType } from '@/types/comment';
-import { AppContext } from '@/lib/contextLib';
-import { onError } from '@/lib/errorLib';
-import { useNavigate } from 'react-router-dom';
-import { MessageSquare } from 'lucide-react';
-import { useGetPostsQuery, useAddPostMutation } from '@/store/apis/commentsApi';
+} from "@/components/ui/dialog";
+import { MessageSquare } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { AppContext } from "@/lib/contextLib";
+import { onError } from "@/lib/errorLib";
+import {
+  useGetPostsQuery,
+  useAddPostMutation,
+} from "@/store/apis/commentsApi";
+import { buildCommentTree } from "@/lib/utils";
+import { CommentItem } from "./CommentItem";
+import type { CommentType, CommentNode } from "@/types/comment";
 
-function Comments({ author, pk, userId, postId}: CommentType) {
-  const {user} = useContext(AppContext)
+interface CommentsProps {
+  author?: string;
+  pk?: string;
+  userId?: string;
+  postId?: string;
+}
+
+export default function Comments({
+  author,
+  pk,
+  userId,
+}: CommentsProps) {
+  const { user } = useContext(AppContext);
   const nav = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
+
+  // single formData object
+  const [formData, setFormData] = useState<{
+    content?: string;
+    postId?: string;
+    userId?: string;
+    user?: string;
+    parentCommentId?: string | null;
+  }>({
     content: "",
     postId: pk,
-    userId: userId,
-    user: user?.username
+    userId,
+    user: user?.username,
+    parentCommentId: null,
   });
-  const { data: comments, isLoading} = useGetPostsQuery();
+
+  // track the author name of the comment being replied to
+  const [parentAuthor, setParentAuthor] = useState<string | null>(null);
+
+  // reset username if it changes (e.g. on login)
+  useEffect(() => {
+    setFormData((f) => ({ ...f, user: user?.username }));
+  }, [user?.username]);
+
+  const { data = [], isLoading } = useGetPostsQuery();
   const [addPost] = useAddPostMutation();
+  const [loading, setLoading] = useState(false);
 
-  function getCommentsForPost(data: CommentType[], postId: string) {
-    return data?.filter((item) => {
-      return (
-        item?.entityType === "COMMENT" &&
-        item?.sk?.includes(postId)
-      );
-    });
-  }
+  // only comments for this post
+  // build and filter
+  const flat = (data as CommentType[]).filter(
+    (c) => c.entityType === "COMMENT" && c.pk === pk
+  );
 
-  const comment = getCommentsForPost(comments!, postId!);
-  
-  const handleChange = (field: keyof CommentType, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  // build nested tree
+  const tree: CommentNode[] = buildCommentTree(flat);
+
+  // when clicking “Reply”
+  const handleReply = (parentId: string, parentUser: string) => {
+    setFormData((f) => ({ ...f, parentCommentId: parentId }));
+    setParentAuthor(parentUser);
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setLoading(true);
+// cancel reply mode
+  const handleCancelReply = () => {
+    setFormData((f) => ({ ...f, parentCommentId: null }));
+    setParentAuthor(null);
+  };
 
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFormData((f) => ({ ...f, content: e.target.value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
     try {
       await addPost(formData).unwrap();
-      nav('/');
-      setLoading(false)
-    } catch (e) {
-      onError(e);
+      // reset
+      setFormData({
+        content: "",
+        postId: pk,
+        userId,
+        user: user?.username,
+        parentCommentId: null,
+      });
+      setParentAuthor(null);
+      nav(0); // refresh
+    } catch (err) {
+      onError(err);
     } finally {
       setLoading(false);
     }
   };
-  
+
   return (
-    <>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="ghost" className='flex justify-between rounded'>
-            <MessageSquare className="text-pink-500 w-5 h-5" />
-            {!isLoading ? <span>{comment?.length}</span> : <>0</>} Comment{comment?.length === 1 ? "" : "s"}
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          {comment?.length > 0 && (
-            <div className="mt-4 space-y-2">
-              {comment?.map((c, index) => (
-                <div key={index} className="border p-2 rounded text-sm">
-                  <p className="text-gray-700">{c.content}</p>
-                  <p className="text-xs text-gray-500">— {c?.user}</p>
-                </div>
-              ))}
-            </div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="ghost" className="flex items-center space-x-1">
+          <MessageSquare className="w-5 h-5 text-pink-500" />
+          <span>{isLoading ? "…" : flat.length} Comments</span>
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-lg">
+        <DialogTitle className="text-xl font-bold text-center">
+          Comments on {author}’s post
+        </DialogTitle>
+
+        <div className="mt-4 space-y-2 max-h-80 overflow-y-auto">
+          {tree.map((c) => (
+            <CommentItem
+              key={c.commentId}
+              comment={c}
+              onReply={handleReply}
+            />
+          ))}
+        </div>
+
+        <form onSubmit={handleSubmit} className="mt-4">
+          {formData.parentCommentId && parentAuthor && (
+            <p className="mb-2 text-sm text-muted-foreground">
+              Replying to{" "}
+              <strong>
+                {parentAuthor}
+                {"’s"} comment
+              </strong>
+              {"  "}
+              <button
+                type="button"
+                onClick={handleCancelReply}
+                className="underline"
+              >
+                Cancel
+              </button>
+            </p>
           )}
-          <form onSubmit={handleSubmit}>
-            <DialogTitle className='text-xl font-bold text-center'>
-              Comment on {author} post
-            </DialogTitle>
-
-            <div className="grid gap-4">
-              <div className="grid gap-3">
-                <Textarea
-                  placeholder="Type a comment"
-                  value={formData.content}
-                  onChange={(e) => handleChange("content", e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-
-            <DialogFooter>
-              <Button type="submit" className='text-center w-full rounded font-bold'>
-                {loading ? "Commenting..." : "Post a comment"}
-              </Button>
-            </DialogFooter>
-          </form>
           
-        </DialogContent>       
-      </Dialog> 
-    </>
-  )
-}
+          <Textarea
+            placeholder="Write your comment…"
+            value={formData.content}
+            onChange={handleChange}
+            required
+          />
 
-export default Comments;
+          <DialogFooter>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Posting…" : "Post Comment"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}

@@ -9,9 +9,8 @@ import {
   Map,
   PieChart,
   Settings2,
-
-  Palette,
-  Wrench,
+  // Palette,
+  // Wrench,
   UserRoundCog,
   Settings
 } from "lucide-react"
@@ -24,8 +23,12 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { Link } from "react-router-dom"
 
 // This is sample data.
 const data = {
@@ -68,17 +71,17 @@ const data = {
           url: "/settings/profile",
           icon: UserRoundCog
         },
-        {
-          title: "Account",
-          url: "/settings/account",
-          icon: Wrench
-        },
+        // {
+        //   title: "Account",
+        //   url: "/settings/account",
+        //   icon: Wrench
+        // },
         
-        {
-          title: "Appearance",
-          url: "/settings/appearance",
-          icon: Palette
-        },
+        // {
+        //   title: "Appearance",
+        //   url: "/settings/appearance",
+        //   icon: Palette
+        // },
       ],
     },
     // {
@@ -180,6 +183,21 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
+            >
+              <Link to="/">
+                {/* <IconInnerShadowTop className="!size-5" /> */}
+                <span className="text-base font-semibold">Back to home</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
       <SidebarHeader>
         {/* <TeamSwitcher teams={data.teams} /> */}
       </SidebarHeader>

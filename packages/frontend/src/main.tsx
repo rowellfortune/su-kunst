@@ -50,6 +50,11 @@ Amplify.configure({
         region: config.apiGateway.REGION,
       },
       {
+        name: "users",
+        endpoint: config.apiGateway.URL,
+        region: config.apiGateway.REGION,
+      },
+      {
         name: "notifications",
         endpoint: config.apiGateway.URL,
         region: config.apiGateway.REGION,

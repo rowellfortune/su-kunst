@@ -24,6 +24,7 @@ interface BaseItem {
 }
 
 interface PostType extends BaseItem {
+  userId: any;
   entityType: "POST";
 }
 

@@ -17,137 +17,196 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { type ISignUpResult } from "amazon-cognito-identity-js";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
-interface SignupFormValues {
+import { Loader2 } from "lucide-react";
+
+interface SignUpValues {
   username: string;
-  email: string,
-  password: string,
-  confirmPassword: string,
-  confirmationCode: string,
-  attributes: {
-    email: string;
-    "custom:role": string; // ✅ Assign role dynamically
-  },
+  email: string;
+  password: string;
+  confirmPassword: string;
   role: string;
 }
 
-export default function Signup() {
+interface ConfirmValues {
+  confirmationCode: string;
+}
+const COGNITO_USERNAME_REGEX = /^[\p{L}\p{N}\p{P}\p{S}]+$/u
+// Require at least one dot in the domain, with 2+ letter TLD
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
 
-  const form = useForm<SignupFormValues>({
+
+export default function Signup() {
+  const navigate = useNavigate();
+  const { userHasAuthenticated, setUser  } = useAppContext();
+  const [isLoading, setIsLoading] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
+  const [signupUsername, setSignupUsername] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogError, setDialogError] = useState<string>("");
+
+  // 1) Sign-up form
+  const signupForm = useForm<SignUpValues>({
     defaultValues: {
       username: "",
       email: "",
       password: "",
       confirmPassword: "",
-      confirmationCode: "",
-      role: 'artisan'
+      role: "artisan",
     },
     mode: "onChange",
   });
 
-  const nav = useNavigate();
-  const { userHasAuthenticated } = useAppContext();
-  const [isLoading, setIsLoading] = useState(false);
-  const [newUser, setNewUser] = useState<null | ISignUpResult>(null);
+  // 2) Confirmation form
+  const confirmForm = useForm<ConfirmValues>({
+    defaultValues: { confirmationCode: "" },
+    mode: "onChange",
+  });
 
-  async function onSubmit(data: SignupFormValues) {
-    console.log(data);
+  // Handle initial sign-up
+  async function onSignUp(data: SignUpValues) {
     setIsLoading(true);
     try {
-      const newUser = await Auth.signUp({
+      await Auth.signUp({
         username: data.username,
         password: data.password,
         attributes: {
           email: data.email,
-          "custom:role": data.role, // ✅ Assign role dynamically
+          "custom:role": data.role,
         },
-    });
+      });
+      // store for confirmation step
+      setSignupUsername(data.username);
+      setSignupPassword(data.password);
+      setSignupSuccess(true);
       setIsLoading(false);
-      setNewUser(newUser);
-    } catch (e) {
-      onError(e);
+    } catch (e: any) {
+
+      if (e.name === "UsernameExistsException") {
+        signupForm.setError("username", {
+          type: "manual",
+          message: "That username is already taken. Please choose another.",
+        });
+      } else if (
+        e.name === "InvalidParameterException" &&
+        e.message.includes("username")
+      ) {
+        signupForm.setError("username", {
+          type: "manual",
+          message:
+            "Username may only contain letters, numbers or symbols—no spaces.",
+        });
+      } else {
+        signupForm.setError("username", {
+          type: "manual",
+          message: e.message || "An unexpected error occurred.",
+        });
+      }
+
+      setDialogError(e.message);
+      // onError(e);
+      setDialogOpen(true);
       setIsLoading(false);
+     
     }
   }
 
-  async function handleConfirmationSubmit(data: SignupFormValues) {
+  // Handle code confirmation
+  async function onConfirm(data: ConfirmValues) {
     setIsLoading(true);
     try {
-      await Auth.confirmSignUp(data.username, data.confirmationCode);
-      await Auth.signIn(data.username, data.password);
+      await Auth.confirmSignUp(signupUsername, data.confirmationCode);
+      // sign the user in immediately
+      const user = await Auth.signIn(signupUsername, signupPassword);
       userHasAuthenticated(true);
-      nav("/");
+      setUser(user)
+      navigate("/");
     } catch (e) {
       onError(e);
       setIsLoading(false);
     }
   }
 
-  function renderConfirmationForm() {
-    return (
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleConfirmationSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="confirmationCode"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirmation</FormLabel>
-                <FormControl>
-                  <Input type="text" id="confirmationCode" placeholder="shadcn" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button 
-            size={"lg"}
-            type="submit"
-            className="w-full"
-            disabled={!form.formState.isValid || isLoading}
-          >
-            {isLoading && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Sign Up
-          </Button>
-        </form>
-      </Form>
-    );
+  // Resend the confirmation code
+  async function onResendCode() {
+    setIsLoading(true);
+    try {
+      await Auth.resendSignUp(signupUsername);
+      // you might want to show a toast or message here
+    } catch (e) {
+      onError(e);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
-  function renderForm() {
+  function renderSignupForm() {
     return (
-      <div className="max-w-md mx-auto mt-16 p-6 bg-white rounded-lg shadow">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <div className="max-w-7xl mt-16 p-6 bg-white rounded-lg shadow">
+        <Form {...signupForm}>
+          <form onSubmit={signupForm.handleSubmit(onSignUp)} className="space-y-6">
             <FormField
-              control={form.control}
+              control={signupForm.control}
               name="username"
-              rules={{ required: "User is required" }}
-              render={({ field }) => (
+              rules={{
+                required: "Username is required",
+                pattern: {
+                  value: COGNITO_USERNAME_REGEX,
+                  message:
+                    "Username may only contain letters, numbers or symbols—no spaces.",
+                },
+              }}
+              render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel>User</FormLabel>
+                  <FormLabel>Username</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      type="text"
-                      placeholder="JaneDoe"
+                      placeholder="janedoe"
                       autoFocus
+                      onChange={(e) => {
+                        const normalized = e.target.value
+                          .replace(/\s+/g, "");
+                        field.onChange(normalized);
+                      }}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
-                  <FormMessage />
+                  {fieldState.error && (
+                    <FormMessage>
+                      {fieldState.error.message}
+                    </FormMessage>
+                  )}
                 </FormItem>
               )}
             />
 
             <FormField
-              control={form.control}
+              control={signupForm.control}
               name="email"
-              rules={{ required: "Email is required" }}
-              render={({ field }) => (
+              rules={{ 
+                required: "Email is required",
+                pattern: {
+                  // very basic RFC‑style check
+                  value: EMAIL_REGEX,
+                  message:
+                  "Please enter a valid email (including “.com”, “.net”, etc.).",
+                },
+               }}
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
@@ -155,7 +214,119 @@ export default function Signup() {
                       {...field}
                       type="email"
                       placeholder="you@example.com"
-                      autoFocus
+                      autoComplete="email"
+                    />
+                  </FormControl>
+                  {fieldState.error && (
+                    <FormMessage>{fieldState.error.message}</FormMessage>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={signupForm.control}
+              name="password"
+              rules={{ required: "Password is required" }}
+              render={({ field, fieldState  }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="password" placeholder="" />
+                  </FormControl>
+                  {fieldState.error && (
+                    <FormMessage>{fieldState.error.message}</FormMessage>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={signupForm.control}
+              name="confirmPassword"
+              rules={{
+                required: "Please confirm your password",
+                validate: (val) =>
+                  val === signupForm.getValues("password") ||
+                  "Passwords do not match",
+              }}
+              render={({ field,fieldState }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="password" placeholder="" />
+                  </FormControl>
+                  {fieldState.error && (
+                    <FormMessage>{fieldState.error.message}</FormMessage>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            <Button
+              size="lg"
+              type="submit"
+              className="w-full"
+              disabled={!signupForm.formState.isValid || isLoading}
+            >
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Sign Up
+            </Button>
+          </form>
+        </Form>
+
+        {/*  ─── ShadCN AlertDialog ─────────────────────────────────────────────  */}
+        <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <AlertDialogTrigger asChild>
+            {/* you can also trigger this from another button elsewhere */}
+            <div />
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Oops, something went wrong</AlertDialogTitle>
+              <AlertDialogDescription>
+                {dialogError}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setDialogOpen(false)}>
+                Close
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={() => setDialogOpen(false)}>
+                OK
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    );
+  }
+
+  function renderConfirmationForm() {
+    return (
+      <div className="max-w-7xl mt-16 p-6 bg-white rounded-lg shadow">
+        <p className="mb-4">
+          We sent a code to <strong>{signupUsername}</strong>. Enter it below to
+          confirm your account.
+        </p>
+
+        <Form {...confirmForm}>
+          <form
+            onSubmit={confirmForm.handleSubmit(onConfirm)}
+            className=""
+          >
+            <FormField
+              control={confirmForm.control}
+              name="confirmationCode"
+              rules={{ required: "Code is required" }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirmation Code</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Enter code"
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -163,47 +334,29 @@ export default function Signup() {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="password"
-              rules={{ required: "Password is required" }}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input {...field} type="password" placeholder="••••••••" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              rules={{ required: "Password is required" }}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
-                  <FormControl>
-                    <Input {...field} type="password" placeholder="••••••••" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-             <Button
-              type="submit"
-              className="w-full"
-              disabled={!form.formState.isValid || isLoading}
-            >
-              {isLoading && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              Sign Up
-            </Button>
-
+            <div className="flex justify-between items-center">
+              <Button
+                variant="secondary"
+                onClick={onResendCode}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  "Resend Code"
+                )}
+              </Button>
+              <Button
+                size="lg"
+                type="submit"
+                disabled={!confirmForm.formState.isValid || isLoading}
+              >
+                {isLoading && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Confirm
+              </Button>
+            </div>
           </form>
         </Form>
       </div>
@@ -211,8 +364,6 @@ export default function Signup() {
   }
 
   return (
-    <div className="Signup">
-      {newUser === null ? renderForm() : renderConfirmationForm()}
-    </div>
+    <>{signupSuccess ? renderConfirmationForm() : renderSignupForm()}</>
   );
 }

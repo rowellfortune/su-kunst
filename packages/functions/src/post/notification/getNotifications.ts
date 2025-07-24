@@ -6,7 +6,9 @@ import { QueryCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 export const main = RestUtil.restHandler(async (event) => {
-  const userId = event?.requestContext?.authorizer?.iam?.cognitoIdentity?.identityId;
+
+  const full  = event?.requestContext?.authorizer?.iam?.cognitoIdentity?.amr[2];
+  const userId = full.replace(/^.*:/, "");
 
   if (!userId) {
     return JSON.stringify({ error: "Unauthorized" });
@@ -23,6 +25,7 @@ export const main = RestUtil.restHandler(async (event) => {
   };
 
   const result = await dynamoDb.send(new QueryCommand(params));
+  // console.log(result)
 
   return JSON.stringify(result.Items || []);
 });

@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+// import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 import type { OpportunityType } from "@/types/opportunity";
 
@@ -7,10 +7,10 @@ function OpportunitiesComponent({title, pk, type, description, company, attachme
     <div className='mb-5'>
       <div className="bg-white rounded-xl shadow-md overflow-hidden border mx-auto">
         <div className="flex items-center m-4">
-          <Avatar>
+          {/* <Avatar>
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
+          </Avatar> */}
           <div className="">
             <div className="ml-3 text-md font-semibold text-gray-900">{company}</div>
             <div className="ml-3 text-xs font-light text-gray-500">{type}</div>
@@ -18,7 +18,7 @@ function OpportunitiesComponent({title, pk, type, description, company, attachme
         </div>
         <div className='w-full'>
           <div className="p-2">{description}</div>
-          <a href={`/opportunities/${pk}`}>
+          {/* <a href={`/opportunities/${pk}`}> */}
             <div className=" bg-white overflow-hidden">
             
               <img
@@ -32,7 +32,7 @@ function OpportunitiesComponent({title, pk, type, description, company, attachme
               <p>{createdAt}</p>
               </div>
             </div>
-          </a> 
+          {/* </a>  */}
         </div>
       </div>
     </div>

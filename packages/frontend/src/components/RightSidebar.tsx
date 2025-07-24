@@ -10,7 +10,7 @@ import {
   // Filter,
   Calendar as CalendarIcon,
 } from "lucide-react";
-import { useGetAdsQuery, useGetOpportunitiesQuery } from "@/store";
+import { useGetAdsQuery } from "@/store";
 import { Card } from "./ui/card";
 
 // interface MessageItem {
@@ -51,15 +51,15 @@ export const RightSidebar: React.FC = () => {
       // isLoading: adsLoading,
     } = useGetAdsQuery()
 
-  const {
-    data: opportunities = [],
-    // error: oppsError,
-    // isLoading: oppsLoading,
-  } = useGetOpportunitiesQuery()
+  // const {
+  //   data: opportunities = [],
+  //   // error: oppsError,
+  //   // isLoading: oppsLoading,
+  // } = useGetOpportunitiesQuery()
 
   
-    console.log(ads)
-    console.log(opportunities)
+    // console.log(ads)
+    // console.log(opportunities)
 
   return (
     <Card className="bg-white border-l hidden xl:block">

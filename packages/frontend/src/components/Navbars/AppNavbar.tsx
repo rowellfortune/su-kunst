@@ -6,19 +6,41 @@ import { NotificationBell } from "@/components/NotificationBell";
 // import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useGetUserQuery } from '@/store';
 
 export default function Navbar() {
   const { userHasAuthenticated } = useAppContext();
   const navigate = useNavigate();
   const {user} = useContext(AppContext)
   const username = user?.username;
+  const { isAuthenticated } = useAppContext();
+
+
+    // 🔥 Pass userId here, not undefined
+    const effectiveId = user.attributes.sub ?? "";
+    const {
+      data: userInfo,
+      error: userInfoError,
+      isLoading: userInfoLoading,
+    } = useGetUserQuery(effectiveId, { skip: !isAuthenticated || !effectiveId });
+  
+    console.log(userInfoError)
+    console.log(userInfoLoading)
+    // fallback to the passed‑in `author` if we don’t have the full profile yet
+    const avatarUrl   = userInfo?.profile.avatarFileattachment;
+  
 
   return (
     <nav className="flex items-center justify-between px-6 py-4 mb-5 bg-white border-b">
       {/* Brand */}
       <div className="flex items-center space-x-2">
+        <Link to={'/'}>
         <img src="/logo.png" alt="SuKunst Logo" className="h-12 w-12" />
-        <span className="text-xl font-semibold hidden md:inline-block">Su-Kunst</span>
+        </Link>
+        <Link to={'/'}>
+         <span className="text-xl font-semibold hidden md:inline-block">Su-Kunst</span>
+        </Link>
+       
       </div>
 
       {/* Search */}
@@ -41,8 +63,8 @@ export default function Navbar() {
           <DropdownMenuTrigger asChild>
             <button className="flex items-center space-x-2 rounded-full p-1 hover:bg-gray-100">
               <Avatar className="h-8 w-8">
-                <AvatarImage src="/avatar.jpg" alt="User avatar" />
-                <AvatarFallback>JD</AvatarFallback>
+                <AvatarImage src={avatarUrl} alt="User avatar" />
+                <AvatarFallback>{username?.[0]}</AvatarFallback>
               </Avatar>
               <span className="text-sm font-medium">{username}</span>
             </button>

@@ -8,11 +8,14 @@ const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 export const main = RestUtil.restHandler(async (event) => {
   const data = JSON.parse(event.body || "{}");
 
+  const full  = event?.requestContext?.authorizer?.iam?.cognitoIdentity?.amr[2];
+  const userId = full.replace(/^.*:/, "");
+
   const params = {
     TableName: Resource.SuKunst.name,
     Key: {
       // The attributes of the item to be created
-      pk: event?.requestContext?.authorizer?.iam?.cognitoIdentity?.identityId, // The id of the author
+      pk: userId, // The id of the author
       sk: event?.pathParameters?.id, // The id of the note from the path
     },
     // 'UpdateExpression' defines the attributes to be updated

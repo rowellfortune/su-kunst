@@ -3,15 +3,14 @@ import Post from "@/components/newsfeed/Post";
 import { Skeleton } from "@/components/ui/skeleton";
 import AdsComponent from "@/components/adsfeed/AdsComponent";
 import OpportunitiesComponent from "@/components/opportunities/OpportunitiesComponent";
-
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   useGetPostsQuery,
   useGetAdsQuery,
   useGetOpportunitiesQuery,
 } from '@/store/index'
-// import NewPost from "@/components/newsfeed/NewPost";
 import Landing from "./Landing";
+import NewPost from "@/components/newsfeed/NewPost";
 
 // base for all items
 interface BaseItem {
@@ -32,18 +31,18 @@ interface BaseItem {
     | string;
 }
 
-// // a “POST” item
+// a “POST” item
 interface PostType extends BaseItem {
   entityType: "POST";
 }
 
-// // an “AD” item
+// an “AD” item
 interface AdType extends BaseItem {
   entityType: "AD"; 
   company: string;
 }
 
-// // an “OPPORTUNITY” item
+// an “OPPORTUNITY” item
 interface OpportunityType extends BaseItem {
   entityType: "OPPORTUNITY";
   description?: string;
@@ -75,8 +74,6 @@ export default function Home() {
     error: oppsError,
     isLoading: oppsLoading,
   } = useGetOpportunitiesQuery(undefined, { skip: !isAuthenticated });
-
-  console.log(oppsError, adsError, postsError)
 
   // 1) Flatten & shuffle any number of arrays
   function shuffleArrays<T>(...arrays: T[][]): T[] {
@@ -145,7 +142,7 @@ export default function Home() {
   function renderPostsList(feed: FeedItem[]) {
     return (
       <div className="mx-auto">
-        {/* {isAuthenticated ? <NewPost/> : <>Hey</> } */}
+        {isAuthenticated ? <NewPost/> : <>Hey</> }
       {feed.map((item) => {
         switch (item.entityType) {
           case 'POST':
@@ -231,7 +228,7 @@ export default function Home() {
         <ScrollArea className="flex flex-col md:flex-row w-full max-w-xl mx-auto">
           {!postsLoading && !oppsLoading && !adsLoading && !oppsError && !adsError && !postsError && renderPostsList(feed)}
         </ScrollArea>
-        : <h1>gkgf</h1> }
+        : null }
 
         </> 
     );

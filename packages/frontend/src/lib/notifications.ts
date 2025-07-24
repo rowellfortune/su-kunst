@@ -13,6 +13,7 @@ export interface Notification {
 // Fetch latest notifications
 export async function getNotifications(): Promise<Notification[]> {
   const res = await API.get("notifications", '/notifications', {});
+  // console.log(res)
   return res;
 }
 

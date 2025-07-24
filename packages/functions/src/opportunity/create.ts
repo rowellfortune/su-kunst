@@ -8,11 +8,14 @@ const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 export const main = RestUtil.restHandler(async (event) => {
   let data, params;
+  
   if (event.body != null) {
     data = JSON.parse(event.body);
   }
 
-  console.log(event?.requestContext?.authorizer)
+  const full  = event?.requestContext?.authorizer?.iam?.cognitoIdentity?.amr[2];
+  const userId = full.replace(/^.*:/, "");
+
   params = {
     TableName: Resource?.SuKunst?.name,
     Item: {
@@ -23,7 +26,7 @@ export const main = RestUtil.restHandler(async (event) => {
       entityType: "OPPORTUNITY", // 👈 Required for GSI
       type: data.opencall,
       attachment: data.attachment,
-      postedBy: event?.requestContext?.authorizer?.iam?.cognitoIdentity?.identityId,
+      postedBy: userId,
       createdAt: Date.now(),
       status: "active",
     },

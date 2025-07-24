@@ -1,61 +1,235 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
+// src/components/Profile.tsx
+import React, { useEffect, useRef, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { useAppContext } from "@/lib/contextLib";
+import { API } from "aws-amplify";
+import { onError } from "@/lib/errorLib";
+import { s3Upload } from "@/lib/awsLib";
 
-import { useAppContext } from '@/lib/contextLib'
-
-function Profile() {
-  const { isAuthenticated, user } = useAppContext();
-
-  return isAuthenticated && user ? (
-    <div className="w-full overflow-y-hidden p-1">
-      <div>Welcome back, {user.username}!</div>
-      <div className="flex flex-1 flex-col">
-        <div className="flex-none">
-          <h3 className="text-lg font-medium">Profile</h3>
-          <p className="text-muted-foreground text-sm">This is how others will see you on the site.</p>
-        </div>
-      </div>
-      <div data-orientation="horizontal" className="bg-border data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px my-4 flex-none"></div>
-      <div className="faded-bottom h-full w-full overflow-y-auto scroll-smooth pr-4 pb-12">
-        <div className="-mx-1 px-1.5 lg:max-w-xl">
-          <form className="space-y-8">
-            <div data-slot="form-item" className="grid gap-2">
-              <Label htmlFor="username" className="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 data-[error=true]:text-destructive">Username</Label>
-              <Input onChange={() => {console.log('Rowell')}} value={user.username} defaultValue={user.username} />
-              <p data-slot="form-description" id="«rnk»-form-item-description" className="text-muted-foreground text-sm">This is your public display name. It can be your real name or a pseudonym. You can only change this once every 30 days.</p></div>
-              <div data-slot="form-item" className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Select>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select a verified email to display" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
-                  </SelectContent>
-                </Select>
-                <p data-slot="form-description" id="«rnl»-form-item-description" className="text-muted-foreground text-sm">You can manage verified email addresses in your <a href="/">email settings</a>.</p></div><div data-slot="form-item" className="grid gap-2">
-                <Label htmlFor="bio"  className="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 data-[error=true]:text-destructive">Bio</Label>
-                <Textarea onChange={() => {console.log('This is about me')}} placeholder="Tell us a little bit about yourself" name="bio"  value={''}/>
-                <p data-slot="form-description" id="«rnn»-form-item-description" className="text-muted-foreground text-sm">You can <span>@mention</span> other users and organizations to link to them.</p>
-              </div>
-            <button data-slot="button" className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([className*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-9 px-4 py-2 has-[&gt;svg]:px-3" type="submit">Update profile</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  ) : (
-    <div>Please sign in</div>
-  );
+export interface Post {
+  id: string;
+  author: {
+    name: string;
+    avatarUrl: string;
+  };
+  timestamp: string;        // e.g. "2 hrs"
+  content: string;
+  imageUrl?: string;
 }
 
-export default Profile;
+export interface ProfilePageProps {
+  coverUrl: string;
+  avatarUrl: string;
+  name: string;
+  headline?: string;        // e.g. "Software engineer • Suriname"
+  photos: string[];         // list of URLs
+  posts: Post[];
+  createdAt: 1751015236574
+  email: string;
+  entityType: string;
+  avatarFileattachment: string | undefined | File;
+    coverFileattachment: string | undefined | File;
+  pk: string
+  profile: {
+    bio: string;
+    avatarFileattachment: string | undefined;
+    coverFileattachment: string | undefined;
+  }
+  role: string;
+  sk: string;
+  username: string;
+}
+
+export default function Profile() {
+  // refs for files
+  const { isAuthenticated, user } = useAppContext();
+  const userId = user?.attributes.sub ?? "";
+
+  // refs for file uploads
+  const avatarFile = useRef<File | null>(null);
+  const coverFile  = useRef<File | null>(null);
+  
+  const [profile, setProfile] = useState<ProfilePageProps | null>(null)
+
+  console.log(profile)
+
+  // previews
+  const [avatarPreview, setAvatarPreview] = useState<string>("");
+  const [coverPreview, setCoverPreview]   = useState<string>("");
+
+  // other form state
+  const [username, setUsername] = useState(user?.username ?? "");
+  const [bio, setBio]           = useState("");
+
+  // UI state
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError]       = useState<string | null>(null);
+  const [success, setSuccess]   = useState<string | null>(null);
+
+  function updateUserProfile(
+    userId: string,
+    updates: Record<string, string>
+  ) {
+    console.log(updates)
+    // “SuKunstApi” must match the name in your amplify config
+    return API.post("users", `/users/${userId}`, {
+      body: { userId, updates }
+    });
+  }
+
+  // load existing profile
+  useEffect(() => {
+    function loadNote() {
+      return API.get("users", `/users/${userId}`, {});
+    }
+
+    async function onLoad() {
+      try {
+        const profile = await loadNote();
+        setProfile(profile)
+      } catch (e) {
+        onError(e);
+      }
+    }
+
+    onLoad();
+  }, [userId]);
+
+  useEffect(() => {
+    if (profile?.profile?.bio) {
+      setBio(profile.profile.bio);
+    }
+  }, [profile]);
+
+  // reusable handler like in NewPost
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>, target: "avatar" | "cover") {
+    const files = event.currentTarget.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
+    if (target === "avatar") {
+      avatarFile.current = file;
+      setAvatarPreview(URL.createObjectURL(file));
+    } else {
+      coverFile.current = file;
+      setCoverPreview(URL.createObjectURL(file));
+    }
+
+    console.log(file)
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setIsSaving(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      // 1️⃣ upload (if any)
+      const avatarFileattachment = avatarFile.current ? await s3Upload(avatarFile.current) : undefined;
+      const coverFileattachment = coverFile.current ? await s3Upload(coverFile.current) : undefined;
+
+      // send update
+      // 2️⃣ build a Record<string, string> that omits undefined
+          // 2️⃣ build a Record<string, string> that omits undefined
+      const updates: Record<string, string> = {
+        username,
+        bio,
+        // only spread these if they’re defined
+        ...(avatarFileattachment && { avatarFileattachment }),
+        ...(coverFileattachment  && { coverFileattachment  }),
+      };
+
+      // 3️⃣ call your helper
+      const { updatedProfile } = await updateUserProfile(userId, updates);
+
+      setSuccess("Profile updated!");
+      // reset refs so we don’t re‑upload on next save
+      console.log("🔄 updatedProfile:", updatedProfile);
+      avatarFile.current = null;
+      coverFile.current  = null;
+      
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "Something went wrong");
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  if (!isAuthenticated || !user) return <div>Please sign in</div>;
+
+  return (
+    <div className="w-full p-4 space-y-6">
+      <h3 className="text-lg font-medium">Welcome back, {user.username}!</h3>
+
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Cover Upload */}
+        <div className="grid gap-2">
+          <Label htmlFor="cover">Header Image</Label>
+          {coverPreview && <img src={coverPreview} className="w-full h-40 object-cover rounded" />}
+          <img src={profile?.profile?.coverFileattachment} className="w-full h-60 object-cover rounded" />
+          <input
+            id="cover"
+            name="cover"
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleFileChange(e, "cover")}
+            disabled={isSaving}
+          />
+          <p className="text-muted-foreground text-sm">Recommended size: 1200×300px</p>
+        </div>
+
+        {/* Avatar Upload */}
+        <div className="grid gap-2">
+          <Label htmlFor="avatar">Profile Picture</Label>
+          <img src={profile?.profile?.avatarFileattachment} className="w-24 h-24 rounded-full object-cover" />
+          {avatarPreview && <img src={avatarPreview} className="w-24 h-24 rounded-full object-cover" />}
+          <input
+            id="avatar"
+            name="avatar"
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleFileChange(e, "avatar")}
+            disabled={isSaving}
+          />
+          <p className="text-muted-foreground text-sm">Square, at least 200×200px</p>
+        </div>
+
+        {/* Username */}
+        <div className="grid gap-2">
+          <Label htmlFor="username">Username</Label>
+          <Input
+            id="username"
+            value={username}
+            onChange={(e) => setUsername(e.currentTarget.value)}
+            disabled={isSaving}
+          />
+        </div>
+
+        {/* Bio */}
+        <div className="grid gap-2">
+          <Label htmlFor="bio">Bio</Label>
+          <Textarea
+            id="bio"
+            value={bio}
+            onChange={(e) => setBio(e.currentTarget.value)}
+            disabled={isSaving}
+          />
+        </div>
+
+        {/* Submit */}
+        <Button type="submit" disabled={isSaving}>
+          {isSaving ? "Saving…" : "Update Profile"}
+        </Button>
+
+        {/* Feedback */}
+        {error && <p className="text-destructive text-sm">{error}</p>}
+        {success && <p className="text-green-600 text-sm">{success}</p>}
+      </form>
+    </div>
+  );
+}

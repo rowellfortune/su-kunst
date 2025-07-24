@@ -14,8 +14,8 @@ import { RestUtil } from "@su-kunst/core/util";
 const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 export const main = RestUtil.restHandler(async (event) => {
-   let data, commentParams;
-     if (event.body != null) {
+  let data, commentParams;
+  if (event.body != null) {
     data = JSON.parse(event.body);
   }
 
@@ -24,9 +24,13 @@ export const main = RestUtil.restHandler(async (event) => {
   // ─────────────────────────────────────────────────────
   // Extract the authenticated user ID from Cognito
  
-  const userId = event.requestContext.authorizer?.iam.cognitoIdentity.identityId!;
+  // const userId = event.requestContext.authorizer?.iam.cognitoIdentity.identityId!;
   // Extract postId from path parameters
   const postId = event.pathParameters!.postId!;
+
+  const full  = event?.requestContext?.authorizer?.iam?.cognitoIdentity?.amr[2];
+  const userId = full.replace(/^.*:/, "");
+
 
   // ─────────────────────────────────────────────────────
   // 2️⃣ Build DynamoDB keys

@@ -17,6 +17,18 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+
 import { Loader2 } from "lucide-react";
 
 interface SignUpValues {
@@ -30,6 +42,10 @@ interface SignUpValues {
 interface ConfirmValues {
   confirmationCode: string;
 }
+const COGNITO_USERNAME_REGEX = /^[\p{L}\p{N}\p{P}\p{S}]+$/u
+// Require at least one dot in the domain, with 2+ letter TLD
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
+
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -38,6 +54,9 @@ export default function Signup() {
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [signupUsername, setSignupUsername] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogError, setDialogError] = useState<string>("");
 
   // 1) Sign-up form
   const signupForm = useForm<SignUpValues>({
@@ -74,9 +93,34 @@ export default function Signup() {
       setSignupPassword(data.password);
       setSignupSuccess(true);
       setIsLoading(false);
-    } catch (e) {
-      onError(e);
+    } catch (e: any) {
+
+      if (e.name === "UsernameExistsException") {
+        signupForm.setError("username", {
+          type: "manual",
+          message: "That username is already taken. Please choose another.",
+        });
+      } else if (
+        e.name === "InvalidParameterException" &&
+        e.message.includes("username")
+      ) {
+        signupForm.setError("username", {
+          type: "manual",
+          message:
+            "Username may only contain letters, numbers or symbols—no spaces.",
+        });
+      } else {
+        signupForm.setError("username", {
+          type: "manual",
+          message: e.message || "An unexpected error occurred.",
+        });
+      }
+
+      setDialogError(e.message);
+      // onError(e);
+      setDialogOpen(true);
       setIsLoading(false);
+     
     }
   }
 
@@ -111,23 +155,41 @@ export default function Signup() {
 
   function renderSignupForm() {
     return (
-      <div className="max-w-md mx-auto mt-16 p-6 bg-white rounded-lg shadow">
+      <div className="max-w-7xl mt-16 p-6 bg-white rounded-lg shadow">
         <Form {...signupForm}>
-          <form
-            onSubmit={signupForm.handleSubmit(onSignUp)}
-            className="space-y-6"
-          >
+          <form onSubmit={signupForm.handleSubmit(onSignUp)} className="space-y-6">
             <FormField
               control={signupForm.control}
               name="username"
-              rules={{ required: "Username is required" }}
-              render={({ field }) => (
+              rules={{
+                required: "Username is required",
+                pattern: {
+                  value: COGNITO_USERNAME_REGEX,
+                  message:
+                    "Username may only contain letters, numbers or symbols—no spaces.",
+                },
+              }}
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="JaneDoe" autoFocus />
+                    <Input
+                      {...field}
+                      placeholder="janedoe"
+                      autoFocus
+                      onChange={(e) => {
+                        const normalized = e.target.value
+                          .replace(/\s+/g, "");
+                        field.onChange(normalized);
+                      }}
+                      value={field.value ?? ""}
+                    />
                   </FormControl>
-                  <FormMessage />
+                  {fieldState.error && (
+                    <FormMessage>
+                      {fieldState.error.message}
+                    </FormMessage>
+                  )}
                 </FormItem>
               )}
             />
@@ -135,8 +197,16 @@ export default function Signup() {
             <FormField
               control={signupForm.control}
               name="email"
-              rules={{ required: "Email is required" }}
-              render={({ field }) => (
+              rules={{ 
+                required: "Email is required",
+                pattern: {
+                  // very basic RFC‑style check
+                  value: EMAIL_REGEX,
+                  message:
+                  "Please enter a valid email (including “.com”, “.net”, etc.).",
+                },
+               }}
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
@@ -144,9 +214,12 @@ export default function Signup() {
                       {...field}
                       type="email"
                       placeholder="you@example.com"
+                      autoComplete="email"
                     />
                   </FormControl>
-                  <FormMessage />
+                  {fieldState.error && (
+                    <FormMessage>{fieldState.error.message}</FormMessage>
+                  )}
                 </FormItem>
               )}
             />
@@ -155,13 +228,15 @@ export default function Signup() {
               control={signupForm.control}
               name="password"
               rules={{ required: "Password is required" }}
-              render={({ field }) => (
+              render={({ field, fieldState  }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input {...field} type="password" placeholder="••••••••" />
+                    <Input {...field} type="password" placeholder="" />
                   </FormControl>
-                  <FormMessage />
+                  {fieldState.error && (
+                    <FormMessage>{fieldState.error.message}</FormMessage>
+                  )}
                 </FormItem>
               )}
             />
@@ -175,13 +250,15 @@ export default function Signup() {
                   val === signupForm.getValues("password") ||
                   "Passwords do not match",
               }}
-              render={({ field }) => (
+              render={({ field,fieldState }) => (
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input {...field} type="password" placeholder="••••••••" />
+                    <Input {...field} type="password" placeholder="" />
                   </FormControl>
-                  <FormMessage />
+                  {fieldState.error && (
+                    <FormMessage>{fieldState.error.message}</FormMessage>
+                  )}
                 </FormItem>
               )}
             />
@@ -197,13 +274,37 @@ export default function Signup() {
             </Button>
           </form>
         </Form>
+
+        {/*  ─── ShadCN AlertDialog ─────────────────────────────────────────────  */}
+        <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <AlertDialogTrigger asChild>
+            {/* you can also trigger this from another button elsewhere */}
+            <div />
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Oops, something went wrong</AlertDialogTitle>
+              <AlertDialogDescription>
+                {dialogError}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setDialogOpen(false)}>
+                Close
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={() => setDialogOpen(false)}>
+                OK
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     );
   }
 
   function renderConfirmationForm() {
     return (
-      <div className="max-w-md mx-auto mt-16 p-6 bg-white rounded-lg shadow">
+      <div className="max-w-7xl mt-16 p-6 bg-white rounded-lg shadow">
         <p className="mb-4">
           We sent a code to <strong>{signupUsername}</strong>. Enter it below to
           confirm your account.
@@ -212,7 +313,7 @@ export default function Signup() {
         <Form {...confirmForm}>
           <form
             onSubmit={confirmForm.handleSubmit(onConfirm)}
-            className="space-y-6"
+            className=""
           >
             <FormField
               control={confirmForm.control}
@@ -263,6 +364,6 @@ export default function Signup() {
   }
 
   return (
-    <div className="Signup">{signupSuccess ? renderConfirmationForm() : renderSignupForm()}</div>
+    <>{signupSuccess ? renderConfirmationForm() : renderSignupForm()}</>
   );
 }

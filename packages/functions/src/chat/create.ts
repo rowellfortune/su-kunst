@@ -12,6 +12,8 @@ export const main = RestUtil.restHandler(async (event) => {
   if (event.body != null) {
     data = JSON.parse(event.body);
   }
+  const full  = event?.requestContext?.authorizer?.iam?.cognitoIdentity?.amr[2];
+  const userId = full.replace(/^.*:/, "");
 
   params = {
     TableName: Resource?.SuKunst?.name,
@@ -22,7 +24,7 @@ export const main = RestUtil.restHandler(async (event) => {
       description: data.description,
       entityType: "OPPORTUNITY", // 👈 Required for GSI
       type: data.type,
-      postedBy: event?.requestContext?.authorizer?.iam?.cognitoIdentity?.identityId,
+      postedBy: userId,
       createdAt: Date.now(),
       status: "active",
     },

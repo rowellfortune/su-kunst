@@ -15,6 +15,7 @@ export default function Reactions({ postId }: any) {
   const {isAuthenticated } = useAppContext();
   const { liked, count, loading, setLiked, setCount } = usePostLikes(postId);
 
+  console.log(usePostLikes(postId), 'Liked')
   // track only the toggle‑call loading
   const [toggling, setToggling] = useState(false);
 
@@ -30,6 +31,7 @@ export default function Reactions({ postId }: any) {
           body: {user}
         });
         // { liked: boolean, count: number }
+        console.log(response, 'Repsonse From Post')
         setLiked(response.liked);
         setCount(response.count);
       } catch (error) {
@@ -41,6 +43,7 @@ export default function Reactions({ postId }: any) {
   };
 
   const isBusy = loading || toggling;
+
 
   return (
     <button
@@ -57,6 +60,7 @@ export default function Reactions({ postId }: any) {
           ? <Heart color='#ff0000' size={20}/>
           : <Heart  size={16}/>
       }
+      
       <span className={`
         ${liked ? "text-#6fff00-600" : "text-gray-600 hover:text-red-600"}
       `}>{count}</span>

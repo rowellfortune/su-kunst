@@ -5,7 +5,7 @@ import { Bell } from "lucide-react"; // or your icon library
 import NotificationList from "@/components/NotificationList";
 
 export const NotificationBell: FC = () => {
-  const { notifications, loading, unreadCount } = useNotifications();
+  const { notifications, loading} = useNotifications(60000);
   const [open, setOpen] = useState(false);
 
   function markOneAsRead(sk: string): Promise<void> {
@@ -20,9 +20,9 @@ export const NotificationBell: FC = () => {
         className="p-2 hover:bg-gray-100 rounded-full"
       >
         <Bell size={20} />
-        {unreadCount > 0 && (
+        {notifications.length > 0 && (
           <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
-            {unreadCount}
+            {notifications.length}
           </span>
         )}
       </button>

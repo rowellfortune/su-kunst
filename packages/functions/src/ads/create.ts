@@ -9,6 +9,9 @@ const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 export const main = RestUtil.restHandler(async (event) => {
   let data, params;
 
+  const full  = event?.requestContext?.authorizer?.iam?.cognitoIdentity?.amr[2];
+  const userId = full.replace(/^.*:/, "");
+
   if (event.body != null) {
     data = JSON.parse(event.body);
   }
@@ -30,7 +33,7 @@ export const main = RestUtil.restHandler(async (event) => {
       link: data.link,
       entityType: "AD", // 👈 Required for GSI
       attachment: data.attachment,
-      postedBy: event?.requestContext?.authorizer?.iam?.cognitoIdentity?.identityId,
+      postedBy: userId,
       createdAt: Date.now(),
       status: "published",
       startDate: startDate,          // new: e.g. Date.parse("2025-07-20T00:00:00Z")

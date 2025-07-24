@@ -14,15 +14,38 @@ export const postConfirmationLambda = new sst.aws.Function("PostConfirmationLamb
 
 // ✅ 1. Cognito User Pool with aliases
 export const userPool = new aws.cognito.UserPool("UserPool", {
+
   aliasAttributes: ["email", "preferred_username"],
+
   autoVerifiedAttributes: ["email"],
+
   schemas: [
     { name: "email", required: true, attributeDataType: "String" },
     { name: "preferred_username", required: false, attributeDataType: "String" },
   ],
+
   lambdaConfig: {
     postConfirmation: postConfirmationLambda.arn,
   },
+
+  accountRecoverySetting: {
+    recoveryMechanisms: [
+      {
+        // ONLY allow recovery via the user’s verified email
+        name:    "verified_email",
+        priority: 1,
+      }
+    ]
+  },
+
+  // ◉ Use Cognito’s default SES; no Pulumi enum needed
+  emailConfiguration: {
+    emailSendingAccount:     "COGNITO_DEFAULT",      // literal string
+    replyToEmailAddress:     "no-reply@yourdomain.com",
+    // from?: string;          // you can also set a custom From address here
+    // sourceArn?: string;     // or supply your own SES identity ARN
+  },
+
 });
 
 new aws.lambda.Permission("AllowCognitoInvokePostConfirmation", {

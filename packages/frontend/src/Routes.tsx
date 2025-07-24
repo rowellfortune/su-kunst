@@ -22,6 +22,8 @@ import AdminDashboard from "./containers/admin/AdminDashboard";
 import Settings from "./containers/settings/Settings";
 import Profile from "./containers/settings/Profile";
 
+import UserProfile from "./containers/UserProfile";
+
 // Inbox
 import Inbox from "./containers/Inbox";
 import NewPost from "./containers/NewPost";
@@ -42,6 +44,8 @@ import AppLayout from "./layout/applayout";
 import Account from "./containers/settings/Account";
 import Appearance from "./containers/settings/Appearance";
 import Notifications from "./containers/settings/Notifications";
+import ProfileLayout from "./layout/profile";
+import ForgotPassword from "./containers/ForgotPassword";
 
 export default function Links() {
   return (
@@ -84,7 +88,17 @@ export default function Links() {
 
       <Route path="/login" 
         element={
-          <Landinglayout children={<Login />} />
+          <UnauthenticatedRoute>
+            <Landinglayout children={<Login />} />
+          </UnauthenticatedRoute>
+        } 
+      />
+
+      <Route 
+        path="/profile/:id" 
+        element={
+          
+          <ProfileLayout children={ <UserProfile />} />
         } 
       />
 
@@ -98,12 +112,23 @@ export default function Links() {
         } 
       />
 
+      <Route 
+        path="/forgot-password" 
+        element={
+          <UnauthenticatedRoute>
+            <Landinglayout children={ <ForgotPassword />} />
+          </UnauthenticatedRoute>
+        } 
+      />
+
       {/* Artist Auth screens */}
       <Route 
         path="/artist/signup"
         element={ 
           <UnauthenticatedRoute>
-            <ArtistSignup />
+            <Landinglayout 
+              children={ <ArtistSignup />} 
+            />
           </UnauthenticatedRoute>
         } 
       />

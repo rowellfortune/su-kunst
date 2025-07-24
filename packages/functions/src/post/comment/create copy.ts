@@ -1,4 +1,3 @@
-// src/functions/createComment.ts
 import * as uuid from "uuid";
 import { Resource } from "sst";
 import { RestUtil, GraphqlUtil } from "@su-kunst/core/util";
@@ -10,62 +9,53 @@ const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 export const main = RestUtil.restHandler(async (event) => {
   let data, commentParams;
 
-  // 1️⃣ Parse input
-  const body = event.body ? JSON.parse(event.body) : {};
-  const { postId, content, user, parentCommentId, userId } = body;
-  console.log(body)
-
   if (event.body != null) {
     data = JSON.parse(event.body);
   }
 
-  // 2️⃣ Generate IDs and keys
   const commentId = uuid.v1();
-  const pk = postId; 
-  const sk = parentCommentId
-    ? `COMMENT#${parentCommentId}#Reply#${commentId}`
-    : `COMMENT#${commentId}`;
-
-  const now = Date.now();
 
   commentParams = {
     TableName: Resource?.SuKunst?.name,
     Item: {
-      pk,
-      sk,
-      commentId,
-      parentCommentId: parentCommentId || null,
+      pk: `COMMENT#${commentId}`,
+      sk: `DETAILS#${data.postId}`,
+      content: data.content,
       entityType: "COMMENT",
-      content,
-      user,
-      createdAt: now,
+      user: data.user,
+      createdAt: Date.now(),
     },
   };
 
-  // 3️⃣ Write the comment
   await dynamoDb.send(new PutCommand(commentParams));
 
-  // 4️⃣ Fetch post to notify its owner (if different)
+  // Fetch the post to find the owner
   const post = await dynamoDb.send(
     new GetCommand({
-      TableName: Resource.SuKunst.name,
-      Key: { pk: postId, sk: `DETAILS#${postId}` },
-  }));
+      TableName: Resource?.SuKunst?.name,
+      Key: {
+        pk: data.postId,
+        sk: `DETAILS#${data.postId}`,
+      },
+    })
+  );
 
-  const postOwner = post.Item?.postedBy;
-  console.log(postOwner, ':Postowner')
-  console.log(user, ': user')
-  if (postOwner && postOwner !== userId) {
+  const postOwnerId = post.Item?.postedBy;
+  const commentAuthorId = data.user;
+
+  if (postOwnerId && postOwnerId !== commentAuthorId) {
 
     const notification = {
-      pk: `USER#${postOwner}`,
+      pk: `USER#${postOwnerId}`,
       sk: `NOTIFICATION#${uuid.v4()}`,
       entityType: "NOTIFICATION",
-      message: `${user} commented on your post`,
-      postId,
+      message: `${commentAuthorId} commented on your post`,
+      postId: data.postId,
       read: false,
-      createdAt: now,
+      createdAt: Date.now(),
     };
+
+    console.log(notification)
 
     await dynamoDb.send(new PutCommand({
       TableName: Resource?.SuKunst?.name,
@@ -73,7 +63,7 @@ export const main = RestUtil.restHandler(async (event) => {
     }));
   }
 
-  return JSON.stringify(commentParams);
+  return createComment(commentParams);
 });
 
 export const createComment = async (params: any) => {

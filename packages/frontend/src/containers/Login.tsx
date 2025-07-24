@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Auth } from "aws-amplify";
 import { onError } from "@/lib/errorLib";
@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface LoginFormValues {
   username: string;
@@ -52,59 +53,85 @@ export default function Login() {
   }
 
   return (
-    <div className="mx-auto p-6 bg-white rounded-lg shadow">
-      {/* Provide RHF context to all FormField components */}
-      <Form {...form}>
-        {/* Native form tag to handle onSubmit */}
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
-          <FormField
-            control={form.control}
-            name="username"
-            rules={{ required: "Email is required" }}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="text"
-                    placeholder="you@example.com"
-                    autoFocus
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
+    <div>
+      <Card>
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">Welcome back</CardTitle>
+          <CardDescription>
             
-            name="password"
-            rules={{ required: "Password is required" }}
-            render={({ field }) => (
-              <FormItem  className="w-full my-5">
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input {...field} type="password" placeholder="s0MeThin4s@fe" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            {/* Native form tag to handle onSubmit */}
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
+              <FormField
+                control={form.control}
+                name="username"
+                rules={{ required: "Email is required" }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email or Username</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="text"
+                        placeholder="you@example.com / username"
+                        autoFocus
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <Button
-            type="submit"
-            className="w-full my-3"
-            disabled={!form.formState.isValid || isLoading}
-          >
-            {isLoading && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Login
-          </Button>
-        </form>
-      </Form>
+              <FormField
+                control={form.control}
+                
+                name="password"
+                rules={{ required: "Password is required" }}
+                render={({ field }) => (
+                  <FormItem  className="w-full my-5">
+                  
+                    <div className="flex items-center">
+                      <FormLabel>Password</FormLabel>
+                        {/* <Label htmlFor="password">Password</Label> */}
+                        <Link to="/forgot-password"
+                          className="ml-auto text-sm underline-offset-4 hover:underline"
+                        >
+                          Forgot your password?
+                        </Link>
+                      </div>
+                    <FormControl>
+                      
+                      <Input {...field} type="password" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                type="submit"
+                className="w-full my-3"
+                disabled={!form.formState.isValid || isLoading}
+              >
+                {isLoading && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Login
+              </Button>
+            </form>
+          </Form>
+          
+          <div className="text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link to="/signup"  className="underline underline-offset-4">
+              Sign up
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
