@@ -2,7 +2,7 @@
 
 import type { OpportunityType } from "@/types/opportunity";
 
-function OpportunitiesComponent({title, pk, type, description, company, attachment, createdAt}: OpportunityType) {
+function OpportunitiesComponent({title, type, description, company, attachment, createdAt}: OpportunityType) {
   return (
     <div className='mb-5'>
       <div className="bg-white rounded-xl shadow-md overflow-hidden border mx-auto">
