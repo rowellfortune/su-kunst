@@ -39,7 +39,7 @@ export const RightSidebar: React.FC = () => {
 
   function RightPanel() {
     return (
-      <aside className="w-80 p-6  space-y-8">
+      <aside className="w-80 p-6 hidden md:block space-y-8">
         <div className="bg-white rounded-xl p-4 text-center">
           <div
             className="h-24 rounded-t-xl bg-gradient-to-r from-pink-500 to-purple-500"

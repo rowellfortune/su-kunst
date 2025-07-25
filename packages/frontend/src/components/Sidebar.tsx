@@ -52,12 +52,12 @@ export const Sidebar: FC = () => {
   const currentPath = location.pathname;
 
   return (
-    <aside className="w-80 p-6 hidden md:block space-y-8">
+    <aside className="md:w-80 md:p-6 sm:px-6 md:block space-y-8">
       {/* {Sidebar()} */}
-      <Card className=" border-r hidden lg:block">
-        <ScrollArea className="h-full p-4">
+      <Card className=" border-r py-0 md:py-1">
+        <ScrollArea className="h-full p-4 mx-auto md:mx-px">
           <nav>
-            <ul className="space-y-2">
+            <ul className="flex sm:flex-row space-x-2 space-y-0 overflow-x-auto md:flex-col md:space-x-0 text-center md:space-y-2">
               {navItems.map(({ label, icon: Icon, badge, url }) => {
                 const isActive = currentPath === url;
                 return (
@@ -70,8 +70,8 @@ export const Sidebar: FC = () => {
                           : "text-gray-700 hover:bg-gray-100"
                       }`}
                     >
-                      <Icon className="h-6 w-6 mr-3 flex-shrink-0" />
-                      <span className="flex-1 text-left">{label}</span>
+                      <Icon className="h-6 w-6 md:mr-3 flex-shrink-0 text-center" />
+                      <span className="flex-1 md:text-left hidden md:block text-center">{label}</span>
                       {badge != null && (
                         <span
                           className={`ml-auto text-xs font-semibold rounded-full px-2 py-0.5 ${
