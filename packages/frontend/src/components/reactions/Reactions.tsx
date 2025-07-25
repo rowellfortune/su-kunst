@@ -15,7 +15,6 @@ export default function Reactions({ postId }: any) {
   const {isAuthenticated } = useAppContext();
   const { liked, count, loading, setLiked, setCount } = usePostLikes(postId);
 
-  console.log(usePostLikes(postId), 'Liked')
   // track only the toggle‑call loading
   const [toggling, setToggling] = useState(false);
 
