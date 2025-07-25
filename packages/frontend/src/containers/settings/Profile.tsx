@@ -8,6 +8,7 @@ import { useAppContext } from "@/lib/contextLib";
 import { API } from "aws-amplify";
 import { onError } from "@/lib/errorLib";
 import { s3Upload } from "@/lib/awsLib";
+import { Card, CardHeader } from "@/components/ui/card";
 
 export interface Post {
   id: string;
@@ -165,6 +166,13 @@ export default function Profile() {
   return (
     <div className="w-full p-4 space-y-6">
       <h3 className="text-lg font-medium">Welcome back, {user.username}!</h3>
+
+      <Card>
+        <CardHeader>
+          <h1 className="text-2xl font-bold">Profile information</h1>
+          <p>Update your public profile details</p>
+        </CardHeader>
+      </Card>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Cover Upload */}
