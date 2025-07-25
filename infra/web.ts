@@ -6,6 +6,10 @@ const region = aws.getRegionOutput().name;
 
 export const frontend = new sst.aws.StaticSite("Frontend", {
   path: "packages/frontend",
+  domain: {
+    name: $app.stage === "live" ? "su-kunst.com" : undefined,
+    redirects: ["www.su-kunst.com"],
+  },
   build: {
     output: "dist",
     command: "npm run build",
