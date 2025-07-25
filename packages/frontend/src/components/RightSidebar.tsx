@@ -10,7 +10,11 @@ export const RightSidebar: React.FC = () => {
     error: postsError,
     isLoading: postsLoading,
   } = useGetPostsQuery(undefined, { skip: !isAuthenticated });
+  
   const { data: users, isLoading: usersAreLoading } = useListUsersQuery();
+
+  console.log(users)
+
   const {user} = useContext(AppContext)
   const username = user?.username;
   const effectiveId = user.attributes.sub ?? "";
@@ -94,7 +98,7 @@ export const RightSidebar: React.FC = () => {
               <li key={pk} className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <img
-                    src={profile.avatarFileattachment}
+                    src={profile?.avatarFileattachment}
                     alt={username}
                     className="h-8 w-8 rounded-full"
                   />
