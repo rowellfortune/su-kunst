@@ -8,7 +8,7 @@ export default function Events() {
   console.log(events)
   function renderEventsList(events: any[] | undefined ) {
     return (
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 w-full">
         {events?.map(({pk, title,  createdAt, attachment }) => (
           <div key={pk} >
             {isLoading
@@ -63,8 +63,8 @@ export default function Events() {
  
   function renderPosts() {
     return (
-      <ScrollArea className="flex flex-col md:flex-row w-full md:max-w-3xl container mx-auto">
-        Upcoming Event
+      <ScrollArea className="flex flex-col md:flex-row w-full container mx-auto">
+        <h1 className="text-2xl text-center font-bold my-5">Upcoming Event</h1>
         {!isLoading && renderEventsList(events)}
       </ScrollArea>
     );
