@@ -141,48 +141,48 @@ export default function Home() {
 
   function renderPostsList(feed: FeedItem[]) {
     return (
-      <div className="mx-auto">
-        {isAuthenticated ? <NewPost/> : <>Hey</> }
-      {feed.map((item) => {
-        switch (item.entityType) {
-          case 'POST':
-            if (!item.content) return null;
-            return  (
-            <Post pk={item?.pk} 
-                      key={item?.pk} 
-                      title={item.title} 
-                      attachment={item.attachment} 
-                      content={item.content} 
-                      author={item.author} 
-                      userId={item.postedBy} 
-                      createdAt={item.createdAt} 
-                      postedBy={item.postedBy}
-                    />
-            // <div key={item.pk} >Post</div>
-                  );
-          case 'AD':
-            return  (<AdsComponent pk={item.pk}  
-                      key={item.pk} 
-                      attachment={item.attachment} 
-                      title={item.title} 
-                      content={item.content}  
-                      company={item?.company ?? "unknown-company"} 
-                      link={item?.link ?? "#"}
-                    />);
-          case 'OPPORTUNITY':
-            return  (<OpportunitiesComponent pk={item.pk} 
-                      key={item.pk} 
-                      attachment={item.attachment} 
-                      title={item.title} 
-                      description={item?.description} 
-                      company={item?.company} 
-                      type={item?.type} 
-                      createdAt={item.entityType}
-                    />);
-          default:
-            return <div> Error</div>;
-        }
-      })}
+      <div className="mt-6">
+        {isAuthenticated ? <NewPost/> : null }
+        {feed.map((item) => {
+          switch (item.entityType) {
+            case 'POST':
+              if (!item.content) return null;
+              return  (
+              <Post pk={item?.pk} 
+                        key={item?.pk} 
+                        title={item.title} 
+                        attachment={item.attachment} 
+                        content={item.content} 
+                        author={item.author} 
+                        userId={item.postedBy} 
+                        createdAt={item.createdAt} 
+                        postedBy={item.postedBy}
+                      />
+              // <div key={item.pk} >Post</div>
+                    );
+            case 'AD':
+              return  (<AdsComponent pk={item.pk}  
+                        key={item.pk} 
+                        attachment={item.attachment} 
+                        title={item.title} 
+                        content={item.content}  
+                        company={item?.company ?? "unknown-company"} 
+                        link={item?.link ?? "#"}
+                      />);
+            case 'OPPORTUNITY':
+              return  (<OpportunitiesComponent pk={item.pk} 
+                        key={item.pk} 
+                        attachment={item.attachment} 
+                        title={item.title} 
+                        description={item?.description} 
+                        company={item?.company} 
+                        type={item?.type} 
+                        createdAt={item.entityType}
+                      />);
+            default:
+              return <div> Error</div>;
+          }
+        })}
       </div>
     );
   }

@@ -9,15 +9,15 @@ export const main = RestUtil.restHandler(async (event) => {
   const params = {
     TableName: Resource.SuKunst.name,
     IndexName: "entityTypeIndex", // 👈 Use your new GSI
-    KeyConditionExpression: "entityType = :opportunity",
+    KeyConditionExpression: "entityType = :user",
     ExpressionAttributeValues: {
-      ":opportunity": "OPPORTUNITY",
+      ":user": "USER",
     },
   };
 
   const result = await dynamoDb.send(new QueryCommand(params));
 
-  // console.log(result);
+  console.log(result);
 
 
   return JSON.stringify(result.Items);

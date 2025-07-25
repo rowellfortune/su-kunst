@@ -14,6 +14,8 @@ export const main = RestUtil.restHandler(async (event) => {
   if (!event.body) throw new Error("Missing request body");
   const { userId, updates } = JSON.parse(event.body);
 
+  console.log(updates)
+
   if (!userId || typeof userId !== "string")
     throw new Error("`userId` must be a string");
   if (!updates || typeof updates !== "object")
@@ -23,6 +25,10 @@ export const main = RestUtil.restHandler(async (event) => {
   const profileKeys = new Set<string>([
     "bio",
     "picture",
+    "website",
+    "location",
+    "name",
+    "username",
     "avatarFileattachment",
     "coverFileattachment",
     // add any other nested profile‑only keys here

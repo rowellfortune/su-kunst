@@ -1,152 +1,126 @@
-import React from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-// import { Input } from "@/components/ui/input";
-// import { Button } from "@/components/ui/button";
-// import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  // Edit2,
-  // Search,
-  // Filter,
-  Calendar as CalendarIcon,
-} from "lucide-react";
-import { useGetAdsQuery } from "@/store";
-import { Card } from "./ui/card";
-
-// interface MessageItem {
-//   name: string;
-//   avatar: string;
-//   initials: string;
-//   online: boolean;
-// }
-
-interface EventItem {
-  title: string;
-  subtitle?: string;
-}
-
-// const messages: MessageItem[] = [
-//   { name: "Roger Korsgaard", avatar: "/avatars/roger.png", initials: "RK", online: true },
-//   { name: "Terry Torff", avatar: "/avatars/terry.png", initials: "TT", online: true },
-//   { name: "Angel Bergson", avatar: "/avatars/angel.png", initials: "AB", online: true },
-//   { name: "Emerson Gouse", avatar: "/avatars/emerson.png", initials: "EG", online: true },
-//   { name: "Corey Baptista", avatar: "/avatars/corey.png", initials: "CB", online: true },
-//   { name: "Zain Culhane", avatar: "/avatars/zain.png", initials: "ZC", online: true },
-//   { name: "Randy Lipshutz", avatar: "/avatars/randy.png", initials: "RL", online: true },
-//   { name: "Craig Botosh", avatar: "/avatars/craig.png", initials: "CB", online: true },
-// ];
-
-const events: EventItem[] = [
-  { title: "10 Events Invites" },
-  { title: "Design System Collaboration", subtitle: "Thu – Harpoon Mall, YK" },
-  { title: "Web Dev 2.0 Meetup", subtitle: "Yoshkar-Ola, Russia" },
-  { title: "Prada's Invitation Birthday" },
-];
+import React, { useContext, useMemo } from "react";
+import {ScanEye, Users} from "lucide-react";
+import {useGetPostsQuery, useGetUserQuery, useListUsersQuery} from "@/store";
+import { AppContext, useAppContext } from "@/lib/contextLib";
 
 export const RightSidebar: React.FC = () => {
-
-    const {
-      data: ads = [],
-      // error: adsError,
-      // isLoading: adsLoading,
-    } = useGetAdsQuery()
-
-  // const {
-  //   data: opportunities = [],
-  //   // error: oppsError,
-  //   // isLoading: oppsLoading,
-  // } = useGetOpportunitiesQuery()
-
+  const {isAuthenticated } = useAppContext();
+  const {
+    data: posts = [],
+    error: postsError,
+    isLoading: postsLoading,
+  } = useGetPostsQuery(undefined, { skip: !isAuthenticated });
   
-    // console.log(ads)
-    // console.log(opportunities)
+  const { data: users, isLoading: usersAreLoading } = useListUsersQuery();
 
-  return (
-    <Card className="bg-white border-l hidden xl:block">
-      <ScrollArea className="h-full p-4 space-y-6">
-        <div className="space-y-3">
-          {ads.map((item) => (
-            // <div>{item.company}</div>
-            <li key={item.pk} className="flex items-center space-x-3">
-              <div className="relative">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={item.attachment} alt={item.company} />
-                  <AvatarFallback>{item.author}</AvatarFallback>
-                </Avatar>
-                {/* {item.type && (
-                  <span className="absolute bottom-0 right-0 block h-2 w-2 rounded-full bg-green-400 ring-1 ring-white" />
-                )} */}
-              </div>
-              <span className="text-sm font-medium">{item.title}</span>
-            </li>
-          ))}
+  console.log(users)
+
+  const {user} = useContext(AppContext)
+  const username = user?.username;
+  const effectiveId = user.attributes.sub ?? "";
+ 
+  const {
+    data: userInfo,
+    error: userInfoError,
+    isLoading: userInfoLoading,
+  } = useGetUserQuery(effectiveId, { skip: !isAuthenticated || !effectiveId });
+  
+  console.log(postsError)
+  const avatarUrl   = userInfo?.profile.avatarFileattachment;
+  
+  console.log(userInfoLoading)
+  console.log(userInfoError)
+
+  const userPosts = useMemo(
+    () => posts.filter((p) => p.author === username),
+    [posts, username]
+  );
+  const postCount = userPosts.length;
+
+  function RightPanel() {
+    return (
+      <aside className="w-80 p-6 hidden md:block space-y-8">
+        <div className="bg-white rounded-xl p-4 text-center">
+          <div
+            className="h-24 rounded-t-xl bg-gradient-to-r from-pink-500 to-purple-500"
+          />
+          <img
+            src={avatarUrl}
+            className="-mt-12 mx-auto h-20 w-20 rounded-full border-4 border-purple-900"
+          />
+          <h3 className="mt-2 font-bold">{username}</h3>
+          <p className="text-sm">@{username.toLowerCase()}</p>
+          <p className="mt-2 text-xs">
+            {userInfo?.profile?.bio ? <>{userInfo.profile?.bio}</> : <>[Your intro goes here]</>}
+          </p>
+          <div className="mt-4 flex justify-center space-x-2">
+            {/* <button className="px-4 py-1 bg-pink-500 rounded-full font-semibold hover:opacity-90">
+              Follow
+            </button> */}
+            {/* <button className="px-4 py-1 border border-gray-600 rounded-full font-semibold hover:border-white">
+              Message
+            </button> */}
+          </div>
+          <div className="mt-4 flex justify-around text-xs ">
+            <div>
+              <p className="font-semibold text-xl">{postsLoading ? "…" : `${postCount}`}</p>
+              <p className="text-md">Posts</p>
+            </div>
+            {/* <div>
+              <p className="font-semibold text-white">2.8K</p>
+              <p>Followers</p>
+            </div>
+            <div>
+              <p className="font-semibold text-white">892</p>
+              <p>Following</p>
+            </div> */}
+          </div>
+          {/* <div className="mt-4 text-left text-xs text-gray-400 space-y-1">
+            <p>📍 San Francisco, CA</p>
+            <p>🌐 alexrivera.art</p>
+            <p>🗓 Joined March 2022</p>
+          </div> */}
+          {/* <div className="mt-4 grid grid-cols-3 gap-2">
+            {[1,2,3,4].map((i) => (
+              <div key={i} className="h-12 bg-gray-700 rounded-md" />
+            ))}
+          </div> */}
         </div>
 
-        {/* Messages Section */}
-        {/* <section>
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-lg font-semibold">Messages</h2>
-            <Button variant="ghost" className="p-1">
-              <Edit2 className="h-4 w-4" />
-            </Button>
-          </div>
-
-          <div className="flex items-center space-x-2 mb-4">
-            <div className="relative flex-1">
-              <Input placeholder="Search" className="h-8 pl-8 pr-10" />
-              <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
-            </div>
-            <Button variant="ghost" className="p-2">
-              <Filter className="h-4 w-4" />
-            </Button>
-          </div>
-
-          <Tabs defaultValue="primary" className="mb-4">
-            <TabsList>
-              <TabsTrigger value="primary">Primary</TabsTrigger>
-              <TabsTrigger value="general">General</TabsTrigger>
-              <TabsTrigger value="requests">Requests(4)</TabsTrigger>
-            </TabsList>
-          </Tabs>
-
+        <div className="bg-white rounded-xl p-4">
+           <h4 className="text-xl font-semibold mb-2 flex items-center">
+            <Users className="h-6 w-6 mr-2" />
+            Suggested Artists
+          </h4>
+          {!usersAreLoading ? 
           <ul className="space-y-3">
-            {messages.map((msg) => (
-              <li key={msg.name} className="flex items-center space-x-3">
-                <div className="relative">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={msg.avatar} alt={msg.name} />
-                    <AvatarFallback>{msg.initials}</AvatarFallback>
-                  </Avatar>
-                  {msg.online && (
-                    <span className="absolute bottom-0 right-0 block h-2 w-2 rounded-full bg-green-400 ring-1 ring-white" />
-                  )}
+            {users?.map(({ username, role, pk, profile }) => (
+              <li key={pk} className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <img
+                    src={profile?.avatarFileattachment}
+                    alt={username}
+                    className="h-8 w-8 rounded-full"
+                  />
+                  <div className="text-xs">
+                    <p className="font-semibold">{username}</p>
+                    <p className="text-gray-400">{role}</p>
+                    {/* <p className="text-gray-500">{followers} followers</p>  */}
+                  </div>
                 </div>
-                <span className="text-sm font-medium">{msg.name}</span>
+                <button className="bg-black rounded-md p-3">
+                  <ScanEye className="h-5 w-5 text-white" xlinkTitle="view" />
+                </button>
               </li>
             ))}
-          </ul>
+          </ul>: <>Loading users</> }
+        </div>
+      </aside>
+    );
+  }
 
-          <a href="#" className="mt-4 block text-sm text-blue-500 hover:underline">
-            View All
-          </a>
-        </section> */}
 
-        {/* Events Section */}
-        <section>
-          <h2 className="mb-4 text-lg font-semibold">Events</h2>
-          <ul className="space-y-4 text-sm text-gray-700">
-            {events.map((ev) => (
-              <li key={ev.title} className="flex items-start space-x-2">
-                <CalendarIcon className="h-5 w-5 mt-1 text-gray-500" />
-                <div>
-                  <p className="font-medium">{ev.title}</p>
-                  {ev.subtitle && <p className="text-xs text-gray-500">{ev.subtitle}</p>}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </ScrollArea>
-    </Card>
+  return (
+    <>{RightPanel()}</>
   );
 };
