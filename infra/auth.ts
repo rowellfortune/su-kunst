@@ -107,7 +107,11 @@ export const identityPool = new sst.aws.CognitoIdentityPool("IdentityPool", {
 // Pulumi does not directly support attaching triggers to user pools cleanly unless you use raw AWS Lambda ARNs.
 // Add Cognito User Pool permissions
 new aws.iam.RolePolicy("CognitoUserPoolAccess", {
+<<<<<<< HEAD
   role: 'su-kunst-live-PostConfirmationLambdaRole-rshurhkk',
+=======
+  role: 'su-kunst-demo-PostConfirmationLambdaRole-vahutxfa',
+>>>>>>> demo
   policy: {
     Version: "2012-10-17",
     Statement: [{
