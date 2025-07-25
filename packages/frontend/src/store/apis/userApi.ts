@@ -79,7 +79,7 @@ export const userApi = createApi({
     }),
     // (optional) list all users
     listUsers: builder.query<ProfilePageProps[], void>({
-      query: () => ({ url: `/users/`, method: 'GET' }),
+      query: () => ({ url: `/users`, method: 'GET' }),
       providesTags: (result) =>
         result
           ? [
@@ -91,6 +91,13 @@ export const userApi = createApi({
   }),
 });
 
+console.log(userApi);
+
 export const {
   useGetUserQuery,
+  useLazyListUsersQuery,
+  useListUsersQuery,
+  useLazyGetUserQuery,
+  useUpdateUserMutation,
+  usePrefetch
 } = userApi;

@@ -1,6 +1,7 @@
 // import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 import type { OpportunityType } from "@/types/opportunity";
+import { Link } from "react-router-dom";
 
 function OpportunitiesComponent({title, pk, type, description, company, attachment, createdAt}: OpportunityType) {
   return (
@@ -18,7 +19,7 @@ function OpportunitiesComponent({title, pk, type, description, company, attachme
         </div>
         <div className='w-full'>
           <div className="p-2">{description}</div>
-          {/* <a href={`/opportunities/${pk}`}> */}
+          <Link to={`/opportunities/${pk}`}>
             <div className=" bg-white overflow-hidden">
             
               <img
@@ -32,7 +33,7 @@ function OpportunitiesComponent({title, pk, type, description, company, attachme
               <p>{createdAt}</p>
               </div>
             </div>
-          {/* </a>  */}
+          </Link> 
         </div>
       </div>
     </div>

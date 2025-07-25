@@ -141,8 +141,9 @@ export default function Home() {
 
   function renderPostsList(feed: FeedItem[]) {
     return (
-      <div className="mx-auto">
-        {isAuthenticated ? <NewPost/> : <>Hey</> }
+      <div className="">
+        <header className="text-center mb-6"></header>
+        {isAuthenticated ? <NewPost/> : null }
       {feed.map((item) => {
         switch (item.entityType) {
           case 'POST':
