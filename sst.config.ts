@@ -5,8 +5,8 @@ export default $config({
   app(input) {
     return {
       name: "su-kunst",
-      removal: input?.stage === "production" ? "retain" : "remove",
-      protect: ["production"].includes(input?.stage),
+      removal: input?.stage === "live" ? "retain" : "remove",
+      protect: ["live"].includes(input?.stage),
       home: "aws",
     };
   },
@@ -24,9 +24,6 @@ export default $config({
       Region: aws.getRegionOutput().name,
       IdentityPool: auth.identityPool.id,
       UserPoolClient: auth.userPoolClient.id,
-      // Region: stack.region,
-
     };
   },
-
 });

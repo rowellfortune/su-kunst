@@ -1,12 +1,12 @@
 
 // Create an S3 bucket
 export const bucket = new sst.aws.Bucket("Uploads", {
-  access: "public", // or “cloudfront” / remove for private
+  access: "public",
   cors: {
-    // which origins can talk to this bucket
     allowOrigins: [
-      "http://localhost:5173",
-      "https://d2tfuxwmx5jemo.cloudfront.net",
+      "https://su-kunst.com",                       // ✅ Custom domain
+      "https://www.su-kunst.com",                   // ✅ Optional
+      "https://d1el6r5smmgu9n.cloudfront.net",      // ✅ Default CloudFront
     ],
     // which HTTP methods are allowed
     allowMethods: ["GET", "PUT", "POST", "DELETE", "HEAD"],
@@ -18,6 +18,7 @@ export const bucket = new sst.aws.Bucket("Uploads", {
     maxAge: `${3000} days`,
   },
   transform: {
+    policy:{},
     publicAccessBlock: {
       blockPublicPolicy: false,
       restrictPublicBuckets: false,
