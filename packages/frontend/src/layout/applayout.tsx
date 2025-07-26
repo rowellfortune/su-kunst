@@ -10,7 +10,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="bg-slate-100 h-vh mx-auto">
        {isAuthenticated ?  <AppNavbar /> :  <IndexNavbar />}
-        <main className={`flex ${isAuthenticated ?  `px-2`  :  null} flex-col md:flex-row max-w-7xl mx-auto`}>
+        <main className={`flex ${isAuthenticated ?  `px-2`  :  null} flex-col md:flex-row mx-auto`}>
           {isAuthenticated && <div>
             <Sidebar/>
             </div>}
