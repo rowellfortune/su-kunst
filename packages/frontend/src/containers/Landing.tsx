@@ -13,16 +13,16 @@ function Landing() {
       {/* Top‐left stats */}
       <Card className="absolute left-[30%] right-[30%] top-90 mx-auto space-y-4 bg-black/80 text-white md:grid-cols-3 md:grid">
         <div className="flex flex-col my-[10px] mx-[16px] text-center">
-          <span className="text-4xl">16,08</span>
+          <span className="text-4xl">164+</span>
           <span className="text-lg">Art work</span>
         </div>
         <div className="flex flex-col my-[10px] mx-[16px] text-center">
-          <p className="text-4xl">283<span className="text-2xl">Artist</span></p>
+          <p className="text-4xl">283<span className="text-2xl"></span></p>
           <span className="text-lg">Opencalls</span>
         </div>
         <div className="flex flex-col my-[10px] mx-auto text-center">
-          <p className="text-4xl">14 <span className="text-2xl">Organization</span></p>
-          <span className="text-lg">20 Countries</span>
+          <p className="text-4xl">14+ <span className="text-2xl"></span></p>
+          <span className="text-lg">Organization</span>
         </div>
       </Card>
 

@@ -8,8 +8,8 @@ export const frontend = new sst.aws.StaticSite("Frontend", {
   path: "packages/frontend",
   domain: $app.stage === "live" 
     ? { 
-        name: "su-kunst.com",
-        redirects: ["www.su-kunst.com"],
+        name: "su-kunst.net",
+        redirects: ["www.su-kunst.net"],
         dns: sst.aws.dns({ override: true }),
       } 
     : undefined,

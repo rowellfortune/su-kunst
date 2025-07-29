@@ -7,7 +7,7 @@ export const api = new sst.aws.ApiGatewayV2("Api", {
   domain: $app.stage === "live" 
   ? 
     {
-      name: "api.su-kunst.com",
+      name: "api.su-kunst.net",
       dns: sst.aws.dns({ override: true }),
     } 
   : undefined,
