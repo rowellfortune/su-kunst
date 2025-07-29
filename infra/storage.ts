@@ -5,8 +5,7 @@ export const bucket = new sst.aws.Bucket("Uploads", {
   cors: {
     allowOrigins: [
       "https://su-kunst.com",                       // ✅ Custom domain
-      "https://www.su-kunst.com",                   // ✅ Optional
-      "https://d1el6r5smmgu9n.cloudfront.net",      // ✅ Default CloudFront
+      "https://www.su-kunst.com",                   // ✅ Default CloudFront
     ],
     // which HTTP methods are allowed
     allowMethods: ["GET", "PUT", "POST", "DELETE", "HEAD"],
