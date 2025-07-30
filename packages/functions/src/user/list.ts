@@ -17,7 +17,7 @@ export const main = RestUtil.restHandler(async (event) => {
 
   const result = await dynamoDb.send(new QueryCommand(params));
 
-  // console.log(result);
+  console.log(result);
 
 
   return JSON.stringify(result.Items);
