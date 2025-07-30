@@ -68,9 +68,7 @@ function Post({ author = "", content, userId, attachment, pk, createdAt }: PostT
         <div className="flex space-x-4">
           {isAuthenticated && <Reactions postId={pk} />}
           {isAuthenticated && <Comment author={displayName} pk={pk} userId={userId} postId={pk} />}
-          <ShareComponent />
         </div>
-        <Bookmark className="text-xl w-4 h-4 cursor-pointer" />
       </div>
     </div>
   );
