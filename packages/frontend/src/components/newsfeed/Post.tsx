@@ -1,4 +1,4 @@
-import { Bookmark } from 'lucide-react';
+// import { Bookmark } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { PostType } from "@/types/post";
 import Comment from "../reactions/Comments";
@@ -7,7 +7,7 @@ import { useAppContext } from "@/lib/contextLib";
 import { useGetUserQuery } from '@/store/apis/userApi';  // <-- make sure this points to your RTK Query slice
 import { Separator } from '../ui/separator';
 import Reactions from '../reactions/Reactions';
-import ShareComponent from '../reactions/Share';
+// import ShareComponent from '../reactions/Share';
 import { Link } from 'react-router-dom';
 
 function Post({ author = "", content, userId, attachment, pk, createdAt }: PostType) {
