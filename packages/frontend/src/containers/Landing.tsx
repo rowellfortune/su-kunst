@@ -17,11 +17,19 @@ function Landing() {
           <span className="text-lg">Art work</span>
         </div>
         <div className="flex flex-col my-[10px] mx-[16px] text-center">
+<<<<<<< HEAD
           <p className="text-4xl">283<span className="text-2xl"></span></p>
           <span className="text-lg">Opencalls</span>
         </div>
         <div className="flex flex-col my-[10px] mx-auto text-center">
           <p className="text-4xl">14+ <span className="text-2xl"></span></p>
+=======
+          <p className="text-4xl">283</p>
+          <span className="text-lg">Opencalls</span>
+        </div>
+        <div className="flex flex-col my-[10px] mx-auto text-center">
+          <p className="text-4xl">14</p>
+>>>>>>> demo
           <span className="text-lg">Organization</span>
         </div>
       </Card>
@@ -38,20 +46,6 @@ function Landing() {
           Start free trial
         </button>
       </div>
-
-      {/* Bottom‐center search bar */}
-      {/* <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 max-w-md">
-        <div className="flex items-center bg-white bg-opacity-90 rounded-full overflow-hidden shadow-md">
-          <input
-            type="text"
-            placeholder="Search the web privately"
-            className="flex-grow px-4 py-2 focus:outline-none"
-          />
-          <button className="p-3">
-            <FiSearch size={20} />
-          </button>
-        </div>
-      </div> */}
     </div>
   )
 }
