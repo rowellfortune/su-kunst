@@ -82,7 +82,7 @@ export default function Navbar() {
                   </p>
                 </Link>
               </li>
-            </ul>
+           </ul>
           }
 
           {isAuthenticated ? 
