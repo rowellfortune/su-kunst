@@ -103,6 +103,11 @@ export default function NewOppertunity() {
           onChange={(e) => setTitle(e.target.value)}
           required
         />
+        <Input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+        />
 
         <Textarea
           placeholder="Description"
@@ -118,11 +123,7 @@ export default function NewOppertunity() {
           />
         )}
             
-        <Input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
+        
 
         <select
         id="fruit-select"

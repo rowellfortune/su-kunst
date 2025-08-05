@@ -1,5 +1,7 @@
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
+import { Link } from "react-router-dom";
+
 
 type AdType = {
   pk?: string;
@@ -9,7 +11,7 @@ type AdType = {
   company: string;
   link: string;
 };
-function AdsComponent({attachment, company, title}: AdType) {
+function AdsComponent({attachment, company, title, link}: AdType) {
 
   return (
     <div className='mb-5'>
@@ -26,16 +28,20 @@ function AdsComponent({attachment, company, title}: AdType) {
         </div>
             
         <div>
-          <div className=" bg-white overflow-hidden border">
-            <img
-              className="rounded-m w-full"
-              src={attachment} // Replace with dynamic source if needed
-              alt={attachment}
-            />
-          </div>
+          <Link to={link}>
+            <div className=" bg-white overflow-hidden border">
+              <img
+                className="rounded-m w-full"
+                src={attachment} // Replace with dynamic source if needed
+                alt={attachment}
+              />
+            </div>
+          </Link>
           <div className="px-2 py-3">
             <div className="flex">
-              <p className="font-bold">{title}</p>
+              <Link to={link}>
+                <p className="font-bold">{title}</p>
+              </Link>
             </div>
           </div>
         </div>

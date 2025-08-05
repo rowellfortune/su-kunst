@@ -2,7 +2,8 @@ import { type FC } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "./ui/card";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Calendar, Megaphone,
+import { Home, Calendar, 
+  // Megaphone,
   //  Search, 
   //  Bell, 
   //  MessageCircle, 
@@ -20,23 +21,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { url: "/", label: "Home", icon: Home },
   { url: "/events", label: "Event", icon: Calendar },
-  { url: "/sponsors", label: "Sponsors", icon: Megaphone },
-  // {
-  //   icon: Search, label: "Explore",
-  //   url: ""
-  // },
-  // {
-  //   icon: Bell, label: "Notifications",
-  //   url: ""
-  // },
-  // {
-  //   icon: MessageCircle, label: "Messages",
-  //   url: ""
-  // },
-  // {
-  //   icon: Bookmark, label: "Saved",
-  //   url: ""
-  // },
+  // { url: "/sponsors", label: "Event", icon: Megaphone },
   {
     icon: User, label: "Profile",
     url: "/settings/profile"
