@@ -1,15 +1,4 @@
 import 'symbol-observable';
-import { Workbox } from 'workbox-window';
-
-if ('serviceWorker' in navigator) {
-  const wb = new Workbox('/sw.js');
-  wb.addEventListener('waiting', () => {
-    // show a toast/snackbar "New version available"
-    wb.messageSW({ type: 'SKIP_WAITING' });
-  });
-  wb.register();
-}
-
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router } from "react-router-dom";
