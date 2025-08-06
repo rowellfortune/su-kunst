@@ -7,7 +7,6 @@ import { useAppContext } from "@/lib/contextLib";
 import { useGetUserQuery } from '@/store/apis/userApi';  // <-- make sure this points to your RTK Query slice
 import { Separator } from '../ui/separator';
 import Reactions from '../reactions/Reactions';
-// import ShareComponent from '../reactions/Share';
 import { Link } from 'react-router-dom';
 
 function Post({ author = "", content, userId, attachment, pk, createdAt }: PostType) {
