@@ -81,7 +81,7 @@ export default function Navbar() {
                     Contact
                   </p>
                 </Link>
-              </li>
+              </li> */}
            </ul>
           }
 
