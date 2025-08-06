@@ -45,7 +45,7 @@ export const RightSidebar: React.FC = () => {
           <div
             className="h-24 rounded-t-xl bg-gradient-to-r from-pink-500 to-purple-500"
           />
-            <Avatar className="-mt-12 mx-auto h-20 w-20 rounded-full border-4 border-purple-900 bg-white">
+            <Avatar className="-mt-12 mx-auto h-20 w-20 rounded-full border-4 border-black bg-white">
               <AvatarImage src={avatarUrl} alt="Jakob Botosh" />
               <AvatarFallback>{username[0]}</AvatarFallback>
             </Avatar>

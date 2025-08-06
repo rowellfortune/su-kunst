@@ -8,8 +8,8 @@ import Post from '@/components/newsfeed/Post';
 import { Separator } from '@/components/ui/separator';
 import Reactions from '@/components/reactions/Reactions';
 import Comment from '@/components/reactions/Comments';
-import ShareCompnent from '@/components/reactions/Share';
-import { Bookmark } from 'lucide-react';
+// import ShareCompnent from '@/components/reactions/Share';
+// import { Bookmark } from 'lucide-react';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { API } from 'aws-amplify';
 import { onError } from '@/lib/errorLib';
@@ -209,7 +209,7 @@ function UserProfile() {
                     {isAuthenticated ? <Comment author={p.author} pk={p.pk} userId={p.userId} postId={p.pk} /> : null}
                   </div>
                   <div className="flex items-center">
-                    <ShareCompnent />
+                    {/* <ShareCompnent /> */}
                   </div>
                   {/* <div className="flex items-center">
                     {user?.username === author ? <><EditPost author={author} title={''} pk={pk}/></> : null }
@@ -218,7 +218,7 @@ function UserProfile() {
                     {user?.username === author ? <><Trash2 className="text-xl w-4 h-4 cursor-pointer"/></> : null }
                   </div> */}
                 </div>
-                <Bookmark className="text-xl w-4 h-4 cursor-pointer"/>
+                {/* <Bookmark className="text-xl w-4 h-4 cursor-pointer"/> */}
               </div>
 
             </div>
