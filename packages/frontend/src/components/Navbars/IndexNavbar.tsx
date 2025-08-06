@@ -81,8 +81,8 @@ export default function Navbar() {
                     Contact
                   </p>
                 </Link>
-              </li> */}
-            </ul>
+              </li>
+           </ul>
           }
 
           {isAuthenticated ? 

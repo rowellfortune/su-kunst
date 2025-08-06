@@ -21,7 +21,23 @@ interface NavItem {
 const navItems: NavItem[] = [
   { url: "/", label: "Home", icon: Home },
   { url: "/events", label: "Event", icon: Calendar },
-  // { url: "/sponsors", label: "Event", icon: Megaphone },
+  // { url: "/sponsors", label: "Sponsors", icon: Megaphone },
+  // {
+  //   icon: Search, label: "Explore",
+  //   url: ""
+  // },
+  // {
+  //   icon: Bell, label: "Notifications",
+  //   url: ""
+  // },
+  // {
+  //   icon: MessageCircle, label: "Messages",
+  //   url: ""
+  // },
+  // {
+  //   icon: Bookmark, label: "Saved",
+  //   url: ""
+  // },
   {
     icon: User, label: "Profile",
     url: "/settings/profile"
