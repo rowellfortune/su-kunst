@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from "react";
-import {ScanEye, Users} from "lucide-react";
+import {Users} from "lucide-react";
 import {useGetPostsQuery, useGetUserQuery, useListUsersQuery} from "@/store";
 import { AppContext, useAppContext } from "@/lib/contextLib";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
