@@ -2,7 +2,8 @@ import { type FC } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "./ui/card";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Calendar, Megaphone,
+import { Home, Calendar, 
+  // Megaphone,
   //  Search, 
   //  Bell, 
   //  MessageCircle, 
@@ -20,7 +21,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { url: "/", label: "Home", icon: Home },
   { url: "/events", label: "Event", icon: Calendar },
-  { url: "/sponsors", label: "Sponsors", icon: Megaphone },
+  // { url: "/sponsors", label: "Sponsors", icon: Megaphone },
   // {
   //   icon: Search, label: "Explore",
   //   url: ""
@@ -53,7 +54,6 @@ export const Sidebar: FC = () => {
 
   return (
     <aside className="md:w-80 md:p-6 sm:px-6 md:block space-y-8">
-      {/* {Sidebar()} */}
       <Card className=" border-r py-0 md:py-1">
         <ScrollArea className="h-full p-4 mx-auto md:mx-px">
           <nav>
