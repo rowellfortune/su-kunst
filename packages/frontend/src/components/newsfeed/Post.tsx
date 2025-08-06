@@ -7,7 +7,6 @@ import { useAppContext } from "@/lib/contextLib";
 import { useGetUserQuery } from '@/store/apis/userApi';  // <-- make sure this points to your RTK Query slice
 import { Separator } from '../ui/separator';
 import Reactions from '../reactions/Reactions';
-import ShareComponent from '../reactions/Share';
 import { Link } from 'react-router-dom';
 
 function Post({ author = "", content, userId, attachment, pk, createdAt }: PostType) {
@@ -68,9 +67,7 @@ function Post({ author = "", content, userId, attachment, pk, createdAt }: PostT
         <div className="flex space-x-4">
           {isAuthenticated && <Reactions postId={pk} />}
           {isAuthenticated && <Comment author={displayName} pk={pk} userId={userId} postId={pk} />}
-          {/* <ShareComponent /> */}
         </div>
-        {/* <Bookmark className="text-xl w-4 h-4 cursor-pointer" /> */}
       </div>
     </div>
   );
