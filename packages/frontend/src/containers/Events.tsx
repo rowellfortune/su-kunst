@@ -6,6 +6,7 @@ import { EventsComponent } from "@/components/eventsFeed/EventsComponent";
 export default function Events() {
   const { data: events, isLoading } = getEvents();
   console.log(events)
+  
   function renderEventsList(events: any[] | undefined ) {
     return (
       <div className="grid grid-cols-1 gap-4 w-full">

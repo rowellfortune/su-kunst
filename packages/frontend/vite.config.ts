@@ -11,11 +11,7 @@ export default defineConfig({
     // or force-include something that Vite might otherwise skip
     include: ['@hookform/resolvers/zod']
   },
-
-  plugins: [
-    react(), 
-    tailwindcss()
-  ],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
