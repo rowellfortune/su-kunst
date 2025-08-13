@@ -1,4 +1,4 @@
-import { Bookmark } from 'lucide-react';
+// import { Bookmark } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { PostType } from "@/types/post";
 import Comment from "../reactions/Comments";
@@ -58,6 +58,8 @@ function Post({ author = "", content, userId, attachment, pk, createdAt }: PostT
             src={attachment}
             alt="Post attachment"
           />
+
+          <p>{attachment}</p>
         </div>
       )}
 
