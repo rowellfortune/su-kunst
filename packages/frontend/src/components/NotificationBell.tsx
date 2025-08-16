@@ -6,6 +6,7 @@ import NotificationList from "@/components/NotificationList";
 
 export const NotificationBell: FC = () => {
   const { notifications, loading} = useNotifications(60000);
+  console.log(notifications)
   const [open, setOpen] = useState(false);
 
   function markOneAsRead(sk: string): Promise<void> {
@@ -20,9 +21,9 @@ export const NotificationBell: FC = () => {
         className="p-2 hover:bg-gray-100 rounded-full"
       >
         <Bell size={20} />
-        {notifications.length > 0 && (
+        {notifications.filter(n => !n.read).length > 0 && (
           <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
-            {notifications.length}
+            {notifications.filter(n => !n.read).length}
           </span>
         )}
       </button>
