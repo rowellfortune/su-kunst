@@ -13,7 +13,7 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.830.0",
     "@pulumi/aws": "^6.83.0",
-    "@pulumi/pulumi": "^3.178.0",
+    "@pulumi/pulumi": "^3.187.0",
     "@tiptap/react": "^2.25.0",
     "@tiptap/starter-kit": "^2.25.0",
     "@vitejs/plugin-react": "^4.6.0",

@@ -1,6 +1,7 @@
 // src/components/NotificationList.tsx
 import { type FC } from "react";
 import type { Notification } from "../lib/notifications";
+import {markAsRead} from '@/lib/notifications'
 
 interface Props {
   notifications: Notification[];
@@ -35,10 +36,10 @@ const NotificationList: FC<Props> = ({ notifications, onMarkRead }) => {
           </div>
           {!n.read && (
             <button
-              onClick={() => onMarkRead(n.sk)}
+              onClick={() => markAsRead(n.sk)}
               className="ml-2 text-blue-500 text-xs"
             >
-              Mark read
+              Mark as read
             </button>
           )}
         </li>

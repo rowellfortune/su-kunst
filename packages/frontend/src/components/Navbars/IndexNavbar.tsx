@@ -61,7 +61,7 @@ export default function Navbar() {
             </ul>  
           :
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto font-medium">
-              <li className="flex items-center">
+             {/* <li className="flex items-center">
                 <Link to={'/pricing'} >
                   <p className="p-3">
                     Pricing
@@ -81,7 +81,7 @@ export default function Navbar() {
                     Contact
                   </p>
                 </Link>
-              </li>
+              </li> */}
            </ul>
           }
 

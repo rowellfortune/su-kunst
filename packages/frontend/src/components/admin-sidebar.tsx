@@ -54,6 +54,13 @@ const data = {
         {
           title: "Opportunities",
           url: "/admin/opportunities",
+          items: [
+            {
+              title: "Create new ads",
+              url: "/admin/ads/new",
+              icon: Megaphone,
+            },
+          ],
           icon: Plane,
         },
         {
@@ -83,6 +90,28 @@ const data = {
            icon: Megaphone,
         },
       ],
+    },
+    {
+      title: "Opportunities",
+      icon: Plane,
+      items: [
+        {
+          title: "Create new Opportunities",
+          url: "/admin/opportunities/new",
+          icon: Megaphone,
+        },
+         {
+          title: "View all Opportunities",
+          url: "/admin/opportunities/new",
+          icon: Megaphone,
+        },
+         {
+          title: "Draft Opportunities",
+          url: "/admin/opportunities/new",
+          icon: Megaphone,
+        },
+      ],
+
     },
     {
       title: "Inbox",
