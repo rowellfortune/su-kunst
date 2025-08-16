@@ -33,11 +33,15 @@ api.route("GET /events/{id}", "packages/functions/src/events/getEvent.main");
 // Posts
 api.route("POST /posts", "packages/functions/src/post/create.main");
 api.route("GET /posts", "packages/functions/src/post/list.main");
-api.route("GET /notifications", "packages/functions/src/post/notification/getNotifications.main");
 api.route("GET /posts/{id}", "packages/functions/src/post/get.main");
 api.route("PUT /posts/{id}", "packages/functions/src/post/update.main");
 // api.route("DELETE /posts/{id}", "packages/functions/src/post/delete.main");
 // api.route("GET /posts/{postId}/likes", "packages/functions/src/post/likes.main");
+
+
+api.route("GET /notifications", "packages/functions/src/post/notification/getNotifications.main");
+api.route("PUT /notifications/{id}/read", "packages/functions/src/post/notification/read.main");
+
 
 //comment
 api.route("POST /comments", "packages/functions/src/post/comment/create.main");

@@ -58,8 +58,6 @@ function Post({ author = "", content, userId, attachment, pk, createdAt }: PostT
             src={attachment}
             alt="Post attachment"
           />
-
-          <p>{attachment}</p>
         </div>
       )}
 

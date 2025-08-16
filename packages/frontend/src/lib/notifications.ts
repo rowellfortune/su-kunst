@@ -13,20 +13,14 @@ export interface Notification {
 // Fetch latest notifications
 export async function getNotifications(): Promise<Notification[]> {
   const res = await API.get("notifications", '/notifications', {});
-  // console.log(res)
+  console.log(res)
   return res;
 }
 
 // Mark a single notification as read
 export async function markAsRead(sk: string): Promise<void> {
-  const res = await fetch(
-    `${process.env.REACT_APP_API_URL}/notifications/mark-read`,
-    {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sk }),
-    }
-  );
-  if (!res.ok) throw new Error("Failed to mark notification read");
+  const uuid = sk.replace("NOTIFICATION#", "");
+  const res = await API.put("notifications", `/notifications/${uuid}/read`, {});
+  console.log(res)
+  return res;
 }
