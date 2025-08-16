@@ -52,18 +52,6 @@ const data = {
           icon: Megaphone,
         },
         {
-          title: "Opportunities",
-          url: "/admin/opportunities",
-          items: [
-            {
-              title: "Create new ads",
-              url: "/admin/ads/new",
-              icon: Megaphone,
-            },
-          ],
-          icon: Plane,
-        },
-        {
           title: "Organizations",
           url: "/admin/organizations",
           icon: Building2,
