@@ -52,11 +52,6 @@ const data = {
           icon: Megaphone,
         },
         {
-          title: "Opportunities",
-          url: "/admin/opportunities",
-          icon: Plane,
-        },
-        {
           title: "Organizations",
           url: "/admin/organizations",
           icon: Building2,
@@ -83,6 +78,28 @@ const data = {
            icon: Megaphone,
         },
       ],
+    },
+    {
+      title: "Opportunities",
+      icon: Plane,
+      items: [
+        {
+          title: "Create new Opportunities",
+          url: "/admin/opportunities/new",
+          icon: Megaphone,
+        },
+         {
+          title: "View all Opportunities",
+          url: "/admin/opportunities/new",
+          icon: Megaphone,
+        },
+         {
+          title: "Draft Opportunities",
+          url: "/admin/opportunities/new",
+          icon: Megaphone,
+        },
+      ],
+
     },
     {
       title: "Inbox",

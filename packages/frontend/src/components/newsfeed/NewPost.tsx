@@ -27,6 +27,7 @@ import { useGetUserQuery } from "@/store";
 
 const NewPost = () => {
   const file = useRef<null | File>(null);
+  console.log(file)
   const nav = useNavigate();
   const [title, setTitle] = useState("");
   const {isAuthenticated } = useAppContext();
@@ -66,6 +67,7 @@ const NewPost = () => {
     }
 
     onLoad();
+    nav('/');
   }, [isAuthenticated, user, open]);
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -92,7 +94,6 @@ const NewPost = () => {
       });
       setIsLoading(false);
       setOpen(false)
-      nav("/");
     } catch (e) {
       onError(e);
       setIsLoading(false);
@@ -147,11 +148,16 @@ const NewPost = () => {
                   </div>
                 </div>
                   {file.current && (
-                    <img
-                      src={URL.createObjectURL(file.current)}
-                      alt="Preview"
-                      className="mt-2 rounded shadow-md w-full max-w-sm"
-                    />
+                    <>
+                      <img
+                        src={URL.createObjectURL(file.current)}
+                        srcSet={URL.createObjectURL(file.current)}
+                        alt="Preview"
+                       
+                        className="mt-2 rounded shadow-md w-full max-w-sm"
+                      />
+                      <source src={URL.createObjectURL(file.current)} type={file?.current?.type}  srcSet={URL.createObjectURL(file.current)}/>
+                    </>
                   )}
                 
                   <Input

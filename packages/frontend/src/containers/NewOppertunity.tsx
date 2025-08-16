@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import config from "@/config";
 import { s3Upload } from "@/lib/awsLib";
+
 export type OpportunityInput = {
   id?: string;
   title: string;
@@ -97,6 +98,7 @@ export default function NewOppertunity() {
   return (
     <div className="NewNote">
       <form onSubmit={handleSubmit} className="space-y-4 p-4 max-w-md mx-auto">
+      
         <Input
           type="text"
           placeholder="Title"

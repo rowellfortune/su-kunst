@@ -32,6 +32,9 @@ export async function main(event: AWSLambda.PostConfirmationTriggerEvent): Promi
         username,
         email,
         bio:      `More about ${username}`,
+        like: 0,
+        post: 0,
+        follow: 0
       },
       role: groupName, // default role
     },

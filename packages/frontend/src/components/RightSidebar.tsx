@@ -61,6 +61,14 @@ export const RightSidebar: React.FC = () => {
               <p className="font-semibold text-xl">{postsLoading ? "…" : `${postCount}`}</p>
               <p className="text-md">Posts</p>
             </div>
+            {/* <div>
+              <p className="font-semibold text-xl">{postsLoading ? "…" : `${postCount}`}</p>
+              <p className="text-md">Likes</p>
+            </div>
+            <div>
+              <p className="font-semibold text-xl">{postsLoading ? "…" : `${postCount}`}</p>
+              <p className="text-md">Followers</p>
+            </div> */}
           </div>
         </div>
 
