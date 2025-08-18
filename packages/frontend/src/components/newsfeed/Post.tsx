@@ -20,8 +20,6 @@ function Post({ author = "", content, userId, attachment, pk, createdAt }: PostT
     isLoading: userInfoLoading,
   } = useGetUserQuery(effectiveId, { skip: !isAuthenticated || !userId });
 
-  console.log(userInfoError)
-  console.log(userInfoLoading)
   // fallback to the passed‑in `author` if we don’t have the full profile yet
   const displayName = userInfo?.username ?? author;
   const avatarUrl   = userInfo?.profile.avatarFileattachment;
@@ -61,8 +59,7 @@ function Post({ author = "", content, userId, attachment, pk, createdAt }: PostT
         </div>
       )}
 
-      <Separator className="my-4" />
-
+      <Separator className="my-4"/>
       <div className="flex justify-between items-center mx-3 pb-4 text-gray-600 text-sm">
         <div className="flex space-x-4">
           {isAuthenticated && <Reactions postId={pk} />}

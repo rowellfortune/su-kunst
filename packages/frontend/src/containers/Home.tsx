@@ -55,13 +55,14 @@ type FeedItem = PostType | AdType | OpportunityType;
 
 export default function Home() {
   const {isAuthenticated } = useAppContext();
+
   // const {user} = useContext(AppContext)
 
   const {
     data: posts = [],
     error: postsError,
     isLoading: postsLoading,
-  } = useGetPostsQuery(undefined, { skip: !isAuthenticated });
+  } = useGetPostsQuery(undefined, { skip: !isAuthenticated});
 
   const {
     data: ads = [],

@@ -3,6 +3,7 @@ import {Users} from "lucide-react";
 import {useGetPostsQuery, useGetUserQuery, useListUsersQuery} from "@/store";
 import { AppContext, useAppContext } from "@/lib/contextLib";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Link } from 'react-router-dom';
 
 export const RightSidebar: React.FC = () => {
   const {isAuthenticated } = useAppContext();
@@ -13,9 +14,7 @@ export const RightSidebar: React.FC = () => {
   } = useGetPostsQuery(undefined, { skip: !isAuthenticated });
   
   const { data: users, isLoading: usersAreLoading } = useListUsersQuery();
-
-  console.log(users)
-
+  console.log(users, 'Users')
   const {user} = useContext(AppContext)
   const username = user?.username;
   const effectiveId = user.attributes.sub ?? "";
@@ -26,17 +25,17 @@ export const RightSidebar: React.FC = () => {
     isLoading: userInfoLoading,
   } = useGetUserQuery(effectiveId, { skip: !isAuthenticated || !effectiveId });
   
-  console.log(postsError)
   const avatarUrl   = userInfo?.profile.avatarFileattachment;
   
-  console.log(userInfoLoading)
-  console.log(userInfoError)
-
   const userPosts = useMemo(
     () => posts.filter((p) => p.author === username),
     [posts, username]
   );
   const postCount = userPosts.length;
+
+  function removeUserPrefix(id: string): string {
+    return id.replace("USER#", "");
+  }
 
   function RightPanel() {
     return (
@@ -49,7 +48,8 @@ export const RightSidebar: React.FC = () => {
               <AvatarImage src={avatarUrl} alt="Jakob Botosh" />
               <AvatarFallback>{username[0]}</AvatarFallback>
             </Avatar>
-          <h3 className="mt-2 font-bold">{username}</h3>
+            {!userInfoError && !userInfoLoading ? <h3 className="mt-2 font-bold">{username}</h3> : <>....</>}
+          {/* <h3 className="mt-2 font-bold">{username}</h3> */}
           <p className="text-sm">@{username.toLowerCase()}</p>
           <p className="mt-2 text-xs">
             {userInfo?.profile?.bio ? <>{userInfo.profile?.bio}</> : <>[Your intro goes here]</>}
@@ -58,19 +58,20 @@ export const RightSidebar: React.FC = () => {
           </div>
           <div className="mt-4 flex justify-around text-xs ">
             <div>
-              <p className="font-semibold text-xl">{postsLoading ? "…" : `${postCount}`}</p>
+              <p className="font-semibold text-xl">{postsLoading && postsError ? "…" : `${postCount}`}</p>
               <p className="text-md">Posts</p>
             </div>
-            {/* <div>
-              <p className="font-semibold text-xl">{postsLoading ? "…" : `${postCount}`}</p>
+            <div>
+              <p className="font-semibold text-xl">{postsLoading && postsError ? "…" : `${postCount}`}</p>
               <p className="text-md">Likes</p>
             </div>
             <div>
-              <p className="font-semibold text-xl">{postsLoading ? "…" : `${postCount}`}</p>
+              <p className="font-semibold text-xl">{postsLoading && postsError ? "…" : `${postCount}`}</p>
               <p className="text-md">Followers</p>
-            </div> */}
+            </div>
           </div>
         </div>
+
 
         <div className="bg-white rounded-xl p-4">
            <h4 className="text-xl font-semibold mb-2 flex items-center">
@@ -81,6 +82,7 @@ export const RightSidebar: React.FC = () => {
           <ul className="space-y-3">
             {users?.map(({ username, role, pk, profile }) => (
               <li key={pk} className="flex items-center justify-between">
+                <Link to={`/profile/${removeUserPrefix(pk)}`}>
                 <div className="flex items-center space-x-3">
                   <Avatar className="h-8 w-8 rounded-full">
                     <AvatarImage src={profile?.avatarFileattachment} alt="Jakob Botosh" />
@@ -91,6 +93,7 @@ export const RightSidebar: React.FC = () => {
                     <p className="text-gray-400">{role}</p>
                   </div>
                 </div>
+                </Link>
               </li>
             ))}
           </ul>: <>Loading users</> }
