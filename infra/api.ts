@@ -61,6 +61,7 @@ api.route("GET /ads/{id}", "packages/functions/src/ads/get.main");
 api.route("GET /users/{id}", "packages/functions/src/user/get.main");
 api.route("GET /users", "packages/functions/src/user/list.main");
 api.route("POST /users/{id}", "packages/functions/src/user/update.main");
+api.route("POST /users/{targetId}/follow/toggle", "packages/functions/src/user/follow/toggle.main")
 
 // export const api = new sst.aws.AppSync("Api", {
 //   schema: "graphql/schema.graphql",
