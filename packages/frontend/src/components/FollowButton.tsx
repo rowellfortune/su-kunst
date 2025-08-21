@@ -1,3 +1,4 @@
+
 import { useFollow } from "@/hooks/useFollow";
 
 type Props = {
@@ -25,7 +26,7 @@ export default function FollowButton({
         onClick={toggleFollow}
         disabled={loading}
         className={`px-3 py-2 rounded-2xl shadow-sm ${
-          isFollowing ? "bg-gray-200" : "bg-black text-white"
+          isFollowing ? "bg-blue-500 text-white" : "bg-black text-white"
         } ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
       >
         {loading ? "…" : isFollowing ? "Following" : "Follow"}

@@ -2,13 +2,17 @@ import { type FC } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "./ui/card";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Calendar, 
-  // Megaphone,
-  //  Search, 
-  //  Bell, 
-  //  MessageCircle, 
-  //  Bookmark, 
-   User, Settings } from "lucide-react";
+import { 
+  Home, 
+  Calendar, 
+  Megaphone,
+  Bell, 
+  MessageCircle, 
+  Bookmark, 
+  User, 
+  Settings, 
+  Users
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 interface NavItem {
@@ -20,32 +24,14 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { url: "/", label: "Home", icon: Home },
-  { url: "/events", label: "Event", icon: Calendar },
-  // { url: "/sponsors", label: "Sponsors", icon: Megaphone },
-  // {
-  //   icon: Search, label: "Explore",
-  //   url: ""
-  // },
-  // {
-  //   icon: Bell, label: "Notifications",
-  //   url: ""
-  // },
-  // {
-  //   icon: MessageCircle, label: "Messages",
-  //   url: ""
-  // },
-  // {
-  //   icon: Bookmark, label: "Saved",
-  //   url: ""
-  // },
-  {
-    icon: User, label: "Profile",
-    url: "/settings/profile"
-  },
-  {
-    icon: Settings, label: "Settings",
-    url: "/settings"
-  },
+  { url: "", icon: Users, label: "Friends"},
+  { url: "/events", icon: Calendar, label: "Events", },
+  { url: "", icon: Megaphone, label: "Sponsors" },
+  { url: "", icon: Bell, label: "Notifications"},
+  { url: "", icon: MessageCircle, label: "Messages"},
+  { url: "", icon: Bookmark, label: "Saved"},
+  { url: "/settings/profile", icon: User, label: "Profile"},
+  { url: "/settings", icon: Settings, label: "Settings"},
 ];
 
 export const Sidebar: FC = () => {
@@ -61,7 +47,10 @@ export const Sidebar: FC = () => {
               {navItems.map(({ label, icon: Icon, badge, url }) => {
                 const isActive = currentPath === url;
                 return (
+                  <>
+                     {url !== "" ? 
                   <li key={label}>
+                 
                     <Link
                       to={url}
                       className={`flex items-center w-full px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 ${
@@ -83,8 +72,10 @@ export const Sidebar: FC = () => {
                           {badge}
                         </span>
                       )}
-                    </Link>
+                    </Link> 
                   </li>
+                  : null }
+                  </>
                 );
               })}
             </ul>

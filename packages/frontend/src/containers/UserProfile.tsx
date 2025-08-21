@@ -165,9 +165,6 @@ function UserProfile() {
           </div>
           <div className='col-span-8 col-end-24 justify-end md:text-center py-5'>
             <FollowButton targetId={id} />
-            <Button variant="outline" size="lg">
-              <UserRoundPlus /> Follow
-            </Button>
           </div>
         </div>
       </div>
