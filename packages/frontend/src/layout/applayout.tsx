@@ -11,9 +11,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="bg-slate-100 h-vh mx-auto">
        {isAuthenticated ?  <AppNavbar /> :  <IndexNavbar />}
         <main className={`flex ${isAuthenticated ?  `px-2`  :  null} flex-col md:flex-row mx-auto`}>
-          {isAuthenticated && <><Sidebar/></>}
+          {isAuthenticated && <div>
+            <Sidebar/>
+            </div>}
             {children}
-          {isAuthenticated && <><RightSidebar /></> }
+          {isAuthenticated && <div><RightSidebar /></div> }
       </main>
     </div>
   )
