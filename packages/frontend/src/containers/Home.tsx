@@ -141,7 +141,7 @@ export default function Home() {
 
   function renderPostsList(feed: FeedItem[]) {
     return (
-      <div className="grid grid-cols-1 gap-4 w-full my-6">
+      <div className="mt-6">
         {isAuthenticated ? <NewPost/> : null }
         {feed.map((item) => {
           switch (item.entityType) {
