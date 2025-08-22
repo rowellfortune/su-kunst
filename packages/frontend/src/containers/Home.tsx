@@ -225,7 +225,7 @@ export default function Home() {
     return (
         <>
          {isAuthenticated ? 
-        <ScrollArea className="flex flex-col md:flex-row w-full max-w-xl mx-auto">
+        <ScrollArea className="flex flex-col md:flex-row w-full mx-auto">
           {!postsLoading && !oppsLoading && !adsLoading && !oppsError && !adsError && !postsError && renderPostsList(feed)}
         </ScrollArea>
         : null }
