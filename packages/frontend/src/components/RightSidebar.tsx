@@ -39,7 +39,7 @@ export const RightSidebar: React.FC = () => {
 
   function RightPanel() {
     return (
-      <aside className="md:w-80 p-6 hidden md:block space-y-8">
+      <aside className="p-6 hidden md:block space-y-8">
         <div className="bg-white rounded-xl p-4 text-center">
           <div
             className="h-24 rounded-t-xl bg-gradient-to-r from-pink-500 to-purple-500"
@@ -81,20 +81,24 @@ export const RightSidebar: React.FC = () => {
           {!usersAreLoading ? 
           <ul className="space-y-3">
             {users?.map(({ username, role, pk, profile }) => (
-              <li key={pk} className="flex items-center justify-between">
-                <Link to={`/profile/${removeUserPrefix(pk)}`}>
-                <div className="flex items-center space-x-3">
-                  <Avatar className="h-8 w-8 rounded-full">
-                    <AvatarImage src={profile?.avatarFileattachment} alt="Jakob Botosh" />
-                    <AvatarFallback>{username[0]}</AvatarFallback>
-                  </Avatar>
-                  <div className="text-xs">
-                    <p className="font-semibold">{username}</p>
-                    <p className="text-gray-400">{role}</p>
+            <>
+              {role !== "admin" ? 
+                <li key={pk} className="flex items-center justify-between">
+                  <Link to={`/profile/${removeUserPrefix(pk)}`}>
+                  <div className="flex items-center space-x-3">
+                    <Avatar className="h-8 w-8 rounded-full">
+                      <AvatarImage src={profile?.avatarFileattachment} alt="Jakob Botosh" />
+                      <AvatarFallback>{username[0]}</AvatarFallback>
+                    </Avatar>
+                    <div className="text-xs">
+                      <p className="font-semibold">{username}</p>
+                      <p className="text-gray-400">{role}</p>
+                    </div>
                   </div>
-                </div>
-                </Link>
-              </li>
+                  </Link>
+                </li>
+              : null}
+            </>
             ))}
           </ul>: <>Loading users</> }
         </div>
