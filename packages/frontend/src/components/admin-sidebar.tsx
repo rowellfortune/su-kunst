@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/sidebar"
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "./nav-user"
+import { Link } from "react-router-dom"
 
 // This is sample data.
 const data = {
@@ -31,49 +32,54 @@ const data = {
   },
   
   navMain: [
-    {
-      title: "Dashboard",
-      icon: Gauge,
-      isActive: true,
-      items: [
-        {
-          title: "User",
-          url: "/admin/user",
-          icon: User,
-        },
-        {
-          title: "Companies",
-          url: "/admin/companies",
-          icon: Building,
-        },
-        {
-          title: "Ad Data",
-          url: "/admin/ad-data",
-          icon: Megaphone,
-        },
-        {
-          title: "Organizations",
-          url: "/admin/organizations",
-          icon: Building2,
-        },
-      ],
-    },
+    // {
+    //   title: "Dashboard",
+    //   icon: Gauge,
+    //   isActive: true,
+    //   items: [
+    //     {
+    //       title: "User",
+    //       url: "/admin/user",
+    //       icon: User,
+    //     },
+    //     {
+    //       title: "Companies",
+    //       url: "/admin/companies",
+    //       icon: Building,
+    //     },
+    //     {
+    //       title: "Ad Data",
+    //       url: "/admin/ad-data",
+    //       icon: Megaphone,
+    //     },
+    //     {
+    //       title: "Organizations",
+    //       url: "/admin/organizations",
+    //       icon: Building2,
+    //     },
+    //   ],
+    // },
     {
       title: "Ads",
       icon: ScanEye,
       items: [
         {
-          title: "Create new ads",
+          title: "Create new",
           url: "/admin/ads/new",
            icon: Megaphone,
         },
         {
-          title: "View all ads",
+          title: "View all",
           url: "/admin/ads/",
            icon: Megaphone,
         },
         {
           title: "Live",
+          url: "/admin/ads/live",
+           icon: Megaphone,
+        },
+         {
+          title: "Draft",
           url: "/admin/ads/live",
            icon: Megaphone,
         },
@@ -84,44 +90,49 @@ const data = {
       icon: Plane,
       items: [
         {
-          title: "Create new Opportunities",
+          title: "Create new",
           url: "/admin/opportunities/new",
           icon: Megaphone,
         },
          {
-          title: "View all Opportunities",
+          title: "View all",
           url: "/admin/opportunities/new",
           icon: Megaphone,
         },
-         {
-          title: "Draft Opportunities",
-          url: "/admin/opportunities/new",
+        {
+          title: "Live",
+          url: "/admin/opportunities/live",
+          icon: Megaphone,
+        },
+        {
+          title: "Draft",
+          url: "/admin/opportunities/draft",
           icon: Megaphone,
         },
       ],
 
     },
-    {
-      title: "Inbox",
-      icon: Inbox,
-      items: [
-        {
-          title: "Applications",
-          url: "/admin/inbox",
-          icon: Megaphone,
-        },
-        {
-          title: "Request",
-          url: "#",
-           icon: Megaphone,
-        },
-        {
-          title: "Incomming Calls",
-          url: "#",
-           icon: Megaphone,
-        },
-      ],
-    },
+    // {
+    //   title: "Inbox",
+    //   icon: Inbox,
+    //   items: [
+    //     {
+    //       title: "Applications",
+    //       url: "/admin/inbox",
+    //       icon: Megaphone,
+    //     },
+    //     {
+    //       title: "Request",
+    //       url: "#",
+    //        icon: Megaphone,
+    //     },
+    //     {
+    //       title: "Incomming Calls",
+    //       url: "#",
+    //        icon: Megaphone,
+    //     },
+    //   ],
+    // },
   ],
 }
 
@@ -130,6 +141,9 @@ export function AdminSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
+           <Link to="/">
+              <span className="text-base font-semibold">Back to home</span>
+            </Link>
           <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
           <SidebarGroupContent>
             <NavMain items={data.navMain} />

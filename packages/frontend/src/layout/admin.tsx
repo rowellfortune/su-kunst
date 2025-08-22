@@ -6,7 +6,7 @@ export default function Admin({ children }: { children: React.ReactNode }) {
     <SidebarProvider 
       style={
         {
-          "--sidebar-width": "200px",
+          "--sidebar-width": "250px",
         } as React.CSSProperties
       }
     >
