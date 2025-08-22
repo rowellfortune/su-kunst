@@ -3,7 +3,6 @@ import Post from "@/components/newsfeed/Post";
 import { Skeleton } from "@/components/ui/skeleton";
 import AdsComponent from "@/components/adsfeed/AdsComponent";
 import OpportunitiesComponent from "@/components/opportunities/OpportunitiesComponent";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   useGetPostsQuery,
   useGetAdsQuery,
@@ -195,7 +194,7 @@ export default function Home() {
     );
   }
 
-  if (postsLoading && oppsLoading && adsLoading && oppsError && adsError && postsError) return (
+  if (postsLoading || oppsLoading || adsLoading || oppsError || adsError || postsError) return (
     <div className="flex w-full flex-col md:flex-row max-w-3xl container mx-auto h-screen" >
       <div className="flex flex-col md:w-1/3">
         <Skeleton className="h-[125px] w-full md:w-[250px] rounded-xl bg-amber-300" />
@@ -225,9 +224,10 @@ export default function Home() {
     return (
         <>
          {isAuthenticated ? 
-        <ScrollArea className="flex flex-col md:flex-row w-full mx-auto">
+     
+        <div className="flex flex-col md:flex-row w-full max-w-xl mx-auto">
           {!postsLoading && !oppsLoading && !adsLoading && !oppsError && !adsError && !postsError && renderPostsList(feed)}
-        </ScrollArea>
+        </div>
         : null }
 
         </> 
