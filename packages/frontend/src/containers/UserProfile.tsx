@@ -3,7 +3,6 @@ import { AppContext} from '@/lib/contextLib';
 import { useGetPostsQuery, useGetUserQuery } from '@/store';
 import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom'
-import { ScrollArea } from '@/components/ui/scroll-area';
 import Post from '@/components/newsfeed/Post';
 import { Separator } from '@/components/ui/separator';
 import Reactions from '@/components/reactions/Reactions';
@@ -16,8 +15,7 @@ import { onError } from '@/lib/errorLib';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { Globe } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { UserRoundPlus } from 'lucide-react';
+
 import FollowButton from '@/components/FollowButton';
 
 export interface Post {

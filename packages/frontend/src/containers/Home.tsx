@@ -189,31 +189,13 @@ export default function Home() {
   }
 
   function renderLander() {
-    return (
-      <>
-        <Landing />
-      </>
-    );
+    return (<Landing /> );
   }
 
-  if (postsLoading && oppsLoading && adsLoading && oppsError && adsError && postsError) return (
-    <div className="flex w-full flex-col md:flex-row max-w-3xl container mx-auto h-screen" >
-      <div className="flex flex-col md:w-1/3">
-        <Skeleton className="h-[125px] w-full md:w-[250px] rounded-xl bg-amber-300" />
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-full md:w-[250px] bg-amber-300" />
-          <Skeleton className="h-4 w-full md:w-[200px] bg-amber-300" />
-        </div>
-      </div>
-      <div className="flex items-center space-x-4">
-        <div className="space-y-2 ">
-          <Skeleton className="h-4 w-full md:w-[250px] bg-amber-300" />
-          <Skeleton className="h-100 w-full bg-amber-300" />
-        </div>
-
-      </div>
-      <div className="flex flex-col md:w-1/3">
-        <Skeleton className="h-[125px] w-[250px] rounded-xl bg-amber-300" />
+  if (postsLoading || oppsLoading || adsLoading || oppsError || adsError || postsError) return (
+    <div className="flex w-full col-span-12 flex-col md:flex-row max-w-3xl container mx-auto h-screen" >
+      <div className="flex flex-col md:w-full">
+        <Skeleton className="h-[125px] w-full rounded-xl bg-amber-300" />
         <div className="space-y-2">
           <Skeleton className="h-4 w-full md:w-[250px] bg-amber-300" />
           <Skeleton className="h-4 w-full md:w-[200px] bg-amber-300" />
@@ -226,7 +208,7 @@ export default function Home() {
     return (
         <>
          {isAuthenticated ? 
-        <div className="flex flex-col md:flex-row w-full max-w-xl mx-auto">
+        <div className="flex flex-col  col-span-12 md:flex-row w-full max-w-xl mx-auto">
           {!postsLoading && !oppsLoading && !adsLoading && !oppsError && !adsError && !postsError && renderPostsList(feed)}
         </div>
         : null }

@@ -63,7 +63,7 @@ export default function Events() {
  
   function renderPosts() {
     return (
-      <ScrollArea className="flex flex-col md:flex-row w-full container mx-auto">
+      <ScrollArea className="flex flex-col col-span-12 md:flex-row w-full container mx-auto">
         <h1 className="text-2xl font-bold my-5">Upcoming Event</h1>
         {!isLoading && renderEventsList(events)}
       </ScrollArea>

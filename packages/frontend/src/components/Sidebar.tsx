@@ -23,7 +23,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { url: "/", label: "Home", icon: Home },
+  { url: "/", icon: Home, label: "Home" },
   { url: "", icon: Users, label: "Friends"},
   { url: "/events", icon: Calendar, label: "Events", },
   { url: "", icon: Megaphone, label: "Sponsors" },
@@ -39,7 +39,7 @@ export const Sidebar: FC = () => {
   const currentPath = location.pathname;
 
   return (
-    <aside className="md:p-6 sm:px-6 md:block space-y-8">
+    <aside className="md:w-full md:p-6 sm:px-6 md:block space-y-8">
       <Card className=" border-r py-0 md:py-1">
         <ScrollArea className="h-full p-4 mx-auto md:mx-px">
           <nav>

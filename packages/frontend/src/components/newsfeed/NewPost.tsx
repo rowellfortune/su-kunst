@@ -90,7 +90,7 @@ const NewPost = () => {
       });
       setIsLoading(false);
       setOpen(false)
-      nav("/");
+      location.reload();
     } catch (e) {
       onError(e);
       setIsLoading(false);
@@ -132,6 +132,11 @@ const NewPost = () => {
                 </div>
                 <div className="grid gap-4">
                   <div className="grid gap-3">
+                  <Input
+                    type="file"
+                    accept="image/jpeg,image/png"
+                    onChange={handleFileChange}
+                  />
                     <Input
                       type="text"
                       placeholder="Artwork Title"
@@ -160,11 +165,7 @@ const NewPost = () => {
                     </>
                   )}
                 
-                  <Input
-                    type="file"
-                    accept="image/jpeg,image/png"
-                    onChange={handleFileChange}
-                  />
+                 
                 
                 <DialogFooter>
                   <Button type="submit" disabled={isLoading} className="mt-3 w-full">

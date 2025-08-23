@@ -3,14 +3,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { PostType } from "@/types/post";
 import Comment from "../reactions/Comments";
 import { formatDistanceToNowStrict } from 'date-fns';
-import { useAppContext } from "@/lib/contextLib";
+import { AppContext, useAppContext } from "@/lib/contextLib";
 import { useGetUserQuery } from '@/store/apis/userApi';  // <-- make sure this points to your RTK Query slice
 import { Separator } from '../ui/separator';
 import Reactions from '../reactions/Reactions';
 import { Link } from 'react-router-dom';
+import EditPost from "../reactions/EditPost";
 
 function Post({ author = "", content, userId, attachment, pk, createdAt }: PostType) {
-  const { isAuthenticated } = useAppContext();
+  const { isAuthenticated} = useAppContext();
+
+  // console.log(user)
 
   // 🔥 Pass userId here, not undefined
   const effectiveId = userId ?? "";
@@ -64,6 +67,7 @@ function Post({ author = "", content, userId, attachment, pk, createdAt }: PostT
         <div className="flex space-x-4">
           {isAuthenticated && <Reactions postId={pk} />}
           {isAuthenticated && <Comment author={displayName} pk={pk} userId={userId} postId={pk} />}
+          {isAuthenticated && <EditPost pk={pk} author={""} />}
         </div>
       </div>
     </div>
