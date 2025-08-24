@@ -36,8 +36,11 @@ function Opportunity() {
       }
     }
 
-    onLoad();
-  }, [id]);
+    if(isAuthenticated){
+      onLoad();
+    }
+   
+  }, [id, isAuthenticated]);
 
 
   return (

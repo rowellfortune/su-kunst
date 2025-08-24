@@ -78,8 +78,8 @@ function Post({ author = "", content, userId, attachment, pk, createdAt }: PostT
     
         <div className="flex justify-between items-center mx-3 pb-4 text-gray-600 text-sm">
           <div className="flex space-x-4">
-            {isAuthenticated ? <Reactions postId={pk} /> : null}
-            {isAuthenticated ? <Comment author={displayName} pk={pk} userId={userId} postId={pk} /> : null}
+            {isAuthenticated && <Reactions postId={pk} />}
+            {isAuthenticated && <Comment author={displayName} pk={pk} userId={userId} postId={pk} />}
             {(isAuthenticated && userId === user.attributes.sub) ? <EditPost pk={pk} author={displayName} userId={userId}/> : null}
           </div>
         </div>

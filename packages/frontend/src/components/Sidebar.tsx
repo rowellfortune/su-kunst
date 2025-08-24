@@ -38,19 +38,19 @@ export const Sidebar: FC = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
+  // Filter out nav items with empty url
+  const visibleNavItems = navItems.filter((item) => item.url.trim() !== "");
+
   return (
     <aside className="xl:w-1/2 md:p-6 sm:px-6 md:block space-y-8 mx-auto">
       <Card className=" border-r py-0 md:py-1">
         <ScrollArea className="h-full p-4 mx-auto md:mx-px">
           <nav>
             <ul className="flex sm:flex-row space-x-2 space-y-0 overflow-x-auto md:flex-col md:space-x-0 text-center md:space-y-2">
-              {navItems.map(({ label, icon: Icon, badge, url }) => {
+              {visibleNavItems.map(({ label, icon: Icon, badge, url }) => {
                 const isActive = currentPath === url;
                 return (
-                  <>
-                     {url !== "" ? 
-                  <li>
-                 
+                  <li key={label}>
                     <Link
                       to={url}
                       className={`flex items-center w-full px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 ${
@@ -74,8 +74,6 @@ export const Sidebar: FC = () => {
                       )}
                     </Link> 
                   </li>
-                  : null }
-                  </>
                 );
               })}
             </ul>

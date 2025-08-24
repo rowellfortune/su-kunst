@@ -49,7 +49,7 @@ export default function Navbar() {
 
       {/* Actions */}
       <div className="flex items-center space-x-1">
-          <NotificationBell />
+        {isAuthenticated && <NotificationBell />}
         {/* <div className="">
           <Bookmark className="h-5 w-5" />
         </div> */}

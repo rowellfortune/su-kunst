@@ -32,17 +32,17 @@ export const store = configureStore({
 
 // Re-export hooks and endpoints from each API slice
 export { useGetPostsQuery }     from '@/store/apis/postsApi'
-export { useGetPostsQuery as useGetCommentsQuery }  from '@/store/apis/commentsApi'
-export { useGetPostsQuery as useGetAdsQuery }       from '@/store/apis/adsApi'
+export { useGetCommentsQuery }  from '@/store/apis/commentsApi'
+export { useGetAdsQuery }       from '@/store/apis/adsApi'
 export { useGetUserQuery } from '@/store/apis/userApi'
 export { useLazyListUsersQuery } from '@/store/apis/userApi'
 export { useListUsersQuery } from '@/store/apis/userApi'
 export { useLazyGetUserQuery } from '@/store/apis/userApi'
 export { useUpdateUserMutation } from '@/store/apis/userApi'
 export { usePrefetch } from '@/store/apis/userApi'
-export { useGetPostsQuery as useGetOpportunitiesQuery } from '@/store/apis/opportunitiesApi'
+export { useGetOpportunitiesQuery } from '@/store/apis/opportunitiesApi'
 export { useGetNotificationsQuery } from '@/store/apis/notificationsApi'
-export { useGetPostsQuery as useGetEventsQuery }    from '@/store/apis/eventsApi'
+export { useGetEventsQuery }    from '@/store/apis/eventsApi'
 
 
 export type RootState = ReturnType<typeof store.getState>

@@ -14,6 +14,11 @@ export const RightSidebar: React.FC = () => {
   } = useGetPostsQuery(undefined, { skip: !isAuthenticated });
   
   const { data: users, isLoading: usersAreLoading } = useListUsersQuery();
+
+
+
+    // Filter out nav items with empty url
+  const noneAdmin =  users?.filter((item) => item.role.trim() !== "admin");
   // console.log(users, 'Users')
   const {user} = useContext(AppContext)
   const username = user?.username;
@@ -76,24 +81,21 @@ export const RightSidebar: React.FC = () => {
           </h4>
           {!usersAreLoading ? 
           <ul className="space-y-3">
-            {users?.map(({ username, role, pk, profile }) => (
-              <>{role != "admin" ? 
+            {noneAdmin?.map(({ username, role, pk, profile }) => (
               <li key={pk} className="flex items-center justify-between">
                 <Link to={`/profile/${removeUserPrefix(pk)}`}>
-                <div className="flex items-center space-x-3">
-                  <Avatar className="h-8 w-8 rounded-full">
-                    <AvatarImage src={profile?.avatarFileattachment} alt="Jakob Botosh" />
-                    <AvatarFallback>{username[0]}</AvatarFallback>
-                  </Avatar>
-                  <div className="text-xs">
-                    <p className="font-semibold">{username}</p>
-                    <p className="text-gray-400">{role}</p>
+                  <div className="flex items-center space-x-3">
+                    <Avatar className="h-8 w-8 rounded-full">
+                      <AvatarImage src={profile?.avatarFileattachment} alt="Jakob Botosh" />
+                      <AvatarFallback>{username[0]}</AvatarFallback>
+                    </Avatar>
+                    <div className="text-xs">
+                      <p className="font-semibold">{username}</p>
+                      <p className="text-gray-400">{role}</p>
+                    </div>
                   </div>
-                </div>
                 </Link>
               </li>
-              : null}
-              </>
             ))}
           </ul>: <>Loading users</> }
         </div>

@@ -62,17 +62,17 @@ export const opportunitiesApi = createApi({
   baseQuery: amplifyBaseQuery,
   tagTypes: ['Post', 'Comment', 'User'],
   endpoints: builder => ({
-    getPosts: builder.query<OpportunityType[], void>({
+    getOpportunities: builder.query<OpportunityType[], void>({
       query: () => ({ url: '/opportunities', method: 'GET' }),
     }),
-    addPost: builder.mutation<OpportunityType, Partial<OpportunityType>>({
+    addOpportunity: builder.mutation<OpportunityType, Partial<OpportunityType>>({
       query: body => ({ url: '/opportunities', method: 'POST', body }),
     }),
   }),
 })
 
 export const {
-  useGetPostsQuery,
+  useGetOpportunitiesQuery,
 } = opportunitiesApi;
 
 

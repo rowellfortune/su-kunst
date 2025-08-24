@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetPostsQuery as getEvents } from '@/store/apis/opportunitiesApi';
+import { useGetOpportunitiesQuery as getEvents } from '@/store/apis/opportunitiesApi';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { EventsComponent } from "@/components/eventsFeed/EventsComponent";
 

@@ -73,16 +73,16 @@ const data = {
           url: "/admin/ads/",
            icon: Megaphone,
         },
-        {
-          title: "Live",
-          url: "/admin/ads/live",
-           icon: Megaphone,
-        },
-         {
-          title: "Draft",
-          url: "/admin/ads/live",
-           icon: Megaphone,
-        },
+        // {
+        //   title: "Live",
+        //   url: "/admin/ads/live",
+        //    icon: Megaphone,
+        // },
+        //  {
+        //   title: "Draft",
+        //   url: "/admin/ads/live",
+        //    icon: Megaphone,
+        // },
       ],
     },
     {
@@ -96,19 +96,19 @@ const data = {
         },
          {
           title: "View all",
-          url: "/admin/opportunities/new",
+          url: "/admin/opportunities",
           icon: Megaphone,
-        },
-        {
-          title: "Live",
-          url: "/admin/opportunities/live",
-          icon: Megaphone,
-        },
-        {
-          title: "Draft",
-          url: "/admin/opportunities/draft",
-          icon: Megaphone,
-        },
+        }
+        // {
+        //   title: "Live",
+        //   url: "/admin/opportunities/live",
+        //   icon: Megaphone,
+        // },
+        // {
+        //   title: "Draft",
+        //   url: "/admin/opportunities/draft",
+        //   icon: Megaphone,
+        // },
       ],
 
     },

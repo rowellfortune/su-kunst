@@ -60,7 +60,7 @@ export default function Reactions({ postId }: any) {
 
       {isBusy
         ? <span className="animate-pulse"><ScanHeart size={16}/></span>
-        : liked
+        : isAuthenticated && liked 
           ? <Heart color='#ff0000' size={20}/>
           : <Heart  size={16}/>
       }
