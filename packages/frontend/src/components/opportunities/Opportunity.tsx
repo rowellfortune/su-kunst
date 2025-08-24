@@ -7,7 +7,7 @@ function Opportunity() {
   const id = useParams();
 
   return (
-    <div className="col-span-12">
+    <div className="pt-6 flex w-full col-span-12 flex-col md:flex-row max-w-3xl container mx-auto h-screen" >
       {isAuthenticated ? <div> id {`${id.id}`} </div>: null }
     </div>
   )
