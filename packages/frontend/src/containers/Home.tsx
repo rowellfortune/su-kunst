@@ -195,7 +195,7 @@ export default function Home() {
   }
 
   if (postsLoading || oppsLoading || adsLoading || oppsError || adsError || postsError) return (
-    <div className="flex w-full col-span-12 flex-col md:flex-row max-w-3xl container mx-auto h-screen" >
+    <div className="flex w-full col-span-12 flex-col md:flex-row max-w-3xl container mx-auto h-screen">
       <div className="flex flex-col md:w-full">
         <Skeleton className="h-[125px] w-full rounded-xl bg-amber-300" />
         <div className="space-y-2">
@@ -208,14 +208,13 @@ export default function Home() {
  
   function renderPosts() {
     return (
-        <>
-         {isAuthenticated ? 
-        <div className="flex flex-col  col-span-12 md:flex-row w-full max-w-xl mx-auto">
+      <>
+        {isAuthenticated ? 
+        <div className="flex w-full col-span-12 flex-col md:flex-row max-w-3xl container mx-auto h-screen">
           {!postsLoading && !oppsLoading && !adsLoading && !oppsError && !adsError && !postsError && renderPostsList(feed)}
         </div>
         : null }
-
-        </> 
+      </> 
     );
   }
 
