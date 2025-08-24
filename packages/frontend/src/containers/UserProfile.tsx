@@ -13,9 +13,7 @@ import { formatDistanceToNowStrict } from 'date-fns';
 import { API } from 'aws-amplify';
 import { onError } from '@/lib/errorLib';
 import { Skeleton } from '@/components/ui/skeleton';
-
 import { Globe } from 'lucide-react';
-
 import FollowButton from '@/components/FollowButton';
 
 export interface Post {
@@ -42,8 +40,8 @@ export interface ProfilePageProps {
   pk: string
   profile: {
     bio: string;
-    avatarFileattachment: string;   // string | undefined
-    coverFileattachment: string;    // string | undefined
+    avatarFileattachment?: string;   // string | undefined
+    coverFileattachment?: string;    // string | undefined
     website: string;
     location: string;
   }
@@ -54,56 +52,31 @@ export interface ProfilePageProps {
 
 function UserProfile() {
   const {isAuthenticated } = useContext(AppContext);
-  const id = useParams();
-  const [profile, setProfile] = useState<ProfilePageProps | null>(null)
+  const {id} = useParams();
 
   // 🔥 Pass userId here, not undefined
-  const effectiveId = id.id ?? "";
+  const effectiveId = id ?? "";
   const {
     data: userInfo,
     error: userInfoError,
     isLoading: userInfoLoading,
   } = useGetUserQuery(effectiveId, { skip: !isAuthenticated || !effectiveId });
 
-
-  console.log(userInfo)
+  console.log(userInfo, 'User Info')
   console.log(userInfoError)
   console.log(userInfoLoading)
   const avatarUrl   = userInfo?.profile?.avatarFileattachment;
   
-
   const {
     data: posts = [],
     error: postsError,
     isLoading: postsLoading,
   } = useGetPostsQuery(undefined, { skip: !isAuthenticated });
 
+  const myPosts = posts.filter((post) => post.postedBy === `${id}`);
 
-  useEffect(() => {
-    function loadNote() {
-      return API.get("users", `/users/${id?.id}`, {});
-    }
-
-    async function onLoad() {
-      try {
-        const profile = await loadNote();
-        setProfile(profile)
-      } catch (e) {
-        onError(e);
-      }
-    }
-
-    onLoad();
-  }, [id.id]);
-
-  const follow = () => {
-
-  }
-
-  const myPosts = posts.filter((post) => post.postedBy === `${id.id}`);
-
-  if (postsLoading) return( 
-    <>
+  if (postsLoading && !isAuthenticated) return( 
+    <div>
       <Skeleton className="relative h-64">
         <Skeleton className="w-full h-full object-cover bg-black"/>
         <Skeleton className="absolute left-6 bottom-0 transform translate-y-1/2 z-50">
@@ -115,10 +88,10 @@ function UserProfile() {
       <Skeleton className='w-full h-screen bg-amber-100' />
       <Skeleton className='w-full h-screen bg-amber-100' />
       <Skeleton className='w-full h-screen bg-amber-100' />
-    </>
+    </div>
   );
 
-  if (postsError)   return(
+  if (postsError && !isAuthenticated)   return(
     <>
       <Skeleton className="relative h-64">
         <Skeleton className="w-full h-full object-cover bg-black"/>
@@ -137,33 +110,33 @@ function UserProfile() {
   
     return (
     <div className="md:mx-auto md:mx-w-3xl md:w-7xl">
-      <div className="relative h-64 rounded-md">
-        {profile?.profile?.coverFileattachment
+      <div className="relative h-94 rounded-md">
+        {userInfo?.profile?.coverFileattachment
         ? 
         <img
-          src={profile?.profile?.coverFileattachment}
+          src={userInfo?.profile?.coverFileattachment}
           alt="Cover"
           className="w-full h-full object-cover rounded-xl"
         /> 
         :
         <img
-          src={`https://placehold.co/600x400?text=${profile?.username}`}
-          alt={profile?.username}
+          src={`https://placehold.co/600x500?text=${userInfo?.username}`}
+          alt={userInfo?.username}
           className="w-full h-full object-cover rounded-md"
         />
         }
         <div className='md:px-10 md:grid md:grid-cols-24 md:gap-4 md:items-center justify-center'>
           <Avatar className="h-42 w-42 bg-white -mt-16 col-span-5 justify-center">
-            {profile && <AvatarImage className="h-42 w-42" src={profile?.profile?.avatarFileattachment} alt={profile?.username} />}
-            <AvatarFallback className="bg-amber-400 text-8xl">{profile?.username[0]}</AvatarFallback>
+            {userInfo && <AvatarImage className="h-42 w-42" src={userInfo?.profile?.avatarFileattachment} alt={userInfo?.username} />}
+            <AvatarFallback className="bg-amber-400 text-8xl">{userInfo?.username[0]}</AvatarFallback>
           </Avatar>
           <div className='col-span-10 md:text-start text-center'>
-            <p className='text-3xl font-bold'>{profile?.username}</p>
-            <p>0 Followers . 0 following</p>
+            <p className='text-3xl font-bold'>{userInfo?.username}</p>
+            {/* <p>0 Followers . 0 following</p> */}
           </div>
-          <div className='col-span-8 col-end-24 justify-end md:text-center py-5'>
+          {/* <div className='col-span-8 col-end-24 justify-end md:text-center py-5'>
             <FollowButton targetId={id} />
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -176,9 +149,9 @@ function UserProfile() {
           {/* Intro */}
           <section className="bg-white p-4 rounded-lg shadow">
             <h2 className="text-lg font-medium mb-3">Intro</h2>
-            <p className="text-gray-700">{profile?.profile?.bio ? <>{profile?.profile?.bio}</> : <>[Your intro goes here]</>}</p>
-            <div className='flex py-2' >{profile?.profile?.location ? <><House color='#333'/><p className='px-2'>{profile?.profile?.location}</p></>: null }</div> 
-            <div className='flex py-2' >{profile?.profile?.website ? <><Globe color='#333'/><p className='px-2'>{profile?.profile?.website}</p></>: null }</div> 
+            <p className="text-gray-700">{userInfo?.profile?.bio ? <>{userInfo?.profile?.bio}</> : <>[Your intro goes here]</>}</p>
+            <div className='flex py-2' >{userInfo?.profile?.location ? <><House color='#333'/><p className='px-2'>{userInfo?.profile?.location}</p></>: null }</div> 
+            <div className='flex py-2' >{userInfo?.profile?.website ? <><Globe color='#333'/><p className='px-2'>{userInfo?.profile?.website}</p></>: null }</div> 
           </section>
         </aside>
 
@@ -219,9 +192,9 @@ function UserProfile() {
                   <div className="flex items-center">
                     {isAuthenticated ? <Comment author={p.author} pk={p.pk} userId={p.userId} postId={p.pk} /> : null}
                   </div>
-                  <div className="flex items-center">
+                  {/* <div className="flex items-center">
                     <ShareCompnent />
-                  </div>
+                  </div> */}
                   {/* <div className="flex items-center">
                     {user?.username === author ? <><EditPost author={author} title={''} pk={pk}/></> : null }
                   </div>
@@ -229,7 +202,7 @@ function UserProfile() {
                     {user?.username === author ? <><Trash2 className="text-xl w-4 h-4 cursor-pointer"/></> : null }
                   </div> */}
                 </div>
-                <Bookmark className="text-xl w-4 h-4 cursor-pointer"/>
+                {/* <Bookmark className="text-xl w-4 h-4 cursor-pointer"/> */}
               </div>
 
             </div>

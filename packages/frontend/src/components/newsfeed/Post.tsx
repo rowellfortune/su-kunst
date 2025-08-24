@@ -14,7 +14,7 @@ function Post({ author = "", content, userId, attachment, pk, createdAt }: PostT
 
   const { isAuthenticated, user} = useAppContext();
 
-  console.log(user.attributes.sub)
+  // console.log(user.attributes.sub)
 
   // 🔥 Pass userId here, not undefined
   const effectiveId = userId ?? "";

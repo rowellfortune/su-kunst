@@ -3,7 +3,6 @@ import Post from "@/components/newsfeed/Post";
 import { Skeleton } from "@/components/ui/skeleton";
 import AdsComponent from "@/components/adsfeed/AdsComponent";
 import OpportunitiesComponent from "@/components/opportunities/OpportunitiesComponent";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   useGetPostsQuery,
   useGetAdsQuery,

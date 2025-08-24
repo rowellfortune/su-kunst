@@ -39,7 +39,7 @@ export const RightSidebar: React.FC = () => {
 
   function RightPanel() {
     return (
-      <aside className="md:w-80 p-6 hidden md:block space-y-8">
+      <aside className="xl:w-1/2 p-6 hidden md:block space-y-8 mx-auto">
         <div className="bg-white rounded-xl p-4 text-center">
           <div className="h-24 rounded-t-xl bg-gradient-to-r from-pink-500 to-purple-500" />
             <Avatar className="-mt-12 mx-auto h-20 w-20 rounded-full border-4 border-purple-900 bg-white">
@@ -50,7 +50,7 @@ export const RightSidebar: React.FC = () => {
             {/* <h3 className="mt-2 font-bold">{username}</h3> */}
             <p className="text-sm">@{username.toLowerCase()}</p>
             <p className="mt-2 text-xs">
-              {userInfo?.profile?.bio ? <>{userInfo.profile?.bio}</> : <>[Your intro goes here]</>}
+              {userInfo?.profile?.bio ? <>{userInfo.profile?.bio}</> : <>[Tell us something about yourself]</>}
             </p>
             <div className="mt-4 flex justify-center space-x-2"></div>
             <div className="mt-4 flex justify-around text-xs ">
@@ -58,14 +58,14 @@ export const RightSidebar: React.FC = () => {
                 <p className="font-semibold text-xl">{postsLoading && postsError ? "…" : `${postCount}`}</p>
                 <p className="text-md">Posts</p>
               </div>
-              <div>
+              {/* <div>
                 <p className="font-semibold text-xl">{postsLoading && postsError ? "…" : `${postCount}`}</p>
                 <p className="text-md">Likes</p>
               </div>
               <div>
                 <p className="font-semibold text-xl">{postsLoading && postsError ? "…" : `${postCount}`}</p>
                 <p className="text-md">Followers</p>
-              </div>
+              </div> */}
             </div>
           </div>
     

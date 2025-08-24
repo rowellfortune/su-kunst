@@ -62,7 +62,7 @@ export default function Navbar() {
                 <AvatarImage src={avatarUrl} alt="User avatar" />
                 {!userInfoError && userInfoLoading &&   <AvatarFallback>{username?.[0]}</AvatarFallback> }
               </Avatar>
-              <span className="text-sm font-medium">{username}</span>
+              <span className="text-sm hidden font-medium">{username}</span>
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

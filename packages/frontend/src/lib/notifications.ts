@@ -10,6 +10,7 @@ export interface Notification {
   createdAt: number;
 }
 
+
 // Fetch latest notifications
 export async function getNotifications(): Promise<Notification[]> {
   const res = await API.get("notifications", '/notifications', {});

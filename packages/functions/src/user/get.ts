@@ -18,6 +18,7 @@ export const main = RestUtil.restHandler(async (event) => {
   };
 
   const result = await dynamoDb.send(new GetCommand(params));
+  console.log(result)
   if (!result.Item) {
     throw new Error("Item not found.");
   }

@@ -39,7 +39,7 @@ export const Sidebar: FC = () => {
   const currentPath = location.pathname;
 
   return (
-    <aside className="md:w-full md:p-6 sm:px-6 md:block space-y-8">
+    <aside className="xl:w-1/2 md:p-6 sm:px-6 md:block space-y-8 mx-auto">
       <Card className=" border-r py-0 md:py-1">
         <ScrollArea className="h-full p-4 mx-auto md:mx-px">
           <nav>
