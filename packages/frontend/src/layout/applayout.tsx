@@ -13,7 +13,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <main className={`${isAuthenticated ?  `grid grid-cols-24 gap-2`  :  `flex`} `}>
           {isAuthenticated && <div className="col-span-5"><Sidebar/></div>}
             {children}
-          {isAuthenticated && <div className="col-span-5"><RightSidebar/></div> }
+          {isAuthenticated && <div className="col-span-5">{isAuthenticated ? <RightSidebar/> : null}</div> }
       </main>
     </div>
   )

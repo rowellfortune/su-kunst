@@ -15,6 +15,8 @@ export default function Reactions({ postId }: any) {
   const {isAuthenticated } = useAppContext();
   const { liked, count, loading, setLiked, setCount } = usePostLikes(postId);
 
+  console.log(count)
+
   // track only the toggle‑call loading
   const [toggling, setToggling] = useState(false);
 
@@ -45,6 +47,8 @@ export default function Reactions({ postId }: any) {
 
 
   return (
+    <>
+    {isAuthenticated &&
     <button
       onClick={toggleLike}
       disabled={isBusy}
@@ -53,6 +57,7 @@ export default function Reactions({ postId }: any) {
         ${liked ? "text-red-600" : "text-gray-600 hover:text-red-600"}
       `}
     >
+
       {isBusy
         ? <span className="animate-pulse"><ScanHeart size={16}/></span>
         : liked
@@ -64,5 +69,7 @@ export default function Reactions({ postId }: any) {
         ${liked ? "text-#6fff00-600" : "text-gray-600 hover:text-red-600"}
       `}>{count}</span>
     </button>
+}
+    </>
   );
 }

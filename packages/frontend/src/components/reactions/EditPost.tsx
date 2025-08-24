@@ -14,7 +14,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { API } from 'aws-amplify'
 import { useAppContext } from '@/lib/contextLib'
 import { onError } from '@/lib/errorLib'
-import { useNavigate } from 'react-router-dom'
 import { SquarePen } from 'lucide-react'
 import type { PostType } from '@/types/post'
 import { s3Upload } from '@/lib/awsLib'
@@ -30,12 +29,11 @@ function EditPost({ author, pk, userId }: PostType) {
   const fileInput = useRef<File>(null)
 
   const { isAuthenticated } = useAppContext()
-  const nav = useNavigate()
 
   // Fetch all posts
-  async function loadPosts(): Promise<PostType[]> {
-    return API.get('posts', '/posts', {})
-  }
+  // async function loadPosts(): Promise<PostType[]> {
+  //   return API.get('posts', '/posts', {})
+  // }
 
   // Put update
   async function updatePost(note: PostType) {
@@ -43,38 +41,44 @@ function EditPost({ author, pk, userId }: PostType) {
   }
 
   // Find the one post in the list
-  function findCurrentPost(data: PostType[], pk: string) {
-    return data.find(
-      p =>
-        p?.entityType === 'POST' &&
-        p?.pk?.includes(pk!) &&
-        p?.author?.includes(author)
-    )
-  }
+  
 
   // When the dialog opens (isAuthenticated), load and seed form state
   useEffect(() => {
     if (!isAuthenticated) return
+    
+    // function findCurrentPost(data: PostType[], pk: string) {
+    //   return data.find(
+    //     p =>
+    //       p?.entityType === 'POST' &&
+    //       p?.pk?.includes(pk!) &&
+    //       p?.author?.includes(author)
+    //   )
+    // }
 
     async function onLoad() {
-      try {
-        const all = await loadPosts()
-        // setPostList(all)
-
-        const current = findCurrentPost(all, pk!)
+      if(isAuthenticated){
+        try {
         
-        if (current) {
-          setTitle(current.title || '')
-          setContent(current.content || '')
-          setAttachmentUrl(current.attachment)
+            // const all = await loadPosts()
+            // setPostList(all)
+
+            // const current = findCurrentPost(all, pk!)
+            
+            // if (current) {
+            //   setTitle(current.title || '')
+            //   setContent(current.content || '')
+            //   setAttachmentUrl(current.attachment)
+            // }
+          
+        } catch (e) {
+          onError(e)
         }
-      } catch (e) {
-        onError(e)
       }
     }
 
     onLoad()
-  }, [isAuthenticated])
+  }, [author, isAuthenticated, pk])
 
   // Handle file select
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -108,7 +112,7 @@ function EditPost({ author, pk, userId }: PostType) {
       })
 
     setOpen(false)
-      nav('/')
+    location.reload();
     } catch (err) {
       onError(err)
     } finally {
@@ -117,6 +121,7 @@ function EditPost({ author, pk, userId }: PostType) {
   }
 
   return (
+    <>
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost" className="rounded-full">
@@ -133,6 +138,13 @@ function EditPost({ author, pk, userId }: PostType) {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="block w-full text-sm text-gray-600"
+          />
+
           <Input
             placeholder="Post Title"
             value={title}
@@ -152,14 +164,7 @@ function EditPost({ author, pk, userId }: PostType) {
             value={type}
             onChange={e => setType(e.target.value)}
           />
-
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="block w-full text-sm text-gray-600"
-          />
-
+          
           {attachmentUrl && (
             <img
               src={attachmentUrl}
@@ -176,6 +181,7 @@ function EditPost({ author, pk, userId }: PostType) {
         </form>
       </DialogContent>
     </Dialog>
+    </>
   )
 }
 

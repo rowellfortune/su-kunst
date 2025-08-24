@@ -149,18 +149,17 @@ export default function Home() {
             case 'POST':
               if (!item.content) return null;
               return  (
-              <Post pk={item?.pk} 
-                        key={item?.pk} 
-                        title={item.title} 
-                        attachment={item.attachment} 
-                        content={item.content} 
-                        author={item.author} 
-                        userId={item.postedBy} 
-                        createdAt={item.createdAt} 
-                        postedBy={item.postedBy}
-                      />
-              // <div key={item.pk} >Post</div>
-                    );
+                <Post pk={item?.pk} 
+                  key={item?.pk} 
+                  title={item.title} 
+                  attachment={item.attachment} 
+                  content={item.content} 
+                  author={item.author} 
+                  userId={item.postedBy} 
+                  createdAt={item.createdAt} 
+                  postedBy={item.postedBy}
+                />
+              );
             case 'AD':
               return  (<AdsComponent pk={item.pk}  
                         key={item.pk} 

@@ -41,40 +41,36 @@ export const RightSidebar: React.FC = () => {
     return (
       <aside className="md:w-80 p-6 hidden md:block space-y-8">
         <div className="bg-white rounded-xl p-4 text-center">
-          <div
-            className="h-24 rounded-t-xl bg-gradient-to-r from-pink-500 to-purple-500"
-          />
+          <div className="h-24 rounded-t-xl bg-gradient-to-r from-pink-500 to-purple-500" />
             <Avatar className="-mt-12 mx-auto h-20 w-20 rounded-full border-4 border-purple-900 bg-white">
               <AvatarImage src={avatarUrl} alt="Jakob Botosh" />
               <AvatarFallback>{username[0]}</AvatarFallback>
             </Avatar>
             {!userInfoError && !userInfoLoading ? <h3 className="mt-2 font-bold">{username}</h3> : <>....</>}
-          {/* <h3 className="mt-2 font-bold">{username}</h3> */}
-          <p className="text-sm">@{username.toLowerCase()}</p>
-          <p className="mt-2 text-xs">
-            {userInfo?.profile?.bio ? <>{userInfo.profile?.bio}</> : <>[Your intro goes here]</>}
-          </p>
-          <div className="mt-4 flex justify-center space-x-2">
+            {/* <h3 className="mt-2 font-bold">{username}</h3> */}
+            <p className="text-sm">@{username.toLowerCase()}</p>
+            <p className="mt-2 text-xs">
+              {userInfo?.profile?.bio ? <>{userInfo.profile?.bio}</> : <>[Your intro goes here]</>}
+            </p>
+            <div className="mt-4 flex justify-center space-x-2"></div>
+            <div className="mt-4 flex justify-around text-xs ">
+              <div>
+                <p className="font-semibold text-xl">{postsLoading && postsError ? "…" : `${postCount}`}</p>
+                <p className="text-md">Posts</p>
+              </div>
+              <div>
+                <p className="font-semibold text-xl">{postsLoading && postsError ? "…" : `${postCount}`}</p>
+                <p className="text-md">Likes</p>
+              </div>
+              <div>
+                <p className="font-semibold text-xl">{postsLoading && postsError ? "…" : `${postCount}`}</p>
+                <p className="text-md">Followers</p>
+              </div>
+            </div>
           </div>
-          <div className="mt-4 flex justify-around text-xs ">
-            <div>
-              <p className="font-semibold text-xl">{postsLoading && postsError ? "…" : `${postCount}`}</p>
-              <p className="text-md">Posts</p>
-            </div>
-            <div>
-              <p className="font-semibold text-xl">{postsLoading && postsError ? "…" : `${postCount}`}</p>
-              <p className="text-md">Likes</p>
-            </div>
-            <div>
-              <p className="font-semibold text-xl">{postsLoading && postsError ? "…" : `${postCount}`}</p>
-              <p className="text-md">Followers</p>
-            </div>
-          </div>
-        </div>
-
-
+    
         <div className="bg-white rounded-xl p-4">
-           <h4 className="text-xl font-semibold mb-2 flex items-center">
+          <h4 className="text-xl font-semibold mb-2 flex items-center">
             <Users className="h-6 w-6 mr-2" />
             Suggested Artists
           </h4>
@@ -101,6 +97,8 @@ export const RightSidebar: React.FC = () => {
             ))}
           </ul>: <>Loading users</> }
         </div>
+      
+
       </aside>
     );
   }

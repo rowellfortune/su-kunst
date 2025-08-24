@@ -47,9 +47,9 @@ export const Sidebar: FC = () => {
               {navItems.map(({ label, icon: Icon, badge, url }) => {
                 const isActive = currentPath === url;
                 return (
-                  <>
+                  <div key={label}>
                      {url !== "" ? 
-                  <li key={label}>
+                  <li>
                  
                     <Link
                       to={url}
@@ -75,7 +75,7 @@ export const Sidebar: FC = () => {
                     </Link> 
                   </li>
                   : null }
-                  </>
+                  </div>
                 );
               })}
             </ul>
