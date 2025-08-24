@@ -35,18 +35,18 @@ export const commentsApi = createApi({
   baseQuery: amplifyBaseQuery,
   tagTypes: ['Post', 'Comment', 'User'],
   endpoints: builder => ({
-    getPosts: builder.query<CommentType[], void>({
+    getComments: builder.query<CommentType[], void>({
       query: () => ({ url: '/comments', method: 'GET' }),
     }),
-    addPost: builder.mutation<CommentType, Partial<CommentType>>({
+    addComment: builder.mutation<CommentType, Partial<CommentType>>({
       query: body => ({ url: '/comments', method: 'POST', body }),
     }),
   }),
 })
 
 export const {
-  useGetPostsQuery,
-  useAddPostMutation,
+  useGetCommentsQuery,
+  useAddCommentMutation,
 } = commentsApi;
 
 

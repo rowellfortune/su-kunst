@@ -27,7 +27,7 @@ import { useGetUserQuery } from "@/store";
 
 const NewPost = () => {
   const file = useRef<null | File>(null);
-  console.log(file)
+  // console.log(file)
   const nav = useNavigate();
   const [title, setTitle] = useState("");
   const {isAuthenticated } = useAppContext();
@@ -36,7 +36,6 @@ const NewPost = () => {
   const [author, setAuthor] = useState("");
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true);
-
   const effectiveId = user.attributes.sub ?? "";
   const {
     data: userInfo,
@@ -44,12 +43,9 @@ const NewPost = () => {
     isLoading: userInfoLoading,
   } = useGetUserQuery(effectiveId, { skip: !isAuthenticated || !effectiveId });
 
-  console.log(userInfoError)
-  console.log(userInfoLoading)
   // fallback to the passed‑in `author` if we don’t have the full profile yet
   const avatarUrl   = userInfo?.profile.avatarFileattachment;
   
-
   function createPost(note: PostType) {
     return API.post("posts", "/posts", {
       body: note,
@@ -94,7 +90,7 @@ const NewPost = () => {
       });
       setIsLoading(false);
       setOpen(false)
-      nav("/");
+      location.reload();
     } catch (e) {
       onError(e);
       setIsLoading(false);
@@ -108,8 +104,11 @@ const NewPost = () => {
         <div className="flex items-center space-x-3">
           <Link to={`/profile/${user.attributes.sub}`}>
             <Avatar className="h-10 w-10">
+              {!userInfoError &&  !userInfoLoading ? (
               <AvatarImage src={avatarUrl} alt="Jakob Botosh" />
+              ):(
               <AvatarFallback>{author[0]}</AvatarFallback>
+              )}
             </Avatar>
           </Link>
           <div className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none">
@@ -133,6 +132,11 @@ const NewPost = () => {
                 </div>
                 <div className="grid gap-4">
                   <div className="grid gap-3">
+                  <Input
+                    type="file"
+                    accept="image/jpeg,image/png"
+                    onChange={handleFileChange}
+                  />
                     <Input
                       type="text"
                       placeholder="Artwork Title"
@@ -161,11 +165,7 @@ const NewPost = () => {
                     </>
                   )}
                 
-                  <Input
-                    type="file"
-                    accept="image/jpeg,image/png"
-                    onChange={handleFileChange}
-                  />
+                 
                 
                 <DialogFooter>
                   <Button type="submit" disabled={isLoading} className="mt-3 w-full">

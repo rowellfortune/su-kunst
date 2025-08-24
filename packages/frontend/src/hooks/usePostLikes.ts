@@ -34,6 +34,7 @@ export function usePostLikes(
     // Compose the GET path: e.g. "/reactions/abc123/likes"
     const path = `${basePath}/${postId}/likes`;
 
+    if(isAuthenticated){
     // Amplify’s API.get signature: API.get(apiName, path, init?)
     API.get(apiName, path, {})
       .then((response: { liked: boolean; count: number }) => {
@@ -47,7 +48,7 @@ export function usePostLikes(
       .finally(() => {
         if (isMounted) setLoading(false);
       });
-
+    }
     // cleanup function: runs on unmount or before next effect
     return () => {
       isMounted = false;

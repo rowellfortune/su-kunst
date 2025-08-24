@@ -14,8 +14,8 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "@/lib/contextLib";
 import { onError } from "@/lib/errorLib";
 import {
-  useGetPostsQuery,
-  useAddPostMutation,
+  useGetCommentsQuery,
+  useAddCommentMutation,
 } from "@/store/apis/commentsApi";
 import { buildCommentTree } from "@/lib/utils";
 import { CommentItem } from "./CommentItem";
@@ -59,8 +59,8 @@ export default function Comments({
     setFormData((f) => ({ ...f, user: user?.username }));
   }, [user?.username]);
 
-  const { data = [], isLoading } = useGetPostsQuery();
-  const [addPost] = useAddPostMutation();
+  const { data = [], isLoading } = useGetCommentsQuery();
+  const [addPost] = useAddCommentMutation();
   const [loading, setLoading] = useState(false);
 
   // only comments for this post

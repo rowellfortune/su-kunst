@@ -12,13 +12,12 @@ export const main = RestUtil.restHandler(async (event) => {
     // 'Key' defines the partition key and sort key of
     // the item to be retrieved
     Key: {
-      pk: `USER#${event.pathParameters!.id!}`, // The id of the author
-      sk: 'PROFILE', // The id of the note from the path
+      pk: `OPPORTUNITY-${event.pathParameters!.id!}`, // The id of the author
+      sk: 'DETAILS#OPPORTUNITY', // The id of the note from the path
     },
   };
 
   const result = await dynamoDb.send(new GetCommand(params));
-  console.log(result)
   if (!result.Item) {
     throw new Error("Item not found.");
   }

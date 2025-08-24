@@ -53,7 +53,7 @@ export const amplifyBaseQuery: BaseQueryFn<Args, unknown, unknown> =
   }
 
 export const notificationApi = createApi({
-  reducerPath: 'adsApi',
+  reducerPath: 'notificationApi',
   baseQuery: amplifyBaseQuery,
   tagTypes: ['Post', 'Comment', 'User'],
   endpoints: builder => ({

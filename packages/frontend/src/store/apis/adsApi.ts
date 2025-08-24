@@ -53,7 +53,7 @@ export const adsApi = createApi({
   baseQuery: amplifyBaseQuery,
   tagTypes: ['Post', 'Comment', 'User'],
   endpoints: builder => ({
-    getPosts: builder.query<AdType[], void>({
+    getAds: builder.query<AdType[], void>({
       query: () => ({ url: '/ads', method: 'GET' }),
     }),
     addPost: builder.mutation<AdType, Partial<AdType>>({
@@ -63,7 +63,7 @@ export const adsApi = createApi({
 })
 
 export const {
-  useGetPostsQuery,
+  useGetAdsQuery,
 } = adsApi;
 
 
