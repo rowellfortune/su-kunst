@@ -1,98 +1,75 @@
-// src/store/notificationsApi.ts
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { amplifyBaseQuery } from "../amplifyBaseQuery";
+import { createApi} from '@reduxjs/toolkit/query/react';
+import type { BaseQueryFn } from '@reduxjs/toolkit/query'
+import { API } from 'aws-amplify'
+// import type { CommentType } from '@/types/comment';
 
-export type Notification = {
-  entityType: "NOTIFICATION";
-  read: boolean;
-  updatedAt: number;
-  createdAt: number;
-  sk: string;
-  message: string;
-  postId?: string;
-  pk: string;
-  link?: string;
-};
+// base for all items
+interface BaseItem {
+  pk?: string;            // primary key (optional)
+  title: string;          // always required
+  attachment?: string;    // URL to an image/video (optional)
+  content?: string;       // body text (optional)
+  description?: string;   // extra text (optional)
+  author: string;         // who created it (required)
+  postedBy?: string;      // user ID who posted it (optional)
+  createdAt: number;     // UNIX timestamp (optional)
+  type?: string;          // a generic “type” label (optional)
+  link?: string;           // always required
+  entityType:            // discriminant for narrowing
+    | "POST"
+    | "AD"
+    | "OPPORTUNITY"
+    | string;
+}
 
-type GetNotificationsArgs = { cursor?: string };
-type GetNotificationsResponse = { items: Notification[]; nextCursor?: string };
+// an “AD” item
+interface AdType extends BaseItem {
+  entityType: "AD"; 
+  company: string;
+}
+
+
+type Args = { url: string; method: 'GET'|'POST'|'PUT'|'DELETE'; body?: any }
+
+export const amplifyBaseQuery: BaseQueryFn<Args, unknown, unknown> =
+  async ({ url, method, body }) => {
+    try {
+      let data
+      if (method === 'GET') {
+        data = await API.get("notifications", url, {});
+        console.log(data)
+      } else {
+        data = await API.post('notifications', url, { body })
+      }
+      return { data }
+    } catch (error: any) {
+      return {
+        error: {
+          status: error.response?.status || 500,
+          data: error.message || error,
+        }
+      }
+    }
+  }
 
 export const notificationsApi = createApi({
-  reducerPath: "notificationsApi",
-  // 👇 Use Amplify
-  baseQuery: amplifyBaseQuery({ apiName: "notifications" }),
-  tagTypes: ["Notifications"],
-  endpoints: (build) => ({
-    // Infinite list with shared cache + merge (RTKQ pattern)
-    getNotifications: build.query<GetNotificationsResponse, GetNotificationsArgs | void>({
-      query: (args) => {
-        const cursor = (args as GetNotificationsArgs | undefined)?.cursor;
-        return cursor
-          ? { url: "/notifications", method: "GET", init: { queryStringParameters: { cursor } } }
-          : { url: "/notifications", method: "GET" };
-      },
-      serializeQueryArgs: ({ endpointName }) => endpointName,
-      merge: (currentCache, newCache) => {
-        currentCache.items.push(...newCache.items);
-        currentCache.nextCursor = newCache.nextCursor;
-      },
-      forceRefetch({ currentArg, previousArg }) {
-        return (currentArg as GetNotificationsArgs | undefined)?.cursor !==
-               (previousArg as GetNotificationsArgs | undefined)?.cursor;
-      },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.items.map((n) => ({ type: "Notifications" as const, id: n.sk })),
-              { type: "Notifications" as const, id: "LIST" },
-            ]
-          : [{ type: "Notifications", id: "LIST" }],
+  reducerPath: 'notificationApi',
+  baseQuery: amplifyBaseQuery,
+  tagTypes: ['Post', 'Comment', 'User'],
+  endpoints: builder => ({
+    getNotifications: builder.query<AdType[], void>({
+      query: () => ({ url: '/notifications', method: 'GET' }),
     }),
-
-    // Optimistic single mark-read
-    markRead: build.mutation<{ sk: string }, { sk: string }>({
-      query: ({ sk }) => ({
-        url: `/notifications/${encodeURIComponent(sk)}/read`,
-        method: "POST",
-      }),
-      async onQueryStarted({ sk }, { dispatch, queryFulfilled }) {
-        const patch = dispatch(
-          notificationsApi.util.updateQueryData("getNotifications", undefined, (draft) => {
-            const item = draft.items.find((n) => n.sk === sk);
-            if (item) item.read = true;
-          })
-        );
-        try {
-          await queryFulfilled;
-        } catch {
-          patch.undo();
-        }
-      },
-      invalidatesTags: (_res, _err, { sk }) => [{ type: "Notifications", id: sk }],
-    }),
-
-    // Optimistic mark-all-read
-    markAllRead: build.mutation<{ count: number }, void>({
-      query: () => ({ url: `/notifications/read-all`, method: "POST" }),
-      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
-        const patch = dispatch(
-          notificationsApi.util.updateQueryData("getNotifications", undefined, (draft) => {
-            draft.items.forEach((n) => (n.read = true));
-          })
-        );
-        try {
-          await queryFulfilled;
-        } catch {
-          patch.undo();
-        }
-      },
-      invalidatesTags: [{ type: "Notifications", id: "LIST" }],
+    addNotification: builder.mutation<AdType, Partial<AdType>>({
+      query: body => ({ url: '/notifications', method: 'POST', body }),
     }),
   }),
-});
+})
 
 export const {
   useGetNotificationsQuery,
-  useMarkReadMutation,
-  useMarkAllReadMutation,
+  useAddNotificationMutation
 } = notificationsApi;
+
+
+

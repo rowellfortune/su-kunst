@@ -5,12 +5,13 @@ import { onError } from '@/lib/errorLib';
 
 
 function Opportunities() {
-    const [ads, setAds] = useState<Array<AdType>>([]);
+    const [ads, setAds] = useState([]);
     const { isAuthenticated } = useAppContext();
     const [user, setUser] = useState(null)
     const [isLoading, setIsLoading] = useState(true);
 
     console.log(ads);
+    console.log(user);
     console.log(isLoading);
 
     function loadAds() {
@@ -43,7 +44,7 @@ function Opportunities() {
   return (
     <div>
       <div className="grid grid-cols-3 gap-4">
-        {ads.map(({content,attachment, company, pk}) => (
+        {ads.map(({attachment, company, pk}) => (
             <div key={pk} className="justify-center">
               <div>
                 {company}

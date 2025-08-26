@@ -1,20 +1,16 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AppContext} from '@/lib/contextLib';
 import { useGetPostsQuery, useGetUserQuery } from '@/store';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { useParams } from 'react-router-dom'
 import Post from '@/components/newsfeed/Post';
 import { Separator } from '@/components/ui/separator';
 import Reactions from '@/components/reactions/Reactions';
 import Comment from '@/components/reactions/Comments';
-import ShareCompnent from '@/components/reactions/Share';
-import { Bookmark, House } from 'lucide-react';
 import { formatDistanceToNowStrict } from 'date-fns';
-import { API } from 'aws-amplify';
-import { onError } from '@/lib/errorLib';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Globe } from 'lucide-react';
-import FollowButton from '@/components/FollowButton';
+import { Globe, House } from 'lucide-react';
+
 
 export interface Post {
   id: string;
@@ -192,19 +188,8 @@ function UserProfile() {
                   <div className="flex items-center">
                     {isAuthenticated ? <Comment author={p.author} pk={p.pk} userId={p.userId} postId={p.pk} /> : null}
                   </div>
-                  {/* <div className="flex items-center">
-                    <ShareCompnent />
-                  </div> */}
-                  {/* <div className="flex items-center">
-                    {user?.username === author ? <><EditPost author={author} title={''} pk={pk}/></> : null }
-                  </div>
-                  <div className="flex items-center">
-                    {user?.username === author ? <><Trash2 className="text-xl w-4 h-4 cursor-pointer"/></> : null }
-                  </div> */}
                 </div>
-                {/* <Bookmark className="text-xl w-4 h-4 cursor-pointer"/> */}
               </div>
-
             </div>
           ))}
 
