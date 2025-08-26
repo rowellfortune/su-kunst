@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 
 function OpportunitiesComponent({title, pk, type, description, company, attachment, createdAt}: OpportunityType) {
 
-  const getId = (pk: string) => {
-    const id = pk.replace("OPPORTUNITY-", "")
+  const getId = (pk: string | undefined) => {
+    const id = pk?.replace("OPPORTUNITY-", "")
     return id
   } 
 

@@ -21,9 +21,9 @@ function formatRelativeTime(ts: number) {
 }
 
 const NotificationList: FC<Props> = ({ notifications, onMarkRead }) => {
-  const readNotifications = notifications.filter(n => n.read === false);
+  // const readNotifications = notifications.filter(n => n.read === false);
 
-  if (readNotifications.length === 0) {
+  if (notifications.length === 0) {
     return (
       <div className="p-6 text-center text-gray-500">
         You’re all caught up 🎉

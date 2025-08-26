@@ -1,17 +1,15 @@
 import { AppContext } from '@/lib/contextLib';
-import React, { useRef, useState, useEffect, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { useParams } from "react-router-dom";
 import { API, Storage } from "aws-amplify";
 import { onError } from "@/lib/errorLib"
+import type { OpportunityType } from '@/types/opportunity';
 
 function Opportunity() {
 
   const {isAuthenticated } = useContext(AppContext);
-  const file = useRef<null | File>(null)
   const {id} = useParams();
-  const nav = useNavigate();
-  const [note, setNote] = useState(null);
-  const [content, setContent] = useState("");
+  const [note, setNote] = useState<OpportunityType>();
 
   console.log(note)
 
@@ -23,13 +21,12 @@ function Opportunity() {
     async function onLoad() {
       try {
         const note = await loadNote();
-        const { content, attachment } = note;
+        const { attachment } = note;
 
         if (attachment) {
           note.attachmentURL = await Storage.vault.get(attachment);
         }
 
-        setContent(content);
         setNote(note);
       } catch (e) {
         onError(e);
@@ -37,7 +34,7 @@ function Opportunity() {
     }
 
     onLoad();
-  }, [id]);
+  }, [id,isAuthenticated]);
 
 
   return (

@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { PostType } from "@/types/post";
 import Comment from "../reactions/Comments";
 import { formatDistanceToNowStrict } from 'date-fns';
-import { AppContext, useAppContext } from "@/lib/contextLib";
+import { useAppContext } from "@/lib/contextLib";
 import { useGetUserQuery } from '@/store/apis/userApi';  // <-- make sure this points to your RTK Query slice
 import { Separator } from '../ui/separator';
 import Reactions from '../reactions/Reactions';
