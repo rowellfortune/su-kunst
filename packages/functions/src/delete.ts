@@ -1,5 +1,5 @@
 import { Resource } from "sst";
-import { Util } from "@su-kunst/core/util";
+import { RestUtil } from "@su-kunst/core/util";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DeleteCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
