@@ -6,7 +6,7 @@ import { DeleteCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 export const main = RestUtil.restHandler(async (event) => {
-
+  
   const full  = event?.requestContext?.authorizer?.iam?.cognitoIdentity?.amr[2];
   const userId = full.replace(/^.*:/, "");
 
