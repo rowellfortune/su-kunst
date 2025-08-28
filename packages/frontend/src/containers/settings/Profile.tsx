@@ -89,21 +89,24 @@ export default function Profile() {
 
   // load existing profile
   useEffect(() => {
-    function loadNote() {
+    function loadUser() {
       return API.get("users", `/users/${userId}`, {});
     }
 
     async function onLoad() {
       try {
-        const profile = await loadNote();
+        const profile = await loadUser();
         setProfile(profile)
       } catch (e) {
         onError(e);
       }
     }
 
-    onLoad();
-  }, [userId]);
+    if(isAuthenticated){
+      onLoad();
+    }
+    
+  }, [userId, isAuthenticated]);
 
   useEffect(() => {
     if (profile?.profile?.bio) {

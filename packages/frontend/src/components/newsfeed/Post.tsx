@@ -7,7 +7,7 @@ import { useAppContext } from "@/lib/contextLib";
 import { useGetUserQuery } from '@/store/apis/userApi';  // <-- make sure this points to your RTK Query slice
 import { Separator } from '../ui/separator';
 import Reactions from '../reactions/Reactions';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import EditPost from "../reactions/EditPost";
 
 function Post({ author = "", content, userId, attachment, pk, createdAt }: PostType) {
@@ -41,10 +41,21 @@ function Post({ author = "", content, userId, attachment, pk, createdAt }: PostT
     ? formatDistanceToNowStrict(new Date(createdAt), { addSuffix: true })
     : "";
 
+  const navigate = useNavigate();
+  const open = () => {
+    // Push a sharable URL with the post id
+    navigate({ search: `?post=${pk}` }, { replace: false });
+  };
+
   return (
     <>
      {isAuthenticated &&
-      <div className="bg-white rounded-xl shadow-md overflow-hidden border mx-auto my-3">
+      <div 
+        role="button"
+        tabIndex={0}
+        onClick={open}
+        onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && open()}
+        className="bg-white rounded-xl shadow-md overflow-hidden border mx-auto my-3">
         <div className="flex items-center m-4">
           <Link to={`/profile/${userId}`}>
             <Avatar className="h-12 w-12">
@@ -89,3 +100,4 @@ function Post({ author = "", content, userId, attachment, pk, createdAt }: PostT
 }
 
 export default Post;
+

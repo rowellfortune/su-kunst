@@ -196,21 +196,6 @@ export default function Home() {
 
   if (postsLoading || oppsLoading || adsLoading || oppsError || adsError || postsError) return (
     <div className="mt-6 w-full col-span-12 flex-col md:flex-row max-w-3xl container mx-auto h-full" >
-    
-        <div className="flex bg-white shadow-md p-3 mb-5 rounded-xl flex-col md:w-full">
-          <div className="flex space-y-2 my-2 items-center">
-            <Skeleton className="h-13 rounded-full w-13 bg-slate-300" />
-            <div className="mx-2">
-              <Skeleton className="h-4 w-full md:w-[200px] bg-slate-300 my-2" />
-              <Skeleton className="h-4 w-full md:w-[100px] bg-slate-300 my-2" />
-            </div>
-          </div>
-          <Skeleton className="h-62 w-full rounded-xl bg-slate-300" />
-          <div className="flex space-y-2 my-2 ">
-            <Skeleton className="h-5 w-20 bg-slate-300 mr-2" />
-            <Skeleton className="h-5 w-20 bg-slate-300" />
-          </div>
-        </div>
 
         <div className="flex bg-white shadow-md p-3 mb-5 rounded-xl flex-col md:w-full">
           <div className="flex space-y-2 my-2 items-center">
@@ -256,7 +241,21 @@ export default function Home() {
             <Skeleton className="h-5 w-20 bg-slate-300" />
           </div>
         </div>
-   
+
+        <div className="flex bg-white shadow-md p-3 mb-5 rounded-xl flex-col md:w-full">
+          <div className="flex space-y-2 my-2 items-center">
+            <Skeleton className="h-13 rounded-full w-13 bg-slate-300" />
+            <div className="mx-2">
+              <Skeleton className="h-4 w-full md:w-[200px] bg-slate-300 my-2" />
+              <Skeleton className="h-4 w-full md:w-[100px] bg-slate-300 my-2" />
+            </div>
+          </div>
+          <Skeleton className="h-62 w-full rounded-xl bg-slate-300" />
+          <div className="flex space-y-2 my-2 ">
+            <Skeleton className="h-5 w-20 bg-slate-300 mr-2" />
+            <Skeleton className="h-5 w-20 bg-slate-300" />
+          </div>
+        </div>
     </div>
   );
  

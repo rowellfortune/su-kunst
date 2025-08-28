@@ -53,26 +53,34 @@ export default function Links() {
     <Routes>
       <Route path="/" 
         element={
-          <AppLayout children={<Home/>} />
+          <AuthenticatedRoute>
+            <AppLayout children={<Home/>} />
+          </AuthenticatedRoute>
         }
       />
 
       <Route path="/events" 
         element={
-          <AppLayout children={<Events />} />
+          <AuthenticatedRoute>
+            <AppLayout children={<Events />} />
+          </AuthenticatedRoute>
         }
       />
 
       <Route path="/marketplace" 
         element={
-          <AppLayout children={<Events />} />
+          <AuthenticatedRoute>
+            <AppLayout children={<Events />} />
+          </AuthenticatedRoute>
         }
       />
 
       {/* Post */}
       <Route path="/posts/new" 
         element={
-          <Landinglayout children={<NewPost />} />
+          <AuthenticatedRoute>
+            <Landinglayout children={<NewPost />} />
+          </AuthenticatedRoute>
         }
       />
 
@@ -81,9 +89,11 @@ export default function Links() {
 
       <Route path="/admin/opportunities/new" 
         element={
-          <AdminRoute>
+        <AdminRoute>
+          <AuthenticatedRoute>
             <Admin children={<NewOppertunity />} />
-          </AdminRoute>
+          </AuthenticatedRoute>
+        </AdminRoute>
         }
       />
 
@@ -98,8 +108,9 @@ export default function Links() {
       <Route 
         path="/profile/:id" 
         element={
-          
-          <ProfileLayout children={ <UserProfile />} />
+          <AuthenticatedRoute>
+            <ProfileLayout children={ <UserProfile />} />
+          </AuthenticatedRoute>
         } 
       />
 
@@ -127,9 +138,7 @@ export default function Links() {
         path="/artist/signup"
         element={ 
           <UnauthenticatedRoute>
-            <Landinglayout 
-              children={ <ArtistSignup />} 
-            />
+            <Landinglayout children={ <ArtistSignup />} />
           </UnauthenticatedRoute>
         } 
       />
@@ -145,19 +154,25 @@ export default function Links() {
 
       <Route path="/opportunities/:id" 
         element={
-          <AppLayout children={ <Opportunity />} />
+          <AuthenticatedRoute>
+            <AppLayout children={ <Opportunity />} />
+          </AuthenticatedRoute>
         }
       />
 
       <Route path="/ads/:id" 
         element={
+          <AuthenticatedRoute>
           <AppLayout children={ <Ad />} />
+        </AuthenticatedRoute>
         }
       />
 
       <Route path="/ads/edit/:id" 
         element={
+          <AuthenticatedRoute>
           <Admin children={ <UpdateAd />} />
+        </AuthenticatedRoute>
         }
       />
 
@@ -165,14 +180,18 @@ export default function Links() {
       <Route path="/admin/" 
         element={
           <AdminRoute>
+            <AuthenticatedRoute>
             <Admin children={<AdminDashboard/>} />
+          </AuthenticatedRoute>
           </AdminRoute>
         } 
       />
       <Route path="/admin/inbox" 
         element={
           <AdminRoute>
+            <AuthenticatedRoute>
             <InboxLayout children={<Inbox />} />
+          </AuthenticatedRoute>
           </AdminRoute>
         } 
       />
@@ -180,7 +199,9 @@ export default function Links() {
       <Route path="/admin/user" 
         element={
           <AdminRoute>
+            <AuthenticatedRoute>
             <Admin children={<User />} />
+          </AuthenticatedRoute>
           </AdminRoute>
         } 
       />
@@ -188,7 +209,9 @@ export default function Links() {
       <Route path="/admin/opportunities" 
         element={
           <AdminRoute>
-            <Admin children={<Opportunities />} />
+            <AuthenticatedRoute>
+              <Admin children={<Opportunities />} />
+            </AuthenticatedRoute>
           </AdminRoute>
         } 
       />
@@ -196,7 +219,9 @@ export default function Links() {
       <Route path="/admin/companies" 
         element={
           <AdminRoute>
-            <Admin children={<Companies />} />
+            <AuthenticatedRoute>
+              <Admin children={<Companies />} />
+            </AuthenticatedRoute>
           </AdminRoute>
         } 
       />
@@ -204,7 +229,9 @@ export default function Links() {
       <Route path="/admin/organizations" 
         element={
           <AdminRoute>
-            <Admin children={<Organizations />} />
+            <AuthenticatedRoute>
+              <Admin children={<Organizations />} />
+            </AuthenticatedRoute>
           </AdminRoute>
         } 
       />
@@ -212,7 +239,9 @@ export default function Links() {
       <Route path="/admin/ad-data" 
         element={
           <AdminRoute>
-            <Admin children={<AdData />} />
+            <AuthenticatedRoute>
+              <Admin children={<AdData />} />
+            </AuthenticatedRoute>
           </AdminRoute>
         }
       />
@@ -221,7 +250,9 @@ export default function Links() {
       <Route path="/admin/ads/new" 
         element={
           <AdminRoute>
-            <Admin children={<NewAd />} />
+            <AuthenticatedRoute>
+              <Admin children={<NewAd />} />
+            </AuthenticatedRoute>
           </AdminRoute>
         }
       />
@@ -229,7 +260,9 @@ export default function Links() {
       <Route path="/admin/ads/live" 
         element={
           <AdminRoute>
-            <Admin children={<LiveAds />} />
+            <AuthenticatedRoute>
+              <Admin children={<LiveAds />} />
+            </AuthenticatedRoute>
           </AdminRoute>
         }
       />
@@ -237,7 +270,9 @@ export default function Links() {
       <Route path="/admin/ads" 
         element={
           <AdminRoute>
-            <Admin children={<AllAds />} />
+            <AuthenticatedRoute>
+              <Admin children={<AllAds />} />
+            </AuthenticatedRoute>
           </AdminRoute>
         }
       />
@@ -250,7 +285,9 @@ export default function Links() {
 
       <Route path="/settings" 
         element={
-          <SettingsLayout children={<Settings />} />
+          <AuthenticatedRoute>
+            <SettingsLayout children={<Settings />} />
+          </AuthenticatedRoute>
         }
       />
 
@@ -292,7 +329,9 @@ export default function Links() {
 
       <Route path="/inbox" 
         element={
-          <SettingsLayout children={<Inbox />} />
+          <AuthenticatedRoute>
+            <SettingsLayout children={<Inbox />} />
+          </AuthenticatedRoute>
         }
       />
       

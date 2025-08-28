@@ -41,7 +41,7 @@ function App() {
   };
 
   return (
-    !isAuthenticating && (
+    (!isAuthenticating && isAuthenticated) && (
       <>
         <Provider store={store}>
           <AppContext.Provider value={contextValue}>
