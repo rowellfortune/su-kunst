@@ -27,7 +27,6 @@ import { useGetUserQuery } from "@/store";
 
 const NewPost = () => {
   const file = useRef<null | File>(null);
-  // console.log(file)
   const nav = useNavigate();
   const [title, setTitle] = useState("");
   const {isAuthenticated } = useAppContext();

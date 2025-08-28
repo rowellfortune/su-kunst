@@ -1,6 +1,7 @@
 // src/hooks/useFollow.ts
 import { useState, useCallback } from "react";
 import { API } from "aws-amplify";
+import { ensureAuth } from "@/lib/authGuard";
 
 type ToggleFollowResponse = {
   following: boolean;
@@ -39,6 +40,7 @@ export function useFollow({
     setFollowerCount((c) => Math.max(0, c + (prevFollowing ? -1 : +1)));
 
     try {
+      await ensureAuth(); // 👈 guard
       const res = (await API.post("users", `/users/${targetId}/follow/toggle`, {
         body: targetId, // backend doesn’t need a body; include if you log actor name server-side
       })) as ToggleFollowResponse;
