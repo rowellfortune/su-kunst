@@ -2,13 +2,17 @@ import { type FC } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "./ui/card";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Calendar, 
-  // Megaphone,
-  //  Search, 
-  //  Bell, 
-  //  MessageCircle, 
-  //  Bookmark, 
-   User, Settings } from "lucide-react";
+import { 
+  Home, 
+  Calendar, 
+  Megaphone,
+  Bell, 
+  MessageCircle, 
+  Bookmark, 
+  User, 
+  Settings, 
+  Users
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 interface NavItem {
@@ -19,46 +23,31 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { url: "/", label: "Home", icon: Home },
-  { url: "/events", label: "Event", icon: Calendar },
-  // { url: "/sponsors", label: "Sponsors", icon: Megaphone },
-  // {
-  //   icon: Search, label: "Explore",
-  //   url: ""
-  // },
-  // {
-  //   icon: Bell, label: "Notifications",
-  //   url: ""
-  // },
-  // {
-  //   icon: MessageCircle, label: "Messages",
-  //   url: ""
-  // },
-  // {
-  //   icon: Bookmark, label: "Saved",
-  //   url: ""
-  // },
-  {
-    icon: User, label: "Profile",
-    url: "/settings/profile"
-  },
-  {
-    icon: Settings, label: "Settings",
-    url: "/settings"
-  },
+  { url: "/", icon: Home, label: "Home" },
+  { url: "", icon: Users, label: "Friends"},
+  { url: "/events", icon: Calendar, label: "Events", },
+  { url: "", icon: Megaphone, label: "Sponsors" },
+  { url: "", icon: Bell, label: "Notifications"},
+  { url: "", icon: MessageCircle, label: "Messages"},
+  { url: "", icon: Bookmark, label: "Saved"},
+  { url: "/settings/profile", icon: User, label: "Profile"},
+  { url: "/settings", icon: Settings, label: "Settings"},
 ];
 
 export const Sidebar: FC = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
+  // Filter out nav items with empty url
+  const visibleNavItems = navItems.filter((item) => item.url.trim() !== "");
+
   return (
-    <aside className="p-6 sm:px-6 md:block space-y-8">
+    <aside className="xl:w-1/2 md:p-6 sm:px-6 md:block space-y-8 mx-auto">
       <Card className=" border-r py-0 md:py-1">
         <ScrollArea className="h-full p-4 mx-auto md:mx-px">
           <nav>
             <ul className="flex sm:flex-row space-x-2 space-y-0 overflow-x-auto md:flex-col md:space-x-0 text-center md:space-y-2">
-              {navItems.map(({ label, icon: Icon, badge, url }) => {
+              {visibleNavItems.map(({ label, icon: Icon, badge, url }) => {
                 const isActive = currentPath === url;
                 return (
                   <li key={label}>
@@ -83,7 +72,7 @@ export const Sidebar: FC = () => {
                           {badge}
                         </span>
                       )}
-                    </Link>
+                    </Link> 
                   </li>
                 );
               })}

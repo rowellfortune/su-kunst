@@ -39,6 +39,7 @@ export default function NewOppertunity() {
     { value: "",        label: "-- Please choose an option --" },
     { value: "intership",   label: "Internship" },
     { value: "workshop",  label: "WorKshop" },
+    { value: "info",  label: "Informational" },
     { value: "education",  label: "Education" },
     { value: "opencall",  label: "Opencall" },
   ];

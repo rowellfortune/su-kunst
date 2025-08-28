@@ -29,6 +29,8 @@ export interface ProfilePageProps {
     bio: string;
     avatarFileattachment?: string;
     coverFileattachment?: string;
+    website: string;
+    location: string;
   };
   role: string;
   sk: string;

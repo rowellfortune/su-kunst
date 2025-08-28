@@ -8,7 +8,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const {isAuthenticated } = useAppContext();
 
   return (
-    <div className="bg-slate-100 h-vh mx-auto">
+    <div className="bg-slate-100 h-full mx-auto">
        {isAuthenticated ?  <AppNavbar /> :  <IndexNavbar />}
         <main className={`${isAuthenticated ?  `flex md:flex-row flex-col`  :  `flex`} `}>
           {isAuthenticated && <div className="basis-3/12"><Sidebar/></div>}

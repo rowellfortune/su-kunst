@@ -46,6 +46,7 @@ import Appearance from "./containers/settings/Appearance";
 import Notifications from "./containers/settings/Notifications";
 import ProfileLayout from "./layout/profile";
 import ForgotPassword from "./containers/ForgotPassword";
+import Opportunity from "./components/opportunities/Opportunity";
 
 export default function Links() {
   return (
@@ -144,19 +145,19 @@ export default function Links() {
 
       <Route path="/opportunities/:id" 
         element={
-          <Landinglayout children={ <Ad />} />
+          <AppLayout children={ <Opportunity />} />
         }
       />
 
       <Route path="/ads/:id" 
         element={
-          <Landinglayout children={ <Ad />} />
+          <AppLayout children={ <Ad />} />
         }
       />
 
       <Route path="/ads/edit/:id" 
         element={
-          <Landinglayout children={ <UpdateAd />} />
+          <Admin children={ <UpdateAd />} />
         }
       />
 

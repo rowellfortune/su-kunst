@@ -1,6 +1,7 @@
 import { createApi} from '@reduxjs/toolkit/query/react';
 import type { BaseQueryFn } from '@reduxjs/toolkit/query'
 import { API } from 'aws-amplify'
+// import type { CommentType } from '@/types/comment';
 
 // base for all items
 interface BaseItem {
@@ -27,44 +28,48 @@ interface AdType extends BaseItem {
   company: string;
 }
 
+
 type Args = { url: string; method: 'GET'|'POST'|'PUT'|'DELETE'; body?: any }
 
-export const amplifyBaseQuery: BaseQueryFn<Args, unknown, unknown> = async ({ url, method, body }) => {
-  try {
-    let data
-    if (method === 'GET') {
-      data = await API.get("ads", url, {});
-    } else {
-      data = await API.post('ads', url, { body })
-    }
-    return { data }
-  } catch (error: any) {
-    return {
-      error: {
-        status: error.response?.status || 500,
-        data: error.message || error,
+export const amplifyBaseQuery: BaseQueryFn<Args, unknown, unknown> =
+  async ({ url, method, body }) => {
+    try {
+      let data
+      if (method === 'GET') {
+        data = await API.get("notifications", url, {});
+        console.log(data)
+      } else {
+        data = await API.post('notifications', url, { body })
+      }
+      return { data }
+    } catch (error: any) {
+      return {
+        error: {
+          status: error.response?.status || 500,
+          data: error.message || error,
+        }
       }
     }
   }
-}
 
-export const adsApi = createApi({
-  reducerPath: 'adsApi',
+export const notificationsApi = createApi({
+  reducerPath: 'notificationApi',
   baseQuery: amplifyBaseQuery,
   tagTypes: ['Post', 'Comment', 'User'],
   endpoints: builder => ({
-    getAds: builder.query<AdType[], void>({
-      query: () => ({ url: '/ads', method: 'GET' }),
+    getNotifications: builder.query<AdType[], void>({
+      query: () => ({ url: '/notifications', method: 'GET' }),
     }),
-    addPost: builder.mutation<AdType, Partial<AdType>>({
-      query: body => ({ url: '/ads', method: 'POST', body }),
+    addNotification: builder.mutation<AdType, Partial<AdType>>({
+      query: body => ({ url: '/notifications', method: 'POST', body }),
     }),
   }),
 })
 
 export const {
-  useGetAdsQuery,
-} = adsApi;
+  useGetNotificationsQuery,
+  useAddNotificationMutation
+} = notificationsApi;
 
 
 

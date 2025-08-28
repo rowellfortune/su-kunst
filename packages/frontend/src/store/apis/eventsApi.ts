@@ -32,7 +32,7 @@ export const eventsApi = createApi({
   baseQuery: amplifyBaseQuery,
   tagTypes: ['Post', 'Comment', 'User'],
   endpoints: builder => ({
-    getPosts: builder.query<CommentType[], void>({
+    getEvents: builder.query<CommentType[], void>({
       query: () => ({ url: '/events', method: 'GET' }),
     }),
     addPost: builder.mutation<CommentType, Partial<CommentType>>({
@@ -42,7 +42,7 @@ export const eventsApi = createApi({
 })
 
 export const {
-  useGetPostsQuery,
+  useGetEventsQuery,
 } = eventsApi;
 
 

@@ -3,7 +3,6 @@ import {  Link, useNavigate } from "react-router-dom";
 import { handleLogout } from "@/lib/auth.ts";
 import { AppContext, useAppContext } from "@/lib/contextLib.ts";
 import { NotificationBell } from "@/components/NotificationBell";
-// import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useGetUserQuery } from '@/store';
@@ -24,12 +23,8 @@ export default function Navbar() {
       isLoading: userInfoLoading,
     } = useGetUserQuery(effectiveId, { skip: !isAuthenticated || !effectiveId });
   
-    console.log(userInfoError)
-    console.log(userInfoLoading)
-    // fallback to the passed‑in `author` if we don’t have the full profile yet
     const avatarUrl   = userInfo?.profile.avatarFileattachment;
   
-
   return (
     <nav className="flex items-center justify-between px-6 py-4 mb-5 bg-white border-b">
       {/* Brand */}
@@ -53,7 +48,7 @@ export default function Navbar() {
 
       {/* Actions */}
       <div className="flex items-center space-x-1">
-          <NotificationBell />
+        {isAuthenticated && <NotificationBell />}
         {/* <div className="">
           <Bookmark className="h-5 w-5" />
         </div> */}
@@ -64,9 +59,9 @@ export default function Navbar() {
             <button className="flex items-center space-x-2 rounded-full p-1 hover:bg-gray-100">
               <Avatar className="h-8 w-8">
                 <AvatarImage src={avatarUrl} alt="User avatar" />
-                <AvatarFallback>{username?.[0]}</AvatarFallback>
+                {!userInfoError && userInfoLoading &&   <AvatarFallback>{username?.[0]}</AvatarFallback> }
               </Avatar>
-              <span className="text-sm font-medium">{username}</span>
+              <span className="text-sm hidden font-medium">{username}</span>
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

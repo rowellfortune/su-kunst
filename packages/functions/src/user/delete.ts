@@ -1,11 +1,11 @@
 import { Resource } from "sst";
-import { RestUtil } from "@su-kunst/core/util";
+import { Util } from "@su-kunst/core/util";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DeleteCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
 const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
-export const main = RestUtil.restHandler(async (event) => {
+export const main = Util.handler(async (event) => {
   
   const full  = event?.requestContext?.authorizer?.iam?.cognitoIdentity?.amr[2];
   const userId = full.replace(/^.*:/, "");

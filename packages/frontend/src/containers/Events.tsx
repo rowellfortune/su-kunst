@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetPostsQuery as getEvents } from '@/store/apis/opportunitiesApi';
+import { useGetOpportunitiesQuery as getEvents } from '@/store/apis/opportunitiesApi';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { EventsComponent } from "@/components/eventsFeed/EventsComponent";
 
@@ -9,7 +9,7 @@ export default function Events() {
   
   function renderEventsList(events: any[] | undefined ) {
     return (
-      <div className="grid grid-cols-1 gap-4 w-full">
+      <div className="grid xl:grid-cols-2 grid-cols-1 gap-4 w-full">
         {events?.map(({pk, title,  createdAt, attachment }) => (
           <div key={pk} >
             {isLoading
@@ -37,26 +37,12 @@ export default function Events() {
   }
 
   if (isLoading) return (
-    <div className="flex w-full md:max-w-5xl container mx-auto">
-      <div className="flex flex-col space-y-3 md:w-1/3">
-        <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+    <div className="flex w-full col-span-12 flex-col md:flex-row max-w-3xl container mx-auto h-screen">
+      <div className="flex flex-col md:w-full">
+        <Skeleton className="h-[125px] w-full rounded-xl bg-amber-300" />
         <div className="space-y-2">
-          <Skeleton className="h-4 w-[250px]" />
-          <Skeleton className="h-4 w-[200px]" />
-        </div>
-      </div>
-      <div className="flex items-center space-x-4">
-        <div className="space-y-2 ">
-          <Skeleton className="h-4 w-[250px]" />
-          <Skeleton className="h-100 w-full" />
-        </div>
-
-      </div>
-      <div className="flex flex-col space-y-3 md:w-1/3">
-        <Skeleton className="h-[125px] w-[250px] rounded-xl" />
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-[250px]" />
-          <Skeleton className="h-4 w-[200px]" />
+          <Skeleton className="h-4 w-full md:w-[250px] bg-amber-300" />
+          <Skeleton className="h-4 w-full md:w-[200px] bg-amber-300" />
         </div>
       </div>
     </div>
@@ -64,8 +50,8 @@ export default function Events() {
  
   function renderPosts() {
     return (
-      <ScrollArea className="flex flex-col md:flex-row w-full container mx-auto">
-        <h1 className="text-2xl text-center font-bold my-5">Upcoming Event</h1>
+      <ScrollArea className="flex w-full col-span-12 flex-col md:flex-row max-w-3xl container mx-auto h-screen">
+        <h1 className="text-2xl font-bold my-5">Upcoming Event</h1>
         {!isLoading && renderEventsList(events)}
       </ScrollArea>
     );
