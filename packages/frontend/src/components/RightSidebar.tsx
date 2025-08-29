@@ -74,13 +74,13 @@ export const RightSidebar: React.FC = () => {
             </div>
           </div>
     
-        <div className="bg-white rounded-xl p-4">
-          <h4 className="text-xl font-semibold mb-2 flex items-center">
+        <div className="bg-white rounded-xl p-4 max-h-[70vh] overflow-hidden">
+          <h4 className="text-lg font-semibold mb-2 flex items-center">
             <Users className="h-6 w-6 mr-2" />
             Suggested Artists
           </h4>
           {!usersAreLoading ? 
-          <ul className="space-y-3">
+          <ul className="space-y-3 max-h-[60vh] overflow-y-auto">
             {noneAdmin?.map(({ username, role, pk, profile }) => (
               <li key={pk} className="flex items-center justify-between">
                 <Link to={`/profile/${removeUserPrefix(pk)}`}>

@@ -263,7 +263,7 @@ export default function Home() {
     return (
         <>
          {isAuthenticated ? 
-        <div className="flex flex-col col-span-12 md:flex-row w-full max-w-xl mx-auto">
+        <div className="md:w-[50%] w-full">
           {!postsLoading && !oppsLoading && !adsLoading && !oppsError && !adsError && !postsError && renderPostsList(feed)}
         </div>
         : null }
