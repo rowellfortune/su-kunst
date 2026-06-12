@@ -64,10 +64,11 @@ function UserProfile() {
   const avatarUrl   = userInfo?.profile?.avatarFileattachment;
   
   const {
-    data: posts = [],
+    data: postsData,
     error: postsError,
     isLoading: postsLoading,
   } = useGetPostsQuery(undefined, { skip: !isAuthenticated });
+  const posts = postsData?.items ?? [];
 
   const myPosts = posts.filter((post) => post.postedBy === `${id}`);
 

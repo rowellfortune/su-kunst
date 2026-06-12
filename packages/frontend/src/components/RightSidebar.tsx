@@ -1,112 +1,104 @@
 import React, { useContext, useMemo } from "react";
-import {Users} from "lucide-react";
-import {useGetPostsQuery, useGetUserQuery, useListUsersQuery} from "@/store";
+import { Search } from "lucide-react";
+import { useGetPostsQuery, useGetUserQuery, useListUsersQuery, useGetAdsQuery } from "@/store";
 import { AppContext, useAppContext } from "@/lib/contextLib";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 export const RightSidebar: React.FC = () => {
-  const {isAuthenticated } = useAppContext();
-  const {
-    data: posts = [],
-    error: postsError,
-    isLoading: postsLoading,
-  } = useGetPostsQuery(undefined, { skip: !isAuthenticated });
-  
+  const { isAuthenticated } = useAppContext();
+
+  const { data: ads = [], isLoading: adsLoading } = useGetAdsQuery(undefined, {
+    skip: !isAuthenticated,
+  });
+
   const { data: users, isLoading: usersAreLoading } = useListUsersQuery();
+  const noneAdmin = users?.filter((item) => item.role.trim() !== "admin");
 
-
-
-    // Filter out nav items with empty url
-  const noneAdmin =  users?.filter((item) => item.role.trim() !== "admin");
-  // console.log(users, 'Users')
-  const {user} = useContext(AppContext)
-  const username = user?.username;
-  const effectiveId = user.attributes.sub ?? "";
- 
-  const {
-    data: userInfo,
-    error: userInfoError,
-    isLoading: userInfoLoading,
-  } = useGetUserQuery(effectiveId, { skip: !isAuthenticated || !effectiveId });
-  
-  const avatarUrl   = userInfo?.profile.avatarFileattachment;
-  
-  const userPosts = useMemo(
-    () => posts.filter((p) => p.author === username),
-    [posts, username]
-  );
-  const postCount = userPosts.length;
+  const { user } = useContext(AppContext);
 
   function removeUserPrefix(id: string): string {
     return id.replace("USER#", "");
   }
 
-  function RightPanel() {
-    return (
-      <aside className="xl:w-1/2 p-6 hidden md:block space-y-8 mx-auto">
-        <div className="bg-white rounded-xl p-4 text-center">
-          <div className="h-24 rounded-t-xl bg-gradient-to-r from-pink-500 to-purple-500" />
-            <Avatar className="-mt-12 mx-auto h-20 w-20 rounded-full border-4 border-purple-900 bg-white">
-              <AvatarImage src={avatarUrl} alt="Jakob Botosh" />
-              <AvatarFallback>{username[0]}</AvatarFallback>
-            </Avatar>
-            {!userInfoError && !userInfoLoading ? <h3 className="mt-2 font-bold">{username}</h3> : <>....</>}
-            {/* <h3 className="mt-2 font-bold">{username}</h3> */}
-            <p className="text-sm">@{username.toLowerCase()}</p>
-            <p className="mt-2 text-xs">
-              {userInfo?.profile?.bio ? <>{userInfo.profile?.bio}</> : <>[Tell us something about yourself]</>}
-            </p>
-            <div className="mt-4 flex justify-center space-x-2"></div>
-            <div className="mt-4 flex justify-around text-xs ">
-              <div>
-                <p className="font-semibold text-xl">{postsLoading && postsError ? "…" : `${postCount}`}</p>
-                <p className="text-md">Posts</p>
-              </div>
-              {/* <div>
-                <p className="font-semibold text-xl">{postsLoading && postsError ? "…" : `${postCount}`}</p>
-                <p className="text-md">Likes</p>
-              </div>
-              <div>
-                <p className="font-semibold text-xl">{postsLoading && postsError ? "…" : `${postCount}`}</p>
-                <p className="text-md">Followers</p>
-              </div> */}
-            </div>
-          </div>
-    
-        <div className="bg-white rounded-xl p-4 max-h-[70vh] overflow-hidden">
-          <h4 className="text-lg font-semibold mb-2 flex items-center">
-            <Users className="h-6 w-6 mr-2" />
-            Suggested Artists
-          </h4>
-          {!usersAreLoading ? 
-          <ul className="space-y-3 max-h-[60vh] overflow-y-auto">
-            {noneAdmin?.map(({ username, role, pk, profile }) => (
-              <li key={pk} className="flex items-center justify-between">
-                <Link to={`/profile/${removeUserPrefix(pk)}`}>
-                  <div className="flex items-center space-x-3">
-                    <Avatar className="h-8 w-8 rounded-full">
-                      <AvatarImage src={profile?.avatarFileattachment} alt="Jakob Botosh" />
-                      <AvatarFallback>{username[0]}</AvatarFallback>
-                    </Avatar>
-                    <div className="text-xs">
-                      <p className="font-semibold">{username}</p>
-                      <p className="text-gray-400">{role}</p>
-                    </div>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>: <>Loading users</> }
-        </div>
-      
-
-      </aside>
-    );
-  }
-
-
   return (
-    <>{RightPanel()}</>
+    <div className="space-y-4">
+      {/* Sponsored */}
+      {!adsLoading && ads.length > 0 && (
+        <div>
+          <h4 className="text-[13px] font-semibold text-gray-500 mb-3">Sponsored</h4>
+          <div className="space-y-3">
+            {ads.slice(0, 2).map((ad: any) => (
+              <a
+                key={ad.pk}
+                href={ad.link ?? "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex gap-3 p-2 -mx-2 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer"
+              >
+                {ad.attachment && (
+                  <img
+                    src={ad.attachment}
+                    alt={ad.title}
+                    className="w-[130px] h-[130px] object-cover rounded-lg"
+                  />
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-medium text-gray-900 line-clamp-2">{ad.title}</p>
+                  <p className="text-[12px] text-gray-500 truncate">{ad.company}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Divider */}
+      <div className="border-t border-gray-300" />
+
+      {/* Contacts / Artists */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="text-[13px] font-semibold text-gray-500">Contacts</h4>
+          <button className="p-1.5 rounded-full hover:bg-gray-200 transition-colors">
+            <Search className="h-4 w-4 text-gray-500" />
+          </button>
+        </div>
+
+        {!usersAreLoading ? (
+          <ul className="space-y-0.5">
+            {noneAdmin
+              ?.filter((u) => removeUserPrefix(u.pk) !== user?.attributes?.sub)
+              .slice(0, 12)
+              .map(({ username, pk, profile }) => (
+                <li key={pk}>
+                  <Link
+                    to={`/profile/${removeUserPrefix(pk)}`}
+                    className="flex items-center gap-3 px-2 py-1.5 -mx-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    <div className="relative">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={profile?.avatarFileattachment} alt={username} />
+                        <AvatarFallback className="text-xs bg-gray-300">{username?.[0]}</AvatarFallback>
+                      </Avatar>
+                      <div className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-white" />
+                    </div>
+                    <span className="text-[13px] font-medium text-gray-900">{username}</span>
+                  </Link>
+                </li>
+              ))}
+          </ul>
+        ) : (
+          <div className="space-y-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-3 px-2">
+                <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
+                <div className="h-3 w-24 bg-gray-200 rounded animate-pulse" />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 };

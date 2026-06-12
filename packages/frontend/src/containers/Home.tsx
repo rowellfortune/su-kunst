@@ -1,3 +1,4 @@
+import { useMemo, useCallback, useRef, useEffect, useState } from "react";
 import { useAppContext } from "../lib/contextLib";
 import Post from "@/components/newsfeed/Post";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -7,41 +8,33 @@ import {
   useGetPostsQuery,
   useGetAdsQuery,
   useGetOpportunitiesQuery,
-} from '@/store/index'
+} from '@/store/index';
 import Landing from "./Landing";
 import NewPost from "@/components/newsfeed/NewPost";
 
-// base for all items
 interface BaseItem {
-  pk?: string;            // primary key (optional)
-  title: string;          // always required
-  attachment?: string;    // URL to an image/video (optional)
-  content?: string;       // body text (optional)
-  description?: string;   // extra text (optional)
-  author: string;         // who created it (required)
-  postedBy?: string;      // user ID who posted it (optional)
-  createdAt: number;     // UNIX timestamp (optional)
-  type?: string;          // a generic “type” label (optional)
-  link?: string;           // always required
-  entityType:            // discriminant for narrowing
-    | "POST"
-    | "AD"
-    | "OPPORTUNITY"
-    | string;
+  pk?: string;
+  title: string;
+  attachment?: string;
+  content?: string;
+  description?: string;
+  author: string;
+  postedBy?: string;
+  createdAt: number;
+  type?: string;
+  link?: string;
+  entityType: "POST" | "AD" | "OPPORTUNITY" | string;
 }
 
-// a “POST” item
 interface PostType extends BaseItem {
   entityType: "POST";
 }
 
-// an “AD” item
 interface AdType extends BaseItem {
-  entityType: "AD"; 
+  entityType: "AD";
   company: string;
 }
 
-// an “OPPORTUNITY” item
 interface OpportunityType extends BaseItem {
   entityType: "OPPORTUNITY";
   description?: string;
@@ -49,19 +42,55 @@ interface OpportunityType extends BaseItem {
   type?: string;
 }
 
-// the union of all possible feed items
 type FeedItem = PostType | AdType | OpportunityType;
 
-export default function Home() {
-  const {isAuthenticated } = useAppContext();
+function seededShuffle<T>(arr: T[], seed: number): T[] {
+  const result = [...arr];
+  let s = seed;
+  for (let i = result.length - 1; i > 0; i--) {
+    s = (s * 16807 + 0) % 2147483647;
+    const j = s % (i + 1);
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
 
-  // const {user} = useContext(AppContext)
+function buildMixedFeed(
+  contentItems: FeedItem[],
+  ads: AdType[],
+  seed: number,
+  interval = 3
+): FeedItem[] {
+  const adsQueue = [...seededShuffle(ads, seed)];
+  const feed: FeedItem[] = [];
+  let shownContent = 0;
+
+  for (const item of contentItems) {
+    feed.push(item);
+    shownContent++;
+    if (shownContent >= interval && adsQueue.length > 0) {
+      feed.push(adsQueue.shift()!);
+      shownContent = 0;
+    }
+  }
+
+  return feed;
+}
+
+export default function Home() {
+  const { isAuthenticated } = useAppContext();
+
+  const [cursor, setCursor] = useState<string | undefined>(undefined);
 
   const {
-    data: posts = [],
+    data: postsData,
     error: postsError,
     isLoading: postsLoading,
-  } = useGetPostsQuery(undefined, { skip: !isAuthenticated});
+    isFetching: postsFetching,
+  } = useGetPostsQuery(cursor, { skip: !isAuthenticated });
+
+  const posts = postsData?.items ?? [];
+  const nextCursor = postsData?.nextCursor ?? null;
 
   const {
     data: ads = [],
@@ -75,206 +104,172 @@ export default function Home() {
     isLoading: oppsLoading,
   } = useGetOpportunitiesQuery(undefined, { skip: !isAuthenticated });
 
-  // 1) Flatten & shuffle any number of arrays
-  function shuffleArrays<T>(...arrays: T[][]): T[] {
-    const combined = arrays.flat();
-    for (let i = combined.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [combined[i], combined[j]] = [combined[j], combined[i]];
-    }
-    return combined;
-  }
+  // Stable seed per session so the feed order doesn't jump on re-renders
+  const shuffleSeed = useMemo(() => Date.now(), []);
 
-  // 2) Build a mixed feed with 1 ad after every `interval` content items
-  function buildMixedFeed(
-    contentItems: FeedItem[], // posts + opportunities, already shuffled
-    ads: AdType[],
-    interval = 3
-  ): FeedItem[] {
-    const adsQueue = shuffleArrays(ads);
-    const feed: FeedItem[] = [];
-    let shownContent = 0;
-
-    for (const item of contentItems) {
-      feed.push(item);
-      shownContent++;
-
-      if (shownContent >= interval && adsQueue.length > 0) {
-        feed.push(adsQueue.shift()!);
-        shownContent = 0;
-      }
-    }
-
-    return feed;
-  }
-
-  // 3) Pull out the very newest post, then mix the rest + opportunities + ads
-  function buildFinalFeed(
-    posts: PostType[],
-    opportunities: OpportunityType[],
-    ads: AdType[],
-    interval = 3
-  ): FeedItem[] {
+  const feed = useMemo(() => {
     if (posts.length === 0) {
-      // no posts at all → just mix opps & ads
-      return buildMixedFeed(shuffleArrays(opportunities), ads, interval);
+      return buildMixedFeed(
+        seededShuffle(opportunities as FeedItem[], shuffleSeed),
+        ads as AdType[],
+        shuffleSeed
+      );
     }
 
-    // sort posts descending
     const sortedPosts = [...posts].sort((a, b) => b.createdAt - a.createdAt);
-    // first item is the most recent post
     const [latestPost, ...otherPosts] = sortedPosts;
 
-    // shuffle other content together
-    const shuffledContent = shuffleArrays( otherPosts as FeedItem[],
-    opportunities as FeedItem[]);
+    const shuffledContent = seededShuffle(
+      [...(otherPosts as FeedItem[]), ...(opportunities as FeedItem[])],
+      shuffleSeed
+    );
 
-    // insert ads every `interval`
-    const restFeed = buildMixedFeed(shuffledContent, ads, interval);
-
-    // final feed: latestPost always at index 0
+    const restFeed = buildMixedFeed(shuffledContent, ads as AdType[], shuffleSeed);
     return [latestPost, ...restFeed];
-  }
+  }, [posts, ads, opportunities, shuffleSeed]);
 
-  // Now you have a mixed feed with random order
-  const feed = buildFinalFeed(posts, opportunities, ads, 3);
+  // Infinite scroll observer
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
-  function renderPostsList(feed: FeedItem[]) {
+  useEffect(() => {
+    if (!nextCursor || postsFetching) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setCursor(nextCursor);
+        }
+      },
+      { rootMargin: "400px" }
+    );
+
+    const el = sentinelRef.current;
+    if (el) observer.observe(el);
+    return () => { if (el) observer.unobserve(el); };
+  }, [nextCursor, postsFetching]);
+
+  const loadMore = useCallback(() => {
+    if (nextCursor && !postsFetching) {
+      setCursor(nextCursor);
+    }
+  }, [nextCursor, postsFetching]);
+
+  if (!isAuthenticated) return <Landing />;
+
+  const isInitialLoad = postsLoading || oppsLoading || adsLoading;
+
+  if (isInitialLoad) {
     return (
-      <div className="mt-6">
-        {isAuthenticated ? <NewPost/> : null }
-        {feed.map((item) => {
-          switch (item.entityType) {
-            case 'POST':
-              if (!item.content) return null;
-              return  (
-                <Post pk={item?.pk} 
-                  key={item?.pk} 
-                  title={item.title} 
-                  attachment={item.attachment} 
-                  content={item.content} 
-                  author={item.author} 
-                  userId={item.postedBy} 
-                  createdAt={item.createdAt} 
-                  postedBy={item.postedBy}
-                />
-              );
-            case 'AD':
-              return  (
-                <AdsComponent pk={item.pk}  
-                  key={item.pk} 
-                  attachment={item.attachment} 
-                  title={item.title} 
-                  content={item.content}  
-                  company={item?.company ?? "unknown-company"} 
-                  link={item?.link ?? "#"}
-                />
-              );
-            case 'OPPORTUNITY':
-              return  (
-                <OpportunitiesComponent pk={item.pk} 
-                  key={item.pk} 
-                  attachment={item.attachment} 
-                  title={item.title} 
-                  description={item?.description} 
-                  company={item?.company} 
-                  type={item?.type} 
-                  createdAt={item.entityType}
-                />
-              );
-            default:
-              return <div> Error</div>;
-          }
-        })}
+      <div className="mt-6 w-full col-span-12 flex-col md:flex-row max-w-3xl container mx-auto h-full">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="flex bg-white shadow-md p-3 mb-5 rounded-xl flex-col md:w-full">
+            <div className="flex space-y-2 my-2 items-center">
+              <Skeleton className="h-13 rounded-full w-13 bg-slate-300" />
+              <div className="mx-2">
+                <Skeleton className="h-4 w-full md:w-[200px] bg-slate-300 my-2" />
+                <Skeleton className="h-4 w-full md:w-[100px] bg-slate-300 my-2" />
+              </div>
+            </div>
+            <Skeleton className="h-62 w-full rounded-xl bg-slate-300" />
+            <div className="flex space-y-2 my-2">
+              <Skeleton className="h-5 w-20 bg-slate-300 mr-2" />
+              <Skeleton className="h-5 w-20 bg-slate-300" />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
 
-  function renderLander() {
-    return (<Landing /> );
-  }
-
-  if (postsLoading || oppsLoading || adsLoading || oppsError || adsError || postsError) return (
-    <div className="mt-6 w-full col-span-12 flex-col md:flex-row max-w-3xl container mx-auto h-full" >
-
-        <div className="flex bg-white shadow-md p-3 mb-5 rounded-xl flex-col md:w-full">
-          <div className="flex space-y-2 my-2 items-center">
-            <Skeleton className="h-13 rounded-full w-13 bg-slate-300" />
-            <div className="mx-2">
-              <Skeleton className="h-4 w-full md:w-[200px] bg-slate-300 my-2" />
-              <Skeleton className="h-4 w-full md:w-[100px] bg-slate-300 my-2" />
-            </div>
-          </div>
-          <Skeleton className="h-62 w-full rounded-xl bg-slate-300" />
-          <div className="flex space-y-2 my-2 ">
-            <Skeleton className="h-5 w-20 bg-slate-300 mr-2" />
-            <Skeleton className="h-5 w-20 bg-slate-300" />
-          </div>
-        </div>
-
-        <div className="flex bg-white shadow-md p-3 mb-5 rounded-xl flex-col md:w-full">
-          <div className="flex space-y-2 my-2 items-center">
-            <Skeleton className="h-13 rounded-full w-13 bg-slate-300" />
-            <div className="mx-2">
-              <Skeleton className="h-4 w-full md:w-[200px] bg-slate-300 my-2" />
-              <Skeleton className="h-4 w-full md:w-[100px] bg-slate-300 my-2" />
-            </div>
-          </div>
-          <Skeleton className="h-62 w-full rounded-xl bg-slate-300" />
-          <div className="flex space-y-2 my-2 ">
-            <Skeleton className="h-5 w-20 bg-slate-300 mr-2" />
-            <Skeleton className="h-5 w-20 bg-slate-300" />
-          </div>
-        </div>
-
-        <div className="flex bg-white shadow-md p-3 mb-5 rounded-xl flex-col md:w-full">
-          <div className="flex space-y-2 my-2 items-center">
-            <Skeleton className="h-13 rounded-full w-13 bg-slate-300" />
-            <div className="mx-2">
-              <Skeleton className="h-4 w-full md:w-[200px] bg-slate-300 my-2" />
-              <Skeleton className="h-4 w-full md:w-[100px] bg-slate-300 my-2" />
-            </div>
-          </div>
-          <Skeleton className="h-62 w-full rounded-xl bg-slate-300" />
-          <div className="flex space-y-2 my-2 ">
-            <Skeleton className="h-5 w-20 bg-slate-300 mr-2" />
-            <Skeleton className="h-5 w-20 bg-slate-300" />
-          </div>
-        </div>
-
-        <div className="flex bg-white shadow-md p-3 mb-5 rounded-xl flex-col md:w-full">
-          <div className="flex space-y-2 my-2 items-center">
-            <Skeleton className="h-13 rounded-full w-13 bg-slate-300" />
-            <div className="mx-2">
-              <Skeleton className="h-4 w-full md:w-[200px] bg-slate-300 my-2" />
-              <Skeleton className="h-4 w-full md:w-[100px] bg-slate-300 my-2" />
-            </div>
-          </div>
-          <Skeleton className="h-62 w-full rounded-xl bg-slate-300" />
-          <div className="flex space-y-2 my-2 ">
-            <Skeleton className="h-5 w-20 bg-slate-300 mr-2" />
-            <Skeleton className="h-5 w-20 bg-slate-300" />
-          </div>
-        </div>
-    </div>
-  );
- 
-  function renderPosts() {
+  if (postsError || adsError || oppsError) {
     return (
-        <>
-         {isAuthenticated ? 
-        <div className="md:w-[50%] w-full">
-          {!postsLoading && !oppsLoading && !adsLoading && !oppsError && !adsError && !postsError && renderPostsList(feed)}
+      <div className="mt-6 w-full max-w-3xl mx-auto">
+        <div className="bg-white rounded-xl shadow-md p-6 text-center">
+          <p className="text-red-500 font-medium">Something went wrong loading the feed.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-3 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm"
+          >
+            Try again
+          </button>
         </div>
-        : null }
-
-        </> 
+      </div>
     );
   }
 
   return (
-    <>
-      {isAuthenticated ? renderPosts() : renderLander()}
-    </>
+    <div className="w-full max-w-[680px] mx-auto">
+      <div className="mt-6">
+        <NewPost />
+        {feed.map((item) => {
+          switch (item.entityType) {
+            case 'POST':
+              if (!item.content) return null;
+              return (
+                <Post
+                  pk={item?.pk}
+                  key={item?.pk}
+                  title={item.title}
+                  attachment={item.attachment}
+                  content={item.content}
+                  author={item.author}
+                  userId={item.postedBy}
+                  createdAt={item.createdAt}
+                  postedBy={item.postedBy}
+                />
+              );
+            case 'AD':
+              return (
+                <AdsComponent
+                  pk={item.pk}
+                  key={item.pk}
+                  attachment={item.attachment}
+                  title={item.title}
+                  content={item.content}
+                  company={(item as AdType)?.company ?? "unknown-company"}
+                  link={item?.link ?? "#"}
+                />
+              );
+            case 'OPPORTUNITY':
+              return (
+                <OpportunitiesComponent
+                  pk={item.pk}
+                  key={item.pk}
+                  attachment={item.attachment}
+                  title={item.title}
+                  description={(item as OpportunityType)?.description}
+                  company={(item as OpportunityType)?.company}
+                  type={item?.type}
+                  createdAt={item.entityType}
+                />
+              );
+            default:
+              return null;
+          }
+        })}
+
+        {/* Infinite scroll sentinel */}
+        <div ref={sentinelRef} className="h-1" />
+
+        {postsFetching && (
+          <div className="flex justify-center py-4">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+          </div>
+        )}
+
+        {!nextCursor && posts.length > 0 && (
+          <p className="text-center text-gray-400 text-sm py-6">You're all caught up</p>
+        )}
+
+        {nextCursor && !postsFetching && (
+          <button
+            onClick={loadMore}
+            className="w-full py-3 text-blue-500 hover:text-blue-600 text-sm font-medium"
+          >
+            Load more
+          </button>
+        )}
+      </div>
+    </div>
   );
 }

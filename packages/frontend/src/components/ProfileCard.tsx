@@ -8,10 +8,11 @@ import { useGetPostsQuery, useGetUserQuery } from "@/store";
 export const ProfileCard: FC = () => {
   const {isAuthenticated } = useAppContext();
   const {
-    data: posts = [],
+    data: postsData,
     error: postsError,
     isLoading: postsLoading,
   } = useGetPostsQuery(undefined, { skip: !isAuthenticated });
+  const posts = postsData?.items ?? [];
 
   const {user} = useContext(AppContext)
   const username = user?.username;
