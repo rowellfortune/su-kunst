@@ -4,13 +4,13 @@ import { table } from "./storage";
 // Create the API
 export const api = new sst.aws.ApiGatewayV2("Api", {
   cors: true,
-  domain: $app.stage === "live" 
-  ? 
-    {
-      name: "api.su-kunst.net",
-      dns: sst.aws.dns({ override: true }),
-    } 
-  : undefined,
+  // domain: $app.stage === "live" 
+  // ? 
+  //   {
+  //     name: "api.su-kunst.net",
+  //     dns: sst.aws.dns({ override: true }),
+  //   } 
+  // : undefined,
   transform: {
     route: {
       handler: {

@@ -3,10 +3,10 @@
 export const bucket = new sst.aws.Bucket("Uploads", {
   access: "public",
   cors: {
-    allowOrigins: [
-      "https://su-kunst.net",                       // ✅ Custom domain
-      "https://www.su-kunst.net",                   // ✅ Default CloudFront
-    ],
+    // allowOrigins: [
+    //   "https://su-kunst.net",                       // ✅ Custom domain
+    //   "https://www.su-kunst.net",                   // ✅ Default CloudFront
+    // ],
     // which HTTP methods are allowed
     allowMethods: ["GET", "PUT", "POST", "DELETE", "HEAD"],
     // which headers the browser can send

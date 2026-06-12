@@ -6,13 +6,13 @@ const region = aws.getRegionOutput().name;
 
 export const frontend = new sst.aws.StaticSite("Frontend", {
   path: "packages/frontend",
-  domain: $app.stage === "live" 
-    ? { 
-        name: "su-kunst.net",
-        redirects: ["www.su-kunst.net"],
-        dns: sst.aws.dns({ override: true }),
-      } 
-    : undefined,
+  // domain: $app.stage === "live" 
+  //   ? { 
+  //       name: "su-kunst.net",
+  //       redirects: ["www.su-kunst.net"],
+  //       dns: sst.aws.dns({ override: true }),
+  //     } 
+  //   : undefined,
   build: {
     output: "dist",
     command: "npm run build",
